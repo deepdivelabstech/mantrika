@@ -1,0 +1,83 @@
+{
+  "appTitle": "Mantrika",
+  "nav": {
+    "counter": "Counter",
+    "mantras": "Mantras",
+    "progress": "Progress"
+  },
+  "counter": {
+    "settingsAria": "Settings",
+    "currentMantra": "Current mantra",
+    "beads": "Beads",
+    "rounds": "Rounds",
+    "countAria": "Count one bead",
+    "chooseMantra": "Choose mantra",
+    "browseAll": "Browse all mantras →",
+    "closeSheetAria": "Close mantra list",
+    "customMantraLabel": "Custom mantra"
+  },
+  "mantras": {
+    "title": "Sacred Library",
+    "searchPlaceholder": "Search sacred chants…",
+    "searchLabel": "Search sacred chants",
+    "dailyRecommendation": "Daily recommendation",
+    "forInnerPeace": "For inner peace",
+    "startSadhana": "Start Sadhana",
+    "viewAll": "View All →",
+    "showLess": "Show less",
+    "viewAllAria": "View all mantras",
+    "showLessAria": "Show fewer mantras",
+    "addCustom": "Add custom mantra",
+    "customPlaceholder": "Type your own mantra…",
+    "add": "Add",
+    "nowChanting": "Now chanting",
+    "noResults": "No chants match your search."
+  },
+  "progress": {
+    "title": "Your Progress",
+    "totalBeads": "Total beads",
+    "lifeToDate": "Life-to-date counts",
+    "roundsDone": "Rounds done",
+    "malaCompletions": "Mala completions",
+    "currentStreak": "Current streak",
+    "days": "days",
+    "dailyFocus": "Daily Focus",
+    "ofBeads": "/ 1008 Beads"
+  },
+  "settings": {
+    "title": "Settings & Guidance",
+    "subtitle": "Configure your digital sanctorum and refine your practice.",
+    "backAria": "Back to counter",
+    "sensoryExperience": "Sensory experience",
+    "hapticTitle": "Haptic Feedback",
+    "hapticDesc": "Feel a subtle vibration like physical mala beads.",
+    "risingTitle": "Rising Mantra",
+    "risingDesc": "Your chant floats up from the mala and fades with each bead.",
+    "animSpeed": "Animation speed",
+    "speedGentle": "Gentle",
+    "speedSteady": "Steady",
+    "speedQuick": "Quick",
+    "ambientTitle": "Ambient Soundscape",
+    "soundSilence": "Silence",
+    "soundGanga": "Ganga River",
+    "soundForest": "Evening Forest",
+    "soundBowls": "Tibetan Bowls",
+    "mindfulnessCues": "Mindfulness cues",
+    "reminderTitle": "Daily Sadhana Reminder",
+    "reminderDesc": "Time for your daily practice.",
+    "reminderDescSet": "Scheduled for {{time}}",
+    "reminderDescUnset": "No reminder set",
+    "change": "Change",
+    "languageTitle": "Language",
+    "languageDesc": "Choose the language for the app.",
+    "langEn": "English",
+    "langHi": "हिंदी"
+  },
+  "common": {
+    "loading": "Loading…",
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Try again",
+    "cancel": "Cancel",
+    "save": "Save"
+  }
+}

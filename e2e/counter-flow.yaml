@@ -1,0 +1,12 @@
+appId: com.deepdivelabs.mantrika
+---
+# Critical path: open the app → tap the bead 10x → see the count update.
+# Run with `maestro test e2e/counter-flow.yaml` against a dev/simulator build.
+- launchApp
+- assertVisible: "Mantrika"
+- repeat:
+    times: 10
+    commands:
+      - tapOn:
+          id: "counter.countAria"
+- assertVisible: "10"

@@ -1,0 +1,91 @@
+[
+  {
+    "id": "om-namah-shivaya",
+    "name": "Om Namah Shivaya",
+    "deva": "ॐ नमः शिवाय",
+    "chant": "Om Namah Shivaya",
+    "description": "A salutation to Shiva, the inner Self. Chanted for surrender, transformation, and inner stillness.",
+    "core": true
+  },
+  {
+    "id": "maha-mrityunjaya",
+    "name": "Maha Mrityunjaya Mantra",
+    "deva": "ॐ त्र्यम्बकं यजामहे",
+    "chant": "Om Tryambakam Yajamahe",
+    "description": "The 'great death-conquering' mantra, chanted for healing, protection, and longevity.",
+    "core": true
+  },
+  {
+    "id": "hare-krishna",
+    "name": "Hare Krishna Maha Mantra",
+    "deva": "हरे कृष्ण हरे कृष्ण",
+    "chant": "Hare Krishna Hare Rama",
+    "description": "The maha-mantra of bhakti yoga, chanted for devotion and joyful surrender.",
+    "core": true
+  },
+  {
+    "id": "om-mani-padme-hum",
+    "name": "Om Mani Padme Hum",
+    "deva": "ॐ मणि पद्मे हूँ",
+    "chant": "Om Mani Padme Hum",
+    "description": "The jewel in the lotus — a mantra of compassion central to Tibetan Buddhist practice.",
+    "core": true
+  },
+  {
+    "id": "gayatri-mantra",
+    "name": "Gayatri Mantra",
+    "deva": "ॐ भूर्भुवः स्वः",
+    "chant": "Om Bhur Bhuvah Svah",
+    "description": "The ultimate prayer for enlightenment and universal light. It stimulates the intellect and purifies the subconscious mind, leading the practitioner toward higher consciousness.",
+    "core": true
+  },
+  {
+    "id": "om-namo-bhagavate-vasudevaya",
+    "name": "Om Namo Bhagavate Vasudevaya",
+    "deva": "ॐ नमो भगवते वासुदेवाय",
+    "chant": "Om Namo Bhagavate Vasudevaya",
+    "description": "A salutation to Vasudeva (Krishna/Vishnu), chanted for grace and devotion."
+  },
+  {
+    "id": "om-gam-ganapataye-namaha",
+    "name": "Om Gam Ganapataye Namaha",
+    "deva": "ॐ गं गणपतये नमः",
+    "chant": "Om Gam Ganapataye Namaha",
+    "description": "An invocation to Ganesha, remover of obstacles, chanted before new beginnings."
+  },
+  {
+    "id": "sri-rama-jaya-rama",
+    "name": "Sri Rama Jaya Rama",
+    "deva": "श्री राम जय राम जय जय राम",
+    "chant": "Shri Ram Jai Ram Jai Jai Ram",
+    "description": "A devotional chant to Rama, embodiment of dharma and steadfastness."
+  },
+  {
+    "id": "om-namo-narayanaya",
+    "name": "Om Namo Narayanaya",
+    "deva": "ॐ नमो नारायणाय",
+    "chant": "Om Namo Narayanaya",
+    "description": "A salutation to Narayana (Vishnu), chanted for protection and equanimity."
+  },
+  {
+    "id": "om-shanti-shanti-shanti",
+    "name": "Om Shanti Shanti Shanti",
+    "deva": "ॐ शान्तिः शान्तिः शान्तिः",
+    "chant": "Om Shanti Shanti Shanti",
+    "description": "A threefold invocation of peace — of body, speech, and mind."
+  },
+  {
+    "id": "om-aim-saraswatyai-namah",
+    "name": "Om Aim Saraswatyai Namah",
+    "deva": "ॐ ऐं सरस्वत्यै नमः",
+    "chant": "Om Aim Saraswatyai Namah",
+    "description": "An invocation to Saraswati, goddess of knowledge, art, and clarity of speech."
+  },
+  {
+    "id": "lokah-samastah",
+    "name": "Lokah Samastah Sukhino Bhavantu",
+    "deva": "लोकाः समस्ताः सुखिनो भवन्तु",
+    "chant": "Lokah Samastah Sukhino Bhavantu",
+    "description": "May all beings everywhere be happy and free — a closing dedication chant."
+  }
+]

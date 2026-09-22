@@ -1,0 +1,18 @@
+import React from 'react';
+import { StyleSheet, View, type ViewProps } from 'react-native';
+
+import { colors, radius, spacing } from '@/shared/theme';
+
+export function Card({ style, ...rest }: ViewProps) {
+  return <View style={[styles.card, style]} {...rest} />;
+}
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.card,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.line,
+    padding: spacing.md,
+  },
+});

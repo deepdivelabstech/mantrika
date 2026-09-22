@@ -1,0 +1,83 @@
+{
+  "appTitle": "मंत्रिका",
+  "nav": {
+    "counter": "काउंटर",
+    "mantras": "मंत्र",
+    "progress": "प्रगति"
+  },
+  "counter": {
+    "settingsAria": "सेटिंग्स",
+    "currentMantra": "वर्तमान मंत्र",
+    "beads": "मनके",
+    "rounds": "माला",
+    "countAria": "एक मनका गिनें",
+    "chooseMantra": "मंत्र चुनें",
+    "browseAll": "सभी मंत्र देखें →",
+    "closeSheetAria": "मंत्र सूची बंद करें",
+    "customMantraLabel": "निजी मंत्र"
+  },
+  "mantras": {
+    "title": "पवित्र संग्रह",
+    "searchPlaceholder": "पवित्र मंत्र खोजें…",
+    "searchLabel": "पवित्र मंत्र खोजें",
+    "dailyRecommendation": "आज का सुझाव",
+    "forInnerPeace": "आंतरिक शांति के लिए",
+    "startSadhana": "साधना शुरू करें",
+    "viewAll": "सभी देखें →",
+    "showLess": "कम दिखाएं",
+    "viewAllAria": "सभी मंत्र देखें",
+    "showLessAria": "कम मंत्र दिखाएं",
+    "addCustom": "अपना मंत्र जोड़ें",
+    "customPlaceholder": "अपना मंत्र लिखें…",
+    "add": "जोड़ें",
+    "nowChanting": "अभी जप हो रहा",
+    "noResults": "आपकी खोज से कोई मंत्र मेल नहीं खाता।"
+  },
+  "progress": {
+    "title": "आपकी प्रगति",
+    "totalBeads": "कुल मनके",
+    "lifeToDate": "अब तक की कुल गणना",
+    "roundsDone": "पूर्ण मालाएं",
+    "malaCompletions": "माला पूर्णता",
+    "currentStreak": "लगातार दिन",
+    "days": "दिन",
+    "dailyFocus": "दैनिक लक्ष्य",
+    "ofBeads": "/ 1008 मनके"
+  },
+  "settings": {
+    "title": "सेटिंग्स और मार्गदर्शन",
+    "subtitle": "अपने डिजिटल पूजा स्थल को सेट करें और अपने अभ्यास को परिष्कृत करें।",
+    "backAria": "काउंटर पर वापस जाएं",
+    "sensoryExperience": "संवेदी अनुभव",
+    "hapticTitle": "कंपन अनुभूति",
+    "hapticDesc": "असली माला के मनकों जैसा हल्का कंपन महसूस करें।",
+    "risingTitle": "उठता मंत्र",
+    "risingDesc": "हर मनके के साथ आपका मंत्र माला से ऊपर उठकर विलीन हो जाता है।",
+    "animSpeed": "एनिमेशन गति",
+    "speedGentle": "धीमी",
+    "speedSteady": "स्थिर",
+    "speedQuick": "तेज़",
+    "ambientTitle": "परिवेशी ध्वनि",
+    "soundSilence": "मौन",
+    "soundGanga": "गंगा नदी",
+    "soundForest": "सांध्य वन",
+    "soundBowls": "तिब्बती कटोरे",
+    "mindfulnessCues": "सजगता संकेत",
+    "reminderTitle": "दैनिक साधना अनुस्मारक",
+    "reminderDesc": "आपकी दैनिक साधना का समय हो गया है।",
+    "reminderDescSet": "{{time}} के लिए निर्धारित",
+    "reminderDescUnset": "कोई अनुस्मारक निर्धारित नहीं",
+    "change": "बदलें",
+    "languageTitle": "भाषा",
+    "languageDesc": "ऐप के लिए भाषा चुनें।",
+    "langEn": "English",
+    "langHi": "हिंदी"
+  },
+  "common": {
+    "loading": "लोड हो रहा है…",
+    "somethingWentWrong": "कुछ गलत हो गया",
+    "tryAgain": "पुनः प्रयास करें",
+    "cancel": "रद्द करें",
+    "save": "सहेजें"
+  }
+}
