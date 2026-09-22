@@ -9,9 +9,20 @@ type Props = {
   size?: number;
   strokeWidth?: number;
   label?: string;
+  trackColor?: string;
+  progressColor?: string;
+  children?: React.ReactNode;
 };
 
-export function ProgressRing({ fraction, size = 120, strokeWidth = 10, label }: Props) {
+export function ProgressRing({
+  fraction,
+  size = 120,
+  strokeWidth = 10,
+  label,
+  trackColor = colors.line,
+  progressColor = colors.saffronDark,
+  children,
+}: Props) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const clamped = Math.min(1, Math.max(0, fraction));
@@ -19,12 +30,17 @@ export function ProgressRing({ fraction, size = 120, strokeWidth = 10, label }: 
 
   return (
     <View style={{ width: size, height: size }}>
-      <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <Svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        style={{ transform: [{ rotate: '-90deg' }] }}
+      >
         <Circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={colors.line}
+          stroke={trackColor}
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -32,24 +48,22 @@ export function ProgressRing({ fraction, size = 120, strokeWidth = 10, label }: 
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={colors.saffronDark}
+          stroke={progressColor}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={`${circumference} ${circumference}`}
           strokeDashoffset={dashOffset}
           fill="none"
-          rotation={-90}
-          originX={size / 2}
-          originY={size / 2}
         />
       </Svg>
-      {label ? (
-        <View style={StyleSheet.absoluteFill}>
-          <View style={styles.center}>
-            <Text style={styles.label}>{label}</Text>
+      {children ??
+        (label ? (
+          <View style={StyleSheet.absoluteFill}>
+            <View style={styles.center}>
+              <Text style={styles.label}>{label}</Text>
+            </View>
           </View>
-        </View>
-      ) : null}
+        ) : null)}
     </View>
   );
 }

@@ -4,6 +4,7 @@ export type Mantra = {
   deva: string;
   chant: string;
   description?: string;
+  excerpt?: string;
   core?: boolean;
 };
 
@@ -18,6 +19,7 @@ export type AnimSpeed = 'gentle' | 'steady' | 'quick';
 export type SoundscapeId = 'silence' | 'ganga' | 'forest' | 'bowls';
 
 export type Settings = {
+  name: string;
   lang: Language;
   haptics: boolean;
   risingMantra: boolean;

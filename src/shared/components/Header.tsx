@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { BrandMark } from '@/shared/components/BrandMark';
+import { BackIcon, SettingsIcon } from '@/shared/components/icons';
 import { IconButton } from '@/shared/components/IconButton';
 import { colors, fontFamily, spacing } from '@/shared/theme';
 
@@ -25,7 +26,7 @@ export function Header({ title, showSettings, showBack }: Props) {
             accessibilityLabel={t('settings.backAria')}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.backGlyph}>‹</Text>
+            <BackIcon color={colors.maroon} />
           </IconButton>
         ) : (
           <View style={styles.brandSlot}>
@@ -44,7 +45,7 @@ export function Header({ title, showSettings, showBack }: Props) {
             accessibilityLabel={t('counter.settingsAria')}
             onPress={() => navigation.navigate('Settings' as never)}
           >
-            <Text style={styles.settingsGlyph}>⚙</Text>
+            <SettingsIcon color={colors.maroon} />
           </IconButton>
         )}
       </View>
@@ -71,6 +72,4 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: colors.ink,
   },
-  backGlyph: { fontSize: 26, color: colors.maroon },
-  settingsGlyph: { fontSize: 20, color: colors.maroon },
 });

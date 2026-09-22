@@ -6,13 +6,17 @@ import type { CustomMantra, Mantra } from '@/shared/types/models';
 
 import { asyncStorageAdapter } from './persist';
 
+const DEFAULT_FAVORITES = ['om-namah-shivaya'];
+
 type MantraStore = {
   catalog: Mantra[];
   catalogStatus: 'idle' | 'loading' | 'ready' | 'error';
   custom: CustomMantra[];
+  favorites: string[];
   loadCatalog: () => Promise<void>;
   addCustomMantra: (text: string) => CustomMantra;
   removeCustomMantra: (id: string) => void;
+  toggleFavorite: (id: string) => void;
 };
 
 export const useMantraStore = create<MantraStore>()(
@@ -21,6 +25,15 @@ export const useMantraStore = create<MantraStore>()(
       catalog: BUNDLED_CATALOG,
       catalogStatus: 'idle',
       custom: [],
+      favorites: DEFAULT_FAVORITES,
+      toggleFavorite: (id) => {
+        const favorites = get().favorites;
+        set({
+          favorites: favorites.includes(id)
+            ? favorites.filter((f) => f !== id)
+            : [...favorites, id],
+        });
+      },
       loadCatalog: async () => {
         if (get().catalogStatus === 'loading') return;
         set({ catalogStatus: 'loading' });
@@ -47,7 +60,7 @@ export const useMantraStore = create<MantraStore>()(
       name: 'mantrika.mantras.v1',
       storage: asyncStorageAdapter,
       // Catalog is re-fetched/re-seeded each launch; only user-authored custom mantras persist.
-      partialize: (state) => ({ custom: state.custom }),
+      partialize: (state) => ({ custom: state.custom, favorites: state.favorites }),
     },
   ),
 );

@@ -31,7 +31,9 @@
     "customPlaceholder": "Type your own mantra…",
     "add": "Add",
     "nowChanting": "Now chanting",
-    "noResults": "No chants match your search."
+    "noResults": "No chants match your search.",
+    "removeAria": "Remove {{name}}",
+    "favoriteAria": "Toggle favorite for {{name}}"
   },
   "progress": {
     "title": "Your Progress",
@@ -48,6 +50,10 @@
     "title": "Settings & Guidance",
     "subtitle": "Configure your digital sanctorum and refine your practice.",
     "backAria": "Back to counter",
+    "sadhakaSince": "Sadhaka since {{year}}",
+    "edit": "Edit",
+    "totalCounts": "Total counts",
+    "malaIllustrationAlt": "A wooden mala on a terracotta cloth",
     "sensoryExperience": "Sensory experience",
     "hapticTitle": "Haptic Feedback",
     "hapticDesc": "Feel a subtle vibration like physical mala beads.",

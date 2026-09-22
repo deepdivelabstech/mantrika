@@ -6,6 +6,7 @@ import type { AnimSpeed, Language, Settings, SoundscapeId } from '@/shared/types
 import { asyncStorageAdapter } from './persist';
 
 const DEFAULT_SETTINGS: Settings = {
+  name: 'Arjun Das',
   lang: 'en',
   haptics: true,
   risingMantra: true,
@@ -15,6 +16,7 @@ const DEFAULT_SETTINGS: Settings = {
 };
 
 type SettingsStore = Settings & {
+  setName: (name: string) => void;
   setLang: (lang: Language) => void;
   setHaptics: (on: boolean) => void;
   setRisingMantra: (on: boolean) => void;
@@ -27,6 +29,7 @@ export const useSettingsStore = create<SettingsStore>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
+      setName: (name) => set({ name: name.trim() || DEFAULT_SETTINGS.name }),
       setLang: (lang) => set({ lang }),
       setHaptics: (haptics) => set({ haptics }),
       setRisingMantra: (risingMantra) => set({ risingMantra }),

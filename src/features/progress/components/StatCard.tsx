@@ -1,35 +1,66 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 
-import { Card } from '@/shared/components/Card';
-import { colors, fontFamily, spacing, typeScale } from '@/shared/theme';
+import { colors, fontFamily, radius } from '@/shared/theme';
 
-type Props = { label: string; value: string; sub: string };
+type Props = {
+  label: string;
+  value: string;
+  sub: string;
+  valueColor?: string;
+  decorativeRing?: boolean;
+};
 
-export function StatCard({ label, value, sub }: Props) {
+/** Full-width 176-tall stat card, matching the source design's stacked Progress cards. */
+export function StatCard({ label, value, sub, valueColor = colors.ink, decorativeRing }: Props) {
   return (
-    <Card style={styles.card}>
+    <View style={styles.card}>
+      {decorativeRing ? (
+        <Svg width={150} height={150} viewBox="0 0 150 150" style={styles.ring}>
+          <Circle
+            cx={75}
+            cy={75}
+            r={62}
+            fill="none"
+            stroke={colors.maroon}
+            strokeWidth={9}
+            strokeLinecap="round"
+          />
+        </Svg>
+      ) : null}
       <Text style={styles.label}>{label}</Text>
-      <Text style={styles.value}>{value}</Text>
+      <Text style={[styles.value, { color: valueColor }]}>{value}</Text>
       <Text style={styles.sub}>{sub}</Text>
-    </Card>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { flex: 1, alignItems: 'flex-start' },
-  label: {
-    ...typeScale.caption,
-    fontFamily: fontFamily.sans600,
-    color: colors.muted,
-    textTransform: 'uppercase',
-    letterSpacing: 1.5,
+  card: {
+    height: 176,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: radius.lg,
+    shadowColor: '#5A2819',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
   },
-  value: {
-    fontFamily: fontFamily.serif400,
-    fontSize: 32,
-    color: colors.ink,
-    marginTop: spacing.xxs,
+  ring: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginLeft: -75,
+    marginTop: -75,
+    opacity: 0.14,
   },
-  sub: { ...typeScale.caption, color: colors.muted, marginTop: spacing.xxs },
+  label: { fontSize: 12, letterSpacing: 1.4, color: colors.ink, fontFamily: fontFamily.sans600 },
+  value: { marginTop: 10, fontFamily: fontFamily.serif400, fontSize: 58, lineHeight: 61 },
+  sub: { marginTop: 8, fontSize: 14, color: colors.muted },
 });

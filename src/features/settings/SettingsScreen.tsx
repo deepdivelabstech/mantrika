@@ -2,21 +2,32 @@ import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { OptionList } from '@/features/settings/components/OptionList';
+import { IconRow } from '@/features/settings/components/IconRow';
+import { MalaIllustration } from '@/features/settings/components/MalaIllustration';
+import { PillGrid } from '@/features/settings/components/PillGrid';
+import { ProfileCard } from '@/features/settings/components/ProfileCard';
 import { ReminderRow } from '@/features/settings/components/ReminderRow';
-import { SegmentedControl } from '@/features/settings/components/SegmentedControl';
-import { ToggleRow } from '@/features/settings/components/ToggleRow';
-import { Card } from '@/shared/components/Card';
+import { SettingsCard } from '@/features/settings/components/SettingsCard';
+import { ToggleSwitch } from '@/features/settings/components/ToggleSwitch';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
+import { HapticIcon, LanguageIcon, RisingIcon, SoundIcon } from '@/shared/components/icons';
 import i18n from '@/shared/i18n';
 import { syncDailyReminder } from '@/shared/lib/notifications';
+import { useProgressStore } from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
-import { colors, fontFamily, spacing, typeScale } from '@/shared/theme';
+import { colors, fontFamily, spacing } from '@/shared/theme';
+
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  return (parts[0]?.[0] ?? '').concat(parts[1]?.[0] ?? '').toUpperCase() || '?';
+}
 
 export function SettingsScreen() {
   const { t } = useTranslation();
   const settings = useSettingsStore();
+  const totalBeadsLifetime = useProgressStore((s) => s.totalBeadsLifetime);
+  const streakDays = useProgressStore((s) => s.streakDays);
 
   useEffect(() => {
     void i18n.changeLanguage(settings.lang);
@@ -33,106 +44,157 @@ export function SettingsScreen() {
 
   return (
     <ScreenContainer>
-      <Header title={t('settings.title')} showBack />
+      <Header title={t('appTitle')} showBack />
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.subtitle}>{t('settings.subtitle')}</Text>
+        <View style={styles.titleBlock}>
+          <Text style={styles.h1}>{t('settings.title')}</Text>
+          <Text style={styles.subtitle}>{t('settings.subtitle')}</Text>
+        </View>
 
-        <Section title={t('settings.sensoryExperience')}>
-          <ToggleRow
+        <ProfileCard
+          style={styles.profileCard}
+          name={settings.name}
+          onChangeName={settings.setName}
+          initials={initials(settings.name)}
+          sinceYear={2023}
+          totalBeadsLifetime={totalBeadsLifetime}
+          streakDays={streakDays}
+        />
+
+        <Text style={styles.sectionLabel}>{t('settings.sensoryExperience')}</Text>
+
+        <SettingsCard style={styles.card}>
+          <IconRow
+            icon={<HapticIcon color={colors.maroon} />}
             title={t('settings.hapticTitle')}
             description={t('settings.hapticDesc')}
-            value={settings.haptics}
-            onChange={settings.setHaptics}
+            control={
+              <ToggleSwitch
+                value={settings.haptics}
+                onChange={settings.setHaptics}
+                accessibilityLabel={t('settings.hapticTitle')}
+              />
+            }
           />
-          <Divider />
-          <ToggleRow
+        </SettingsCard>
+
+        <SettingsCard style={styles.stackedCard}>
+          <IconRow
+            icon={<RisingIcon color={colors.maroon} />}
             title={t('settings.risingTitle')}
             description={t('settings.risingDesc')}
-            value={settings.risingMantra}
-            onChange={settings.setRisingMantra}
-          />
-          {settings.risingMantra ? (
-            <View style={styles.speedBlock}>
-              <Text style={styles.fieldLabel}>{t('settings.animSpeed')}</Text>
-              <SegmentedControl
-                accessibilityLabel={t('settings.animSpeed')}
-                value={settings.animSpeed}
-                onChange={settings.setAnimSpeed}
-                options={[
-                  { value: 'gentle', label: t('settings.speedGentle') },
-                  { value: 'steady', label: t('settings.speedSteady') },
-                  { value: 'quick', label: t('settings.speedQuick') },
-                ]}
+            control={
+              <ToggleSwitch
+                value={settings.risingMantra}
+                onChange={settings.setRisingMantra}
+                accessibilityLabel={t('settings.risingTitle')}
               />
-            </View>
-          ) : null}
-        </Section>
-
-        <Section title={t('settings.mindfulnessCues')}>
-          <Text style={styles.fieldLabel}>{t('settings.ambientTitle')}</Text>
-          <OptionList
-            value={settings.sound}
-            onChange={settings.setSound}
-            options={[
-              { value: 'silence', label: t('settings.soundSilence') },
-              { value: 'ganga', label: t('settings.soundGanga') },
-              { value: 'forest', label: t('settings.soundForest') },
-              { value: 'bowls', label: t('settings.soundBowls') },
-            ]}
+            }
           />
-          <Divider />
+          <View style={[styles.speedBlock, !settings.risingMantra && styles.speedBlockOff]}>
+            <Text style={styles.fieldLabel}>{t('settings.animSpeed')}</Text>
+            <PillGrid
+              columns={3}
+              disabled={!settings.risingMantra}
+              value={settings.animSpeed}
+              onChange={settings.setAnimSpeed}
+              options={[
+                { value: 'gentle', label: t('settings.speedGentle') },
+                { value: 'steady', label: t('settings.speedSteady') },
+                { value: 'quick', label: t('settings.speedQuick') },
+              ]}
+            />
+          </View>
+        </SettingsCard>
+
+        <SettingsCard style={styles.stackedCard}>
+          <IconRow icon={<SoundIcon color={colors.maroon} />} title={t('settings.ambientTitle')} />
+          <View style={styles.pillBlock}>
+            <PillGrid
+              columns={2}
+              value={settings.sound}
+              onChange={settings.setSound}
+              options={[
+                { value: 'silence', label: t('settings.soundSilence') },
+                { value: 'ganga', label: t('settings.soundGanga') },
+                { value: 'forest', label: t('settings.soundForest') },
+                { value: 'bowls', label: t('settings.soundBowls') },
+              ]}
+            />
+          </View>
+        </SettingsCard>
+
+        <SettingsCard style={styles.stackedCard}>
+          <IconRow
+            icon={<LanguageIcon color={colors.maroon} />}
+            title={t('settings.languageTitle')}
+            description={t('settings.languageDesc')}
+          />
+          <View style={styles.pillBlock}>
+            <PillGrid
+              columns={2}
+              value={settings.lang}
+              onChange={settings.setLang}
+              options={[
+                { value: 'en', label: t('settings.langEn') },
+                { value: 'hi', label: t('settings.langHi') },
+              ]}
+            />
+          </View>
+        </SettingsCard>
+
+        <Text style={styles.sectionLabel}>{t('settings.mindfulnessCues')}</Text>
+
+        <SettingsCard style={styles.card}>
           <ReminderRow time={settings.reminderTime} onChange={settings.setReminderTime} />
-        </Section>
+        </SettingsCard>
 
-        <Section title={t('settings.languageTitle')}>
-          <Text style={styles.fieldDescription}>{t('settings.languageDesc')}</Text>
-          <OptionList
-            value={settings.lang}
-            onChange={settings.setLang}
-            options={[
-              { value: 'en', label: t('settings.langEn') },
-              { value: 'hi', label: t('settings.langHi') },
-            ]}
-          />
-        </Section>
+        <MalaIllustration />
       </ScrollView>
     </ScreenContainer>
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <Card style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {children}
-    </Card>
-  );
-}
-
-function Divider() {
-  return <View style={styles.divider} />;
-}
-
 const styles = StyleSheet.create({
-  content: { padding: spacing.lg, gap: spacing.md },
-  subtitle: { ...typeScale.body, color: colors.muted },
-  section: { gap: spacing.xs },
-  sectionTitle: {
-    ...typeScale.caption,
+  content: { paddingBottom: spacing.xxl },
+  titleBlock: { paddingHorizontal: spacing.lg, paddingTop: spacing.xl, alignItems: 'center' },
+  h1: {
+    fontFamily: fontFamily.serif500,
+    fontSize: 30,
+    lineHeight: 33,
+    color: colors.ink,
+    textAlign: 'center',
+  },
+  subtitle: {
+    marginTop: spacing.sm,
+    maxWidth: 300,
+    fontSize: 14,
+    lineHeight: 21,
+    color: colors.ink,
+    textAlign: 'center',
+  },
+  sectionLabel: {
+    marginTop: 32,
+    marginHorizontal: spacing.lg,
+    marginBottom: 12,
+    fontSize: 11,
     fontFamily: fontFamily.sans700,
-    color: colors.muted,
+    letterSpacing: 1.76,
     textTransform: 'uppercase',
-    letterSpacing: 1.5,
+    color: colors.muted,
+  },
+  card: { marginHorizontal: spacing.lg },
+  profileCard: { marginTop: 24, marginHorizontal: spacing.lg },
+  stackedCard: { marginTop: 12, marginHorizontal: spacing.lg },
+  fieldLabel: {
+    fontSize: 10,
+    fontFamily: fontFamily.sans600,
+    letterSpacing: 1.6,
+    textTransform: 'uppercase',
+    color: colors.muted,
     marginBottom: spacing.xs,
   },
-  fieldLabel: {
-    ...typeScale.caption,
-    fontFamily: fontFamily.sans600,
-    color: colors.ink,
-    marginTop: spacing.xs,
-    marginBottom: spacing.xxs,
-  },
-  fieldDescription: { ...typeScale.caption, color: colors.muted, marginBottom: spacing.xs },
-  divider: { height: 1, backgroundColor: colors.line, marginVertical: spacing.xs },
-  speedBlock: { marginTop: spacing.xs },
+  speedBlock: { marginTop: spacing.md },
+  speedBlockOff: { opacity: 0.45 },
+  pillBlock: { marginTop: spacing.md },
 });

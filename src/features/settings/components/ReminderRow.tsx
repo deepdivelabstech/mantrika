@@ -1,9 +1,11 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, Text, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { colors, fontFamily, radius, spacing, typeScale } from '@/shared/theme';
+import { IconRow } from '@/features/settings/components/IconRow';
+import { ReminderIcon } from '@/shared/components/icons';
+import { colors, fontFamily } from '@/shared/theme';
 
 type Props = { time: string | null; onChange: (time: string | null) => void };
 
@@ -25,57 +27,39 @@ export function ReminderRow({ time, onChange }: Props) {
   const desc = time ? t('settings.reminderDescSet', { time }) : t('settings.reminderDescUnset');
 
   return (
-    <View style={styles.row}>
-      <View style={styles.textCol}>
-        <Text style={styles.title}>{t('settings.reminderTitle')}</Text>
-        <Text style={styles.description}>{desc}</Text>
-      </View>
-      <TouchableOpacity
-        onPress={() => setPickerOpen(true)}
-        accessibilityRole="button"
-        accessibilityLabel={t('settings.change')}
-        style={styles.changeButton}
-      >
-        <Text style={styles.changeLabel}>{t('settings.change')}</Text>
-      </TouchableOpacity>
-
-      {pickerOpen ? (
-        <DateTimePicker
-          value={timeStringToDate(time)}
-          mode="time"
-          is24Hour={false}
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={(event, selected) => {
-            setPickerOpen(Platform.OS === 'ios');
-            if (event.type === 'dismissed' || !selected) return;
-            const hh = String(selected.getHours()).padStart(2, '0');
-            const mm = String(selected.getMinutes()).padStart(2, '0');
-            onChange(`${hh}:${mm}`);
-          }}
-        />
-      ) : null}
-    </View>
+    <IconRow
+      icon={<ReminderIcon color={colors.maroon} />}
+      title={t('settings.reminderTitle')}
+      description={desc}
+      control={
+        <>
+          <TouchableOpacity
+            onPress={() => setPickerOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t('settings.change')}
+            style={{ flexShrink: 0, height: 44, paddingHorizontal: 4, justifyContent: 'center' }}
+          >
+            <Text style={{ fontFamily: fontFamily.sans700, fontSize: 13, color: colors.maroon }}>
+              {t('settings.change')}
+            </Text>
+          </TouchableOpacity>
+          {pickerOpen ? (
+            <DateTimePicker
+              value={timeStringToDate(time)}
+              mode="time"
+              is24Hour={false}
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={(event, selected) => {
+                setPickerOpen(Platform.OS === 'ios');
+                if (event.type === 'dismissed' || !selected) return;
+                const hh = String(selected.getHours()).padStart(2, '0');
+                const mm = String(selected.getMinutes()).padStart(2, '0');
+                onChange(`${hh}:${mm}`);
+              }}
+            />
+          ) : null}
+        </>
+      }
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
-    gap: spacing.md,
-  },
-  textCol: { flex: 1 },
-  title: { ...typeScale.bodyStrong, fontFamily: fontFamily.sans600, color: colors.ink },
-  description: { ...typeScale.caption, color: colors.muted, marginTop: 2 },
-  changeButton: {
-    minHeight: 44,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.pill,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  changeLabel: { ...typeScale.bodyStrong, color: colors.maroon },
-});

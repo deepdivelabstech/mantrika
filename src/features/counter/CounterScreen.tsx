@@ -1,6 +1,12 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { MalaLoop } from '@/features/counter/components/MalaLoop';
 import { MantraPickerSheet } from '@/features/counter/components/MantraPickerSheet';
@@ -17,6 +23,8 @@ import { useProgressStore } from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
 import { colors, fontFamily, radius, spacing, typeScale } from '@/shared/theme';
 import { BEADS_PER_ROUND } from '@/shared/types/models';
+
+const beadImage = require('../../../assets/images/rudraksha-bead.png');
 
 export function CounterScreen() {
   const { t } = useTranslation();
@@ -39,6 +47,24 @@ export function CounterScreen() {
   useSound();
   const { floats, spawn, remove } = useFloatingChants();
 
+  const [shakeTick, setShakeTick] = useState(0);
+  const beadShake = useSharedValue(0);
+
+  useEffect(() => {
+    if (shakeTick === 0) return;
+    beadShake.value = withSequence(
+      withTiming(-1, { duration: 40 }),
+      withTiming(1, { duration: 60 }),
+      withTiming(-0.5, { duration: 60 }),
+      withTiming(0, { duration: 50 }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shakeTick]);
+
+  const beadShakeStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: beadShake.value }],
+  }));
+
   const allMantras = mergeMantras(catalog, custom, t('counter.customMantraLabel'));
   const current = findMantra(allMantras, currentMantraId) ?? allMantras[0];
 
@@ -50,6 +76,7 @@ export function CounterScreen() {
   const handleTap = () => {
     tick();
     tapBead();
+    setShakeTick((n) => n + 1);
     if (risingMantra && current) {
       const isCustom = current.id.startsWith('custom-');
       const devanagari = lang === 'hi' && !isCustom && !!current.deva;
@@ -107,18 +134,18 @@ export function CounterScreen() {
             <Text style={styles.statLabel}>{t('counter.rounds')}</Text>
             <Text style={styles.statValueSmall}>{roundsToday}</Text>
           </View>
-
-          <TouchableOpacity
-            onPress={handleTap}
-            accessibilityRole="button"
-            accessibilityLabel={t('counter.countAria')}
-            style={styles.tapButton}
-          >
-            <View style={styles.tapButtonInner}>
-              <View style={styles.tapButtonDot} />
-            </View>
-          </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          onPress={handleTap}
+          accessibilityRole="button"
+          accessibilityLabel={t('counter.countAria')}
+          style={styles.tapButton}
+        >
+          <Animated.View style={[styles.tapButtonInner, beadShakeStyle]}>
+            <Image source={beadImage} style={styles.tapButtonBead} resizeMode="cover" />
+          </Animated.View>
+        </TouchableOpacity>
       </View>
 
       <MantraPickerSheet
@@ -137,7 +164,12 @@ export function CounterScreen() {
 }
 
 const styles = StyleSheet.create({
-  main: { flex: 1, alignItems: 'center', paddingBottom: spacing.lg },
+  main: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 22,
+  },
   malaWrap: { width: 390, height: 584, position: 'relative', overflow: 'hidden' },
   mantraSelector: { position: 'absolute', left: 20, top: 24, width: 190 },
   mantraLabel: {
@@ -185,9 +217,6 @@ const styles = StyleSheet.create({
   },
   fillBar: { height: 4, borderRadius: 2, backgroundColor: colors.maroon },
   tapButton: {
-    position: 'absolute',
-    bottom: 8,
-    alignSelf: 'center',
     width: 184,
     height: 80,
     borderRadius: 40,
@@ -207,6 +236,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.saffron,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
-  tapButtonDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: colors.maroon },
+  tapButtonBead: { width: 54, height: 54 },
 });

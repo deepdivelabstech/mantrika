@@ -29,7 +29,7 @@ export function StreakDots({ activeDates, days = 7 }: Props) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', gap: 6 },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.line },
+  row: { flexDirection: 'row', gap: 9, justifyContent: 'center' },
+  dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.line },
   dotActive: { backgroundColor: colors.maroon },
 });

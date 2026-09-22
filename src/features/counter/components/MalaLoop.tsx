@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
-import Svg, { Defs, Image as SvgImage, Pattern, Rect } from 'react-native-svg';
+import Svg, { ClipPath, Defs, Image as SvgImage, Pattern, Polygon, Rect } from 'react-native-svg';
 
 import { useMalaGeometry } from '@/shared/hooks/useMalaGeometry';
 import { colors } from '@/shared/theme';
@@ -15,6 +15,31 @@ const WIDTH = 390;
 const HEIGHT = 584;
 
 type Props = { beadsInRound: number };
+
+// clip-path polygon from the source design, given in the hand image's own
+// local box — offset here by the image's canvas position (155.5, -35) since
+// SVG clipPath coordinates are in the referencing element's user space, not
+// the clipped element's local box like CSS clip-path is.
+const THUMB_CLIP_POINTS = [
+  [167.1, 258.4],
+  [174.0, 254.7],
+  [183.2, 253.5],
+  [192.5, 254.2],
+  [198.9, 257.9],
+  [203.5, 263.0],
+  [205.9, 269.9],
+  [205.9, 273.6],
+  [198.9, 282.9],
+  [194.3, 287.0],
+  [186.0, 290.7],
+  [177.7, 290.2],
+  [169.4, 285.2],
+  [164.7, 277.3],
+  [164.6, 269.9],
+  [165.2, 263.5],
+]
+  .map(([x, y]) => `${x},${y}`)
+  .join(' ');
 
 /** The teardrop-shaped 108-bead loop with a larger "guru" bead, filling as beads are counted. */
 export function MalaLoop({ beadsInRound }: Props) {
@@ -82,6 +107,11 @@ export function MalaLoop({ beadsInRound }: Props) {
               preserveAspectRatio="xMidYMid slice"
             />
           </Pattern>
+          {/* Thumb-tip cutout of the hand photo, drawn after the loop below so the
+              thumb appears pinching the beads instead of hidden behind them. */}
+          <ClipPath id="thumbClip">
+            <Polygon points={THUMB_CLIP_POINTS} />
+          </ClipPath>
         </Defs>
 
         {/* Base loop */}
@@ -125,6 +155,16 @@ export function MalaLoop({ beadsInRound }: Props) {
           strokeLinecap="round"
           strokeDasharray={`0 ${fullLoopLength}`}
           animatedProps={guruAnimatedProps}
+        />
+
+        <SvgImage
+          href={handImage}
+          x={155.5}
+          y={-35}
+          width={236.5}
+          height={332.5}
+          preserveAspectRatio="xMidYMid slice"
+          clipPath="url(#thumbClip)"
         />
       </Svg>
     </View>

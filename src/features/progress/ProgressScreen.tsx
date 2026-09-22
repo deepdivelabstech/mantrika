@@ -5,11 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { DailyFocusCard } from '@/features/progress/components/DailyFocusCard';
 import { StatCard } from '@/features/progress/components/StatCard';
 import { StreakDots } from '@/features/progress/components/StreakDots';
-import { Card } from '@/shared/components/Card';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { useProgressStore } from '@/shared/store/useProgressStore';
-import { colors, fontFamily, spacing, typeScale } from '@/shared/theme';
+import { colors, fontFamily, spacing } from '@/shared/theme';
 
 export function ProgressScreen() {
   const { t } = useTranslation();
@@ -21,30 +20,32 @@ export function ProgressScreen() {
 
   return (
     <ScreenContainer>
-      <Header title={t('progress.title')} showSettings />
+      <Header title={t('appTitle')} showSettings />
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.row}>
-          <StatCard
-            label={t('progress.totalBeads')}
-            value={String(totalBeadsLifetime)}
-            sub={t('progress.lifeToDate')}
-          />
-          <StatCard
-            label={t('progress.roundsDone')}
-            value={String(roundsToday)}
-            sub={t('progress.malaCompletions')}
-          />
-        </View>
+        <StatCard
+          label={t('progress.totalBeads')}
+          value={totalBeadsLifetime.toLocaleString()}
+          sub={t('progress.lifeToDate')}
+        />
 
-        <Card style={styles.streakCard}>
-          <View>
-            <Text style={styles.streakLabel}>{t('progress.currentStreak')}</Text>
-            <Text style={styles.streakValue}>
-              {streakDays} <Text style={styles.streakUnit}>{t('progress.days')}</Text>
-            </Text>
+        <StatCard
+          label={t('progress.roundsDone')}
+          value={String(roundsToday)}
+          sub={t('progress.malaCompletions')}
+          valueColor={colors.saffronDark}
+          decorativeRing
+        />
+
+        <View style={styles.streakCard}>
+          <Text style={styles.streakLabel}>{t('progress.currentStreak')}</Text>
+          <View style={styles.streakValueRow}>
+            <Text style={styles.streakValue}>{streakDays}</Text>
+            <Text style={styles.streakUnit}>{t('progress.days')}</Text>
           </View>
-          <StreakDots activeDates={activeDates} />
-        </Card>
+          <View style={styles.dotsWrap}>
+            <StreakDots activeDates={activeDates} />
+          </View>
+        </View>
 
         <DailyFocusCard beadsToday={beadsToday} />
       </ScrollView>
@@ -53,21 +54,29 @@ export function ProgressScreen() {
 }
 
 const styles = StyleSheet.create({
-  content: { padding: spacing.lg, gap: spacing.md },
-  row: { flexDirection: 'row', gap: spacing.md },
-  streakCard: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  content: { paddingHorizontal: spacing.lg, paddingVertical: spacing.xl, gap: spacing.lg },
+  streakCard: {
+    height: 176,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: 12,
+    shadowColor: '#5A2819',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
+  },
   streakLabel: {
-    ...typeScale.caption,
+    fontSize: 12,
+    letterSpacing: 1.4,
+    color: colors.ink,
     fontFamily: fontFamily.sans600,
-    color: colors.muted,
-    textTransform: 'uppercase',
-    letterSpacing: 1.5,
   },
-  streakValue: {
-    fontFamily: fontFamily.serif400,
-    fontSize: 32,
-    color: colors.saffronDark,
-    marginTop: spacing.xxs,
-  },
-  streakUnit: { ...typeScale.caption, color: colors.muted },
+  streakValueRow: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs, marginTop: 10 },
+  streakValue: { fontFamily: fontFamily.serif400, fontSize: 58, lineHeight: 61, color: colors.ink },
+  streakUnit: { fontSize: 15, color: colors.muted },
+  dotsWrap: { marginTop: 12 },
 });
