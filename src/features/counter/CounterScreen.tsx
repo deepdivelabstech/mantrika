@@ -49,6 +49,7 @@ export function CounterScreen() {
 
   const [shakeTick, setShakeTick] = useState(0);
   const beadShake = useSharedValue(0);
+  const [mantraOrigin, setMantraOrigin] = useState({ x: 103, y: 500, width: 184 });
 
   useEffect(() => {
     if (shakeTick === 0) return;
@@ -96,17 +97,6 @@ export function CounterScreen() {
         <View style={styles.malaWrap}>
           <MalaLoop beadsInRound={beadsInRound} />
 
-          {floats.map((f) => (
-            <RisingMantra
-              key={f.key}
-              chant={f.chant}
-              durationMs={f.durationMs}
-              dx={f.dx}
-              devanagari={f.devanagari}
-              onDone={() => remove(f.key)}
-            />
-          ))}
-
           <TouchableOpacity
             onPress={() => setSheetOpen(true)}
             accessibilityRole="button"
@@ -138,6 +128,10 @@ export function CounterScreen() {
 
         <TouchableOpacity
           onPress={handleTap}
+          onLayout={(e) => {
+            const { x, y, width } = e.nativeEvent.layout;
+            setMantraOrigin({ x, y, width });
+          }}
           accessibilityRole="button"
           accessibilityLabel={t('counter.countAria')}
           style={styles.tapButton}
@@ -146,6 +140,20 @@ export function CounterScreen() {
             <Image source={beadImage} style={styles.tapButtonBead} resizeMode="cover" />
           </Animated.View>
         </TouchableOpacity>
+
+        {floats.map((f) => (
+          <RisingMantra
+            key={f.key}
+            chant={f.chant}
+            durationMs={f.durationMs}
+            dx={f.dx}
+            devanagari={f.devanagari}
+            onDone={() => remove(f.key)}
+            originX={mantraOrigin.x}
+            originY={mantraOrigin.y}
+            originWidth={mantraOrigin.width}
+          />
+        ))}
       </View>
 
       <MantraPickerSheet

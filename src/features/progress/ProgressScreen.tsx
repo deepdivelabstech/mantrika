@@ -8,7 +8,7 @@ import { StreakDots } from '@/features/progress/components/StreakDots';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { useProgressStore } from '@/shared/store/useProgressStore';
-import { colors, fontFamily, spacing } from '@/shared/theme';
+import { colors, fontFamily, radius, spacing } from '@/shared/theme';
 
 export function ProgressScreen() {
   const { t } = useTranslation();
@@ -62,10 +62,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.line,
-    borderRadius: 12,
+    borderRadius: radius.md,
     shadowColor: '#5A2819',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
+    shadowOpacity: 0.05,
+    shadowRadius: 18,
     shadowOffset: { width: 0, height: 6 },
     elevation: 2,
   },
@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.4,
     color: colors.ink,
     fontFamily: fontFamily.sans600,
+    textTransform: 'uppercase',
   },
   streakValueRow: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs, marginTop: 10 },
   streakValue: { fontFamily: fontFamily.serif400, fontSize: 58, lineHeight: 61, color: colors.ink },

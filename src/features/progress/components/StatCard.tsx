@@ -26,6 +26,7 @@ export function StatCard({ label, value, sub, valueColor = colors.ink, decorativ
             stroke={colors.maroon}
             strokeWidth={9}
             strokeLinecap="round"
+            strokeDasharray="0 16.2"
           />
         </Svg>
       ) : null}
@@ -45,10 +46,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.line,
-    borderRadius: radius.lg,
+    borderRadius: radius.md,
     shadowColor: '#5A2819',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
+    shadowOpacity: 0.05,
+    shadowRadius: 18,
     shadowOffset: { width: 0, height: 6 },
     elevation: 2,
   },
@@ -60,7 +61,13 @@ const styles = StyleSheet.create({
     marginTop: -75,
     opacity: 0.14,
   },
-  label: { fontSize: 12, letterSpacing: 1.4, color: colors.ink, fontFamily: fontFamily.sans600 },
+  label: {
+    fontSize: 12,
+    letterSpacing: 1.4,
+    color: colors.ink,
+    fontFamily: fontFamily.sans600,
+    textTransform: 'uppercase',
+  },
   value: { marginTop: 10, fontFamily: fontFamily.serif400, fontSize: 58, lineHeight: 61 },
   sub: { marginTop: 8, fontSize: 14, color: colors.muted },
 });

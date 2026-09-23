@@ -16,10 +16,22 @@ type Props = {
   dx: number;
   devanagari: boolean;
   onDone: () => void;
+  originX: number;
+  originY: number;
+  originWidth: number;
 };
 
-/** One floating chant instance: rises from the mala and fades out, then unmounts itself. */
-export function RisingMantra({ chant, durationMs, dx, devanagari, onDone }: Props) {
+/** One floating chant instance: rises from the tap button and fades out, then unmounts itself. */
+export function RisingMantra({
+  chant,
+  durationMs,
+  dx,
+  devanagari,
+  onDone,
+  originX,
+  originY,
+  originWidth,
+}: Props) {
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -49,7 +61,10 @@ export function RisingMantra({ chant, durationMs, dx, devanagari, onDone }: Prop
   });
 
   return (
-    <Animated.View pointerEvents="none" style={[styles.wrap, style]}>
+    <Animated.View
+      pointerEvents="none"
+      style={[styles.wrap, { left: originX, top: originY, width: originWidth }, style]}
+    >
       <Text
         style={[
           styles.text,
@@ -64,7 +79,7 @@ export function RisingMantra({ chant, durationMs, dx, devanagari, onDone }: Prop
 }
 
 const styles = StyleSheet.create({
-  wrap: { position: 'absolute', left: 189, top: 462, alignItems: 'center' },
+  wrap: { position: 'absolute', alignItems: 'center', zIndex: 10 },
   text: { fontFamily: fontFamily.serif400Italic, color: colors.maroon },
   devanagari: { fontFamily: fontFamily.devanagari400Italic },
 });
