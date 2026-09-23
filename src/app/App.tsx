@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 
+import { AnimatedSplash } from '@/app/AnimatedSplash';
 import { AppProviders } from '@/app/AppProviders';
 import { initSentry } from '@/app/sentry';
 import { RootNavigator } from '@/app/RootNavigator';
@@ -29,6 +30,7 @@ export default function App() {
     return useSettingsStore.persist.onFinishHydration(() => setStoreHydrated(true));
   }, []);
 
+  const [splashDone, setSplashDone] = useState(false);
   const ready = (fontsLoaded || !!fontError) && storeHydrated;
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export default function App() {
       <LanguageSync />
       <RootNavigator />
       <StatusBar style="dark" />
+      {!splashDone && <AnimatedSplash onFinish={() => setSplashDone(true)} />}
     </AppProviders>
   );
 }

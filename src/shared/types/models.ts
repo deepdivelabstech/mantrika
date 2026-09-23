@@ -20,6 +20,7 @@ export type SoundscapeId = 'silence' | 'ganga' | 'forest' | 'bowls';
 
 export type Settings = {
   name: string;
+  onboarded: boolean;
   lang: Language;
   haptics: boolean;
   risingMantra: boolean;

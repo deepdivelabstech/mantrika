@@ -3,7 +3,9 @@ import React from 'react';
 
 import { TabNavigator } from '@/app/TabNavigator';
 import { SettingsScreen } from '@/features/settings/SettingsScreen';
+import { OnboardingScreen } from '@/features/onboarding/OnboardingScreen';
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
+import { useSettingsStore } from '@/shared/store/useSettingsStore';
 
 export type RootStackParamList = {
   Tabs: undefined;
@@ -21,6 +23,8 @@ function SettingsWithBoundary() {
 }
 
 export function RootNavigator() {
+  const onboarded = useSettingsStore((s) => s.onboarded);
+  if (!onboarded) return <OnboardingScreen />;
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Tabs" component={TabNavigator} />

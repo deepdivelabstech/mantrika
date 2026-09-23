@@ -85,5 +85,12 @@
     "tryAgain": "Try again",
     "cancel": "Cancel",
     "save": "Save"
+  },
+  "onboarding": {
+    "splashTagline": "Count. Chant. Be still.",
+    "title": "Welcome, sadhaka",
+    "subtitle": "What shall we call you? This name appears in your settings.",
+    "placeholder": "Your name",
+    "continue": "Continue"
   }
 }
