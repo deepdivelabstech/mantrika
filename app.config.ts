@@ -26,7 +26,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     android: {
       package: 'com.deepdivelabs.mantrika',
       adaptiveIcon: {
-        backgroundColor: '#FBF7F1',
+        backgroundColor: '#3A1812',
         foregroundImage: './assets/android-icon-foreground.png',
         backgroundImage: './assets/android-icon-background.png',
         monochromeImage: './assets/android-icon-monochrome.png',
