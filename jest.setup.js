@@ -10,13 +10,6 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
 }));
 
-jest.mock('expo-av', () => ({
-  Audio: {
-    Sound: { createAsync: jest.fn(async () => ({ sound: { playAsync: jest.fn(), stopAsync: jest.fn(), unloadAsync: jest.fn(), setIsLoopingAsync: jest.fn() } })) },
-    setAudioModeAsync: jest.fn(),
-  },
-}));
-
 jest.mock('expo-notifications', () => ({
   scheduleNotificationAsync: jest.fn(),
   cancelScheduledNotificationAsync: jest.fn(),
@@ -25,4 +18,12 @@ jest.mock('expo-notifications', () => ({
   getPermissionsAsync: jest.fn(async () => ({ status: 'granted' })),
   setNotificationHandler: jest.fn(),
   SchedulableTriggerInputTypes: { DAILY: 'daily' },
+}));
+
+jest.mock('react-native-google-mobile-ads', () => ({
+  __esModule: true,
+  default: () => ({ initialize: jest.fn() }),
+  BannerAd: () => null,
+  BannerAdSize: { ANCHORED_ADAPTIVE_BANNER: 'ANCHORED_ADAPTIVE_BANNER' },
+  TestIds: { BANNER: 'test-banner' },
 }));

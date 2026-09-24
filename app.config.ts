@@ -60,6 +60,16 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         },
       ],
       [
+        'react-native-google-mobile-ads',
+        {
+          // Falls back to Google's sample app IDs so builds without real IDs
+          // still launch (a missing app ID crashes the app at startup).
+          androidAppId:
+            process.env.ADMOB_ANDROID_APP_ID ?? 'ca-app-pub-3940256099942544~3347511713',
+          iosAppId: process.env.ADMOB_IOS_APP_ID ?? 'ca-app-pub-3940256099942544~1458002511',
+        },
+      ],
+      [
         '@sentry/react-native/expo',
         {
           organization: process.env.SENTRY_ORG,
@@ -73,6 +83,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       },
       appEnv: profile,
       sentryDsn: process.env.SENTRY_DSN ?? '',
+      admobBannerAndroid: process.env.ADMOB_BANNER_ANDROID ?? '',
+      admobBannerIos: process.env.ADMOB_BANNER_IOS ?? '',
       remoteCatalogUrl: process.env.REMOTE_CATALOG_URL ?? '',
     },
     updates: {

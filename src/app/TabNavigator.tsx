@@ -1,11 +1,12 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomTabBar, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import { Pressable, StyleSheet, Text, type PressableProps } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type PressableProps } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { CounterScreen } from '@/features/counter/CounterScreen';
 import { MantraLibraryScreen } from '@/features/mantra-library/MantraLibraryScreen';
 import { ProgressScreen } from '@/features/progress/ProgressScreen';
+import { AdBanner } from '@/shared/components/AdBanner';
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 import { CounterTabIcon, MantrasTabIcon, ProgressTabIcon } from '@/shared/components/icons';
 import { colors, fontFamily } from '@/shared/theme';
@@ -63,6 +64,12 @@ export function TabNavigator() {
 
   return (
     <Tab.Navigator
+      tabBar={(props) => (
+        <View style={styles.tabBarWrap}>
+          <AdBanner />
+          <BottomTabBar {...props} />
+        </View>
+      )}
       screenOptions={{
         headerShown: false,
         tabBarStyle: styles.tabBar,
@@ -118,6 +125,7 @@ export function TabNavigator() {
 }
 
 const styles = StyleSheet.create({
+  tabBarWrap: { backgroundColor: colors.ground },
   tabBar: {
     height: 84,
     paddingHorizontal: 16,

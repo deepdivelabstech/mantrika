@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 
 import { AnimatedSplash } from '@/app/AnimatedSplash';
+import { initAds } from '@/app/ads';
 import { AppProviders } from '@/app/AppProviders';
 import { initSentry } from '@/app/sentry';
 import { RootNavigator } from '@/app/RootNavigator';
@@ -13,6 +14,7 @@ import { useSettingsStore } from '@/shared/store/useSettingsStore';
 
 void SplashScreen.preventAutoHideAsync();
 initSentry();
+initAds();
 
 function LanguageSync() {
   const lang = useSettingsStore((s) => s.lang);
