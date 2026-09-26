@@ -9,6 +9,7 @@ import { ProfileCard } from '@/features/settings/components/ProfileCard';
 import { ReminderRow } from '@/features/settings/components/ReminderRow';
 import { SettingsCard } from '@/features/settings/components/SettingsCard';
 import { ToggleSwitch } from '@/features/settings/components/ToggleSwitch';
+import { AdBanner } from '@/shared/components/AdBanner';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { HapticIcon, LanguageIcon, RisingIcon, SoundIcon } from '@/shared/components/icons';
@@ -150,13 +151,18 @@ export function SettingsScreen() {
         </SettingsCard>
 
         <MalaIllustration />
+        <AdBanner />
       </ScrollView>
+      <View style={styles.bottomAd}>
+        <AdBanner />
+      </View>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
   content: { paddingBottom: spacing.xxl },
+  bottomAd: { backgroundColor: colors.ground },
   titleBlock: { paddingHorizontal: spacing.lg, paddingTop: spacing.xl, alignItems: 'center' },
   h1: {
     fontFamily: fontFamily.serif500,
