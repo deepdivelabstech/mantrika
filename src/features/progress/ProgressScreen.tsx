@@ -20,7 +20,7 @@ export function ProgressScreen() {
 
   return (
     <ScreenContainer>
-      <Header title={t('appTitle')} showSettings />
+      <Header title={t('appTitle')} />
       <ScrollView contentContainerStyle={styles.content}>
         <StatCard
           label={t('progress.totalBeads')}

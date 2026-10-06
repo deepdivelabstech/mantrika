@@ -45,7 +45,7 @@ export function SettingsScreen() {
 
   return (
     <ScreenContainer>
-      <Header title={t('appTitle')} showBack />
+      <Header title={t('appTitle')} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.titleBlock}>
           <Text style={styles.h1}>{t('settings.title')}</Text>
@@ -153,16 +153,12 @@ export function SettingsScreen() {
         <MalaIllustration />
         <AdBanner />
       </ScrollView>
-      <View style={styles.bottomAd}>
-        <AdBanner />
-      </View>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
   content: { paddingBottom: spacing.xxl },
-  bottomAd: { backgroundColor: colors.ground },
   titleBlock: { paddingHorizontal: spacing.lg, paddingTop: spacing.xl, alignItems: 'center' },
   h1: {
     fontFamily: fontFamily.serif500,

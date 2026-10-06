@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { SearchIcon } from '@/shared/components/icons';
+import { CloseIcon, SearchIcon } from '@/shared/components/icons';
 import { colors } from '@/shared/theme';
 
 type Props = {
@@ -9,9 +9,10 @@ type Props = {
   onChange: (text: string) => void;
   placeholder: string;
   accessibilityLabel: string;
+  clearLabel: string;
 };
 
-export function SearchBar({ value, onChange, placeholder, accessibilityLabel }: Props) {
+export function SearchBar({ value, onChange, placeholder, accessibilityLabel, clearLabel }: Props) {
   return (
     <View style={styles.wrap}>
       <View style={styles.icon}>
@@ -24,7 +25,19 @@ export function SearchBar({ value, onChange, placeholder, accessibilityLabel }: 
         accessibilityLabel={accessibilityLabel}
         style={styles.input}
         placeholderTextColor={colors.muted}
+        returnKeyType="search"
+        autoCorrect={false}
       />
+      {value ? (
+        <TouchableOpacity
+          onPress={() => onChange('')}
+          accessibilityRole="button"
+          accessibilityLabel={clearLabel}
+          style={styles.clear}
+        >
+          <CloseIcon color={colors.muted} size={18} />
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 }
@@ -35,12 +48,20 @@ const styles = StyleSheet.create({
   input: {
     height: 48,
     paddingLeft: 44,
-    paddingRight: 14,
-    borderRadius: 8,
+    paddingRight: 44,
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: '#DCCBB8',
     backgroundColor: colors.ground,
     fontSize: 14,
     color: colors.ink,
+  },
+  clear: {
+    position: 'absolute',
+    right: 2,
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

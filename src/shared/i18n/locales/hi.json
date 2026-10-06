@@ -3,7 +3,8 @@
   "nav": {
     "counter": "काउंटर",
     "mantras": "मंत्र",
-    "progress": "प्रगति"
+    "progress": "प्रगति",
+    "settings": "सेटिंग्स"
   },
   "counter": {
     "settingsAria": "सेटिंग्स",
@@ -21,19 +22,24 @@
     "searchPlaceholder": "पवित्र मंत्र खोजें…",
     "searchLabel": "पवित्र मंत्र खोजें",
     "dailyRecommendation": "आज का सुझाव",
-    "forInnerPeace": "आंतरिक शांति के लिए",
     "startSadhana": "साधना शुरू करें",
     "viewAll": "सभी देखें →",
-    "showLess": "कम दिखाएं",
-    "viewAllAria": "सभी मंत्र देखें",
-    "showLessAria": "कम मंत्र दिखाएं",
     "addCustom": "अपना मंत्र जोड़ें",
     "customPlaceholder": "अपना मंत्र लिखें…",
     "add": "जोड़ें",
     "nowChanting": "अभी जप हो रहा",
     "noResults": "आपकी खोज से कोई मंत्र मेल नहीं खाता।",
     "removeAria": "{{name}} हटाएं",
-    "favoriteAria": "{{name}} को पसंदीदा में जोड़ें/हटाएं"
+    "favoriteAria": "{{name}} को पसंदीदा में जोड़ें/हटाएं",
+    "filterCore": "मुख्य",
+    "filterAll": "सभी",
+    "filterFavorites": "पसंदीदा",
+    "filterMine": "मेरे मंत्र",
+    "noFavorites": "किसी भी मंत्र पर ♡ दबाकर उसे यहाँ रखें।",
+    "noCustom": "माला पर जप करने के लिए ऊपर अपना मंत्र जोड़ें।",
+    "chantAria": "{{name}} का जप करें",
+    "clearSearch": "खोज साफ़ करें",
+    "continueSadhana": "साधना जारी रखें"
   },
   "progress": {
     "title": "आपकी प्रगति",

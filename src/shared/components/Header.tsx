@@ -1,54 +1,26 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useTranslation } from 'react-i18next';
 
 import { BrandMark } from '@/shared/components/BrandMark';
-import { BackIcon, SettingsIcon } from '@/shared/components/icons';
-import { IconButton } from '@/shared/components/IconButton';
 import { colors, fontFamily, spacing } from '@/shared/theme';
 
-type Props = {
-  title: string;
-  showSettings?: boolean;
-  showBack?: boolean;
-};
+type Props = { title: string };
 
-export const Header = React.memo(function Header({ title, showSettings, showBack }: Props) {
-  const { t } = useTranslation();
-  const navigation = useNavigation();
-
+export const Header = React.memo(function Header({ title }: Props) {
   return (
     <View style={styles.header}>
       <View style={styles.side}>
-        {showBack ? (
-          <IconButton
-            accessibilityLabel={t('settings.backAria')}
-            onPress={() => navigation.goBack()}
-          >
-            <BackIcon color={colors.maroon} />
-          </IconButton>
-        ) : (
-          <View style={styles.brandSlot}>
-            <BrandMark size={32} />
-          </View>
-        )}
+        <View style={styles.brandSlot}>
+          <BrandMark size={32} />
+        </View>
       </View>
 
       <Text style={styles.title} numberOfLines={1}>
         {title}
       </Text>
 
-      <View style={styles.side}>
-        {showSettings && (
-          <IconButton
-            accessibilityLabel={t('counter.settingsAria')}
-            onPress={() => navigation.navigate('Settings' as never)}
-          >
-            <SettingsIcon color={colors.maroon} />
-          </IconButton>
-        )}
-      </View>
+      {/* Mirrors the brand slot so the title stays centred. */}
+      <View style={styles.side} />
     </View>
   );
 });

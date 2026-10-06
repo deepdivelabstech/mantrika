@@ -10,7 +10,7 @@ TypeScript.
 - Zustand (persisted to AsyncStorage) for settings, progress, and mantra state
 - React Native Reanimated + Gesture Handler for the mala/rising-mantra animations
 - i18next / react-i18next for English + Hindi
-- expo-av for ambient soundscapes, expo-haptics for bead-tap feedback
+- expo-audio for ambient soundscapes, expo-haptics for bead-tap feedback
 - expo-font + @expo-google-fonts/{manrope,newsreader,tiro-devanagari-hindi} for brand
   typefaces (bundled locally, not fetched from a CDN)
 - expo-notifications for the daily practice reminder
@@ -102,9 +102,9 @@ that endpoint — the bundled JSON is always the offline/failure fallback (see
 
 ## Placeholder assets
 
-- `assets/sounds/*.wav` are silent stub files so the ambient-soundscape lifecycle
-  (load/loop/stop) is real end-to-end without shipping licensed audio. Swap in real loops at
-  the same paths — nothing in `shared/hooks/useSound.ts` needs to change.
+- `assets/sounds/*.m4a` are seamless 40s ambient loops (river, forest, singing bowls)
+  synthesized by `scripts/generate-soundscapes.py` — no licensed audio. Re-run it (macOS, needs
+  `afconvert`) after tweaking a soundscape; recorded loops can also be dropped in at the same paths.
 - `assets/icon.png`, `assets/splash-icon.png`, and the Android adaptive-icon layers are the
   Expo template defaults. Before release, replace them with exported PNGs of the
   `BrandMark` component (`src/shared/components/BrandMark.tsx`) — the ring-of-beads mark

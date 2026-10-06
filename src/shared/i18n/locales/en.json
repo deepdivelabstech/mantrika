@@ -3,7 +3,8 @@
   "nav": {
     "counter": "Counter",
     "mantras": "Mantras",
-    "progress": "Progress"
+    "progress": "Progress",
+    "settings": "Settings"
   },
   "counter": {
     "settingsAria": "Settings",
@@ -21,19 +22,24 @@
     "searchPlaceholder": "Search sacred chants…",
     "searchLabel": "Search sacred chants",
     "dailyRecommendation": "Daily recommendation",
-    "forInnerPeace": "For inner peace",
     "startSadhana": "Start Sadhana",
     "viewAll": "View All →",
-    "showLess": "Show less",
-    "viewAllAria": "View all mantras",
-    "showLessAria": "Show fewer mantras",
     "addCustom": "Add custom mantra",
     "customPlaceholder": "Type your own mantra…",
     "add": "Add",
     "nowChanting": "Now chanting",
     "noResults": "No chants match your search.",
     "removeAria": "Remove {{name}}",
-    "favoriteAria": "Toggle favorite for {{name}}"
+    "favoriteAria": "Toggle favorite for {{name}}",
+    "filterCore": "Essentials",
+    "filterAll": "All",
+    "filterFavorites": "Favorites",
+    "filterMine": "My mantras",
+    "noFavorites": "Tap ♡ on any mantra to keep it here.",
+    "noCustom": "Add your own mantra above to chant it on the mala.",
+    "chantAria": "Chant {{name}}",
+    "clearSearch": "Clear search",
+    "continueSadhana": "Continue Sadhana"
   },
   "progress": {
     "title": "Your Progress",

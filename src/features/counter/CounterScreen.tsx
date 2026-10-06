@@ -15,7 +15,6 @@ import { useFloatingChants } from '@/features/counter/hooks/useFloatingChants';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { useHaptics } from '@/shared/hooks/useHaptics';
-import { useSound } from '@/shared/hooks/useSound';
 import { fillFraction } from '@/shared/lib/beadMath';
 import { displayName, findMantra, mergeMantras } from '@/shared/lib/mantraDisplay';
 import { useMantraStore } from '@/shared/store/useMantraStore';
@@ -44,7 +43,6 @@ export function CounterScreen() {
   const tapBead = useProgressStore((s) => s.tapBead);
 
   const { tick } = useHaptics();
-  useSound();
   const { floats, spawn, remove } = useFloatingChants();
 
   const [shakeTick, setShakeTick] = useState(0);
@@ -107,7 +105,7 @@ export function CounterScreen() {
 
   return (
     <ScreenContainer>
-      <Header title={t('appTitle')} showSettings />
+      <Header title={t('appTitle')} />
 
       <View style={styles.main}>
         <View style={styles.malaWrap}>

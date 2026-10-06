@@ -1,23 +1,26 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { AddCustomMantraForm } from '@/features/mantra-library/components/AddCustomMantraForm';
 import { DailyRecommendationCard } from '@/features/mantra-library/components/DailyRecommendationCard';
+import { FilterChips } from '@/features/mantra-library/components/FilterChips';
 import { MantraListItem } from '@/features/mantra-library/components/MantraListItem';
 import { SearchBar } from '@/features/mantra-library/components/SearchBar';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { EmptyState, ErrorState } from '@/shared/components/StatusStates';
-import { filterMantras, mergeMantras } from '@/shared/lib/mantraDisplay';
+import { filterMantras, mergeMantras, pickDailyMantra } from '@/shared/lib/mantraDisplay';
 import { useMantraStore } from '@/shared/store/useMantraStore';
 import { useProgressStore } from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
 import { colors, fontFamily, spacing } from '@/shared/theme';
+import type { Mantra } from '@/shared/types/models';
 
 const DEFAULT_MANTRA_ID = 'om-namah-shivaya';
-const FEATURED_MANTRA_ID = 'gayatri-mantra';
+
+type LibraryFilter = 'core' | 'all' | 'favorites' | 'mine';
 
 function Separator() {
   return <View style={styles.separator} />;
@@ -31,7 +34,7 @@ export function MantraLibraryScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [query, setQuery] = useState('');
-  const [showAll, setShowAll] = useState(false);
+  const [filter, setFilter] = useState<LibraryFilter>('core');
 
   const lang = useSettingsStore((s) => s.lang);
   const catalog = useMantraStore((s) => s.catalog);
@@ -50,29 +53,75 @@ export function MantraLibraryScreen() {
     void loadCatalog();
   }, [loadCatalog]);
 
-  const featured = catalog.find((m) => m.id === FEATURED_MANTRA_ID);
+  const featured = useMemo(() => pickDailyMantra(catalog, new Date()), [catalog]);
 
-  // Only core mantras + a user's own custom entries show by default; "View all"
-  // reveals the rest of the catalog — matches the source design's pool logic.
-  const pool = useMemo(() => {
-    const catalogPool = showAll ? catalog : catalog.filter((m) => m.core);
-    return mergeMantras(catalogPool, custom, t('counter.customMantraLabel'));
-  }, [catalog, custom, showAll, t]);
+  const customLabel = t('counter.customMantraLabel');
+  const all = useMemo(
+    () => mergeMantras(catalog, custom, customLabel),
+    [catalog, custom, customLabel],
+  );
 
-  const visible = useMemo(() => filterMantras(pool, query, lang), [pool, query, lang]);
+  const pools = useMemo<Record<LibraryFilter, Mantra[]>>(
+    () => ({
+      core: all.filter((m) => m.core || m.id.startsWith('custom-')),
+      all,
+      favorites: all.filter((m) => favorites.includes(m.id)),
+      mine: all.filter((m) => m.id.startsWith('custom-')),
+    }),
+    [all, favorites],
+  );
 
-  const handleRemove = (id: string) => {
-    removeCustomMantra(id);
-    if (currentMantraId === id) setCurrentMantra(DEFAULT_MANTRA_ID);
-  };
+  // A search from the default "Essentials" view looks through the whole
+  // library — otherwise most of the catalog would be unfindable from there.
+  const searchPool = filter === 'core' && query.trim() ? all : pools[filter];
+  const visible = useMemo(() => filterMantras(searchPool, query, lang), [searchPool, query, lang]);
+
+  const goToCounter = useCallback(() => navigation.navigate('Counter' as never), [navigation]);
+
+  const handleChant = useCallback(
+    (id: string) => {
+      setCurrentMantra(id);
+      goToCounter();
+    },
+    [setCurrentMantra, goToCounter],
+  );
+
+  const handleRemove = useCallback(
+    (id: string) => {
+      removeCustomMantra(id);
+      if (useProgressStore.getState().currentMantraId === id) setCurrentMantra(DEFAULT_MANTRA_ID);
+    },
+    [removeCustomMantra, setCurrentMantra],
+  );
+
+  const filterOptions = [
+    { value: 'core' as const, label: t('mantras.filterCore'), count: pools.core.length },
+    { value: 'all' as const, label: t('mantras.filterAll'), count: pools.all.length },
+    {
+      value: 'favorites' as const,
+      label: t('mantras.filterFavorites'),
+      count: pools.favorites.length,
+    },
+    { value: 'mine' as const, label: t('mantras.filterMine'), count: pools.mine.length },
+  ];
+
+  const emptyLabel = query.trim()
+    ? t('mantras.noResults')
+    : filter === 'favorites'
+      ? t('mantras.noFavorites')
+      : filter === 'mine'
+        ? t('mantras.noCustom')
+        : t('mantras.noResults');
 
   return (
     <ScreenContainer>
-      <Header title={t('appTitle')} showSettings />
+      <Header title={t('appTitle')} />
       <FlatList
         data={visible}
         keyExtractor={(m) => m.id}
         contentContainerStyle={styles.listContent}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         ListHeaderComponent={
           <View style={styles.headerSection}>
             <SearchBar
@@ -80,33 +129,22 @@ export function MantraLibraryScreen() {
               onChange={setQuery}
               placeholder={t('mantras.searchPlaceholder')}
               accessibilityLabel={t('mantras.searchLabel')}
+              clearLabel={t('mantras.clearSearch')}
             />
 
-            <Text style={styles.eyebrow}>{t('mantras.dailyRecommendation')}</Text>
-            {featured ? (
+            {featured && !query.trim() ? (
               <DailyRecommendationCard
                 mantra={featured}
-                onStart={() => {
-                  setCurrentMantra(featured.id);
-                  navigation.navigate('Counter' as never);
-                }}
+                lang={lang}
+                active={featured.id === currentMantraId}
+                onStart={() => handleChant(featured.id)}
               />
             ) : null}
 
-            <View style={styles.libraryHeaderRow}>
-              <Text style={styles.libraryTitle}>{t('mantras.title')}</Text>
-              <TouchableOpacity
-                onPress={() => setShowAll((s) => !s)}
-                accessibilityRole="button"
-                accessibilityLabel={showAll ? t('mantras.showLessAria') : t('mantras.viewAllAria')}
-              >
-                <Text style={styles.toggle}>
-                  {showAll ? t('mantras.showLess') : t('mantras.viewAll')}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.libraryTitle}>{t('mantras.title')}</Text>
+            <FilterChips options={filterOptions} value={filter} onChange={setFilter} />
 
-            {showAll ? <AddCustomMantraForm onAdd={addCustomMantra} /> : null}
+            {filter === 'mine' ? <AddCustomMantraForm onAdd={addCustomMantra} /> : null}
           </View>
         }
         renderItem={({ item }) => (
@@ -115,9 +153,10 @@ export function MantraLibraryScreen() {
             lang={lang}
             active={item.id === currentMantraId}
             favorite={favorites.includes(item.id)}
-            onSelect={() => setCurrentMantra(item.id)}
-            onToggleFavorite={() => toggleFavorite(item.id)}
-            onRemove={item.id.startsWith('custom-') ? () => handleRemove(item.id) : undefined}
+            onSelect={setCurrentMantra}
+            onChant={handleChant}
+            onToggleFavorite={toggleFavorite}
+            onRemove={item.id.startsWith('custom-') ? handleRemove : undefined}
           />
         )}
         ItemSeparatorComponent={Separator}
@@ -129,7 +168,7 @@ export function MantraLibraryScreen() {
               retryLabel={t('common.tryAgain')}
             />
           ) : (
-            <EmptyState label={t('mantras.noResults')} />
+            <EmptyState label={emptyLabel} />
           )
         }
         ListFooterComponent={Footer}
@@ -142,21 +181,11 @@ const styles = StyleSheet.create({
   listContent: { paddingHorizontal: spacing.lg },
   separator: { height: spacing.sm },
   footer: { height: spacing.xl },
-  headerSection: { gap: spacing.md, paddingTop: spacing.md },
-  eyebrow: {
+  headerSection: { gap: spacing.md, paddingTop: spacing.md, paddingBottom: spacing.md },
+  libraryTitle: {
     marginTop: spacing.sm,
-    fontSize: 11,
-    fontFamily: fontFamily.sans700,
-    letterSpacing: 1.76,
-    textTransform: 'uppercase',
-    color: colors.muted,
+    fontFamily: fontFamily.serif500,
+    fontSize: 22,
+    color: colors.ink,
   },
-  libraryHeaderRow: {
-    marginTop: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    justifyContent: 'space-between',
-  },
-  libraryTitle: { fontFamily: fontFamily.serif500, fontSize: 20, color: colors.ink },
-  toggle: { fontSize: 13, fontFamily: fontFamily.sans600, color: colors.maroon, minHeight: 44 },
 });

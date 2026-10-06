@@ -4,82 +4,92 @@ import { useTranslation } from 'react-i18next';
 
 import { LampIllustration } from '@/features/mantra-library/components/LampIllustration';
 import { PlayIcon } from '@/shared/components/icons';
+import { displayName } from '@/shared/lib/mantraDisplay';
 import { colors, fontFamily, spacing } from '@/shared/theme';
-import type { Mantra } from '@/shared/types/models';
+import type { Language, Mantra } from '@/shared/types/models';
 
-type Props = { mantra: Mantra; onStart: () => void };
+type Props = { mantra: Mantra; lang: Language; active: boolean; onStart: () => void };
 
-/** Fixed daily-recommendation spotlight (always the same featured mantra, matching the source design). */
-export function DailyRecommendationCard({ mantra, onStart }: Props) {
+/** Compact spotlight for the day's mantra: lamp banner with the eyebrow overlaid, then text + CTA. */
+export function DailyRecommendationCard({ mantra, lang, active, onStart }: Props) {
   const { t } = useTranslation();
+  const showDeva = lang === 'hi';
+  const secondary = mantra.excerpt ?? (showDeva ? mantra.name : mantra.deva);
 
   return (
     <View style={styles.card}>
-      <LampIllustration />
-      <View style={styles.badge}>
-        <Text style={styles.badgeText}>{t('mantras.forInnerPeace')}</Text>
+      <View>
+        <LampIllustration height={112} />
+        <View style={styles.overlay}>
+          <Text style={styles.eyebrow}>{t('mantras.dailyRecommendation')}</Text>
+        </View>
       </View>
-      <Text style={styles.name}>{mantra.name}</Text>
-      {mantra.excerpt ? <Text style={styles.excerpt}>{mantra.excerpt}</Text> : null}
-      {mantra.description ? <Text style={styles.description}>{mantra.description}</Text> : null}
-      <TouchableOpacity onPress={onStart} accessibilityRole="button" style={styles.button}>
-        <PlayIcon color={colors.ground} size={18} />
-        <Text style={styles.buttonText}>{t('mantras.startSadhana')}</Text>
-      </TouchableOpacity>
+
+      <View style={styles.body}>
+        <Text style={[styles.name, showDeva && styles.devanagari]}>
+          {displayName(mantra, lang)}
+        </Text>
+        <Text style={styles.secondary} numberOfLines={1}>
+          {secondary}
+        </Text>
+        {mantra.description ? (
+          <Text style={styles.description} numberOfLines={3}>
+            {mantra.description}
+          </Text>
+        ) : null}
+
+        <TouchableOpacity onPress={onStart} accessibilityRole="button" style={styles.button}>
+          <PlayIcon color={colors.ground} size={18} />
+          <Text style={styles.buttonText}>
+            {active ? t('mantras.continueSadhana') : t('mantras.startSadhana')}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    padding: 20,
-    paddingLeft: 18,
+    overflow: 'hidden',
     backgroundColor: '#F8F1E8',
     borderWidth: 1,
     borderColor: colors.line,
-    borderLeftWidth: 3,
-    borderLeftColor: '#8A4A2B',
-    borderRadius: 6,
+    borderRadius: 16,
   },
-  badge: {
-    alignSelf: 'flex-start',
-    marginTop: spacing.lg,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    backgroundColor: '#FBE3C5',
-  },
-  badgeText: {
+  overlay: { position: 'absolute', left: 16, bottom: 10 },
+  eyebrow: {
     fontSize: 10,
     fontFamily: fontFamily.sans700,
-    letterSpacing: 0.8,
+    letterSpacing: 1.6,
     textTransform: 'uppercase',
-    color: '#7A3E12',
+    color: '#FFE9C4',
   },
+  body: { padding: 18, paddingTop: 14 },
   name: {
-    marginTop: spacing.sm,
     fontFamily: fontFamily.serif500,
-    fontSize: 20,
-    lineHeight: 26,
+    fontSize: 22,
+    lineHeight: 28,
     color: colors.ink,
   },
-  excerpt: {
-    marginTop: spacing.xs,
+  devanagari: { fontFamily: fontFamily.devanagari400 },
+  secondary: {
+    marginTop: 2,
     fontFamily: fontFamily.devanagari400Italic,
-    fontSize: 17,
-    lineHeight: 27,
-    color: colors.ink,
+    fontSize: 15,
+    lineHeight: 24,
+    color: colors.muted,
   },
-  description: { marginTop: spacing.sm, fontSize: 14, lineHeight: 22.4, color: colors.ink },
+  description: { marginTop: spacing.sm, fontSize: 14, lineHeight: 21, color: colors.ink },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
     alignSelf: 'flex-start',
-    height: 48,
-    marginTop: spacing.lg,
-    paddingHorizontal: 22,
-    borderRadius: 24,
+    height: 44,
+    marginTop: spacing.md,
+    paddingHorizontal: 20,
+    borderRadius: 22,
     backgroundColor: colors.maroon,
   },
   buttonText: {

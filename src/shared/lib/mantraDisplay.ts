@@ -31,3 +31,17 @@ export function filterMantras(all: Mantra[], query: string, lang: Language): Man
     );
   });
 }
+
+/**
+ * The day's recommended mantra: rotates through catalog entries that have a
+ * description, one per local calendar day, so everyone sees the same pick on
+ * the same date and it changes at local midnight.
+ */
+export function pickDailyMantra(catalog: Mantra[], date: Date): Mantra | undefined {
+  const pool = catalog.filter((m) => m.description);
+  if (pool.length === 0) return catalog[0];
+  const dayNumber = Math.floor(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86_400_000,
+  );
+  return pool[dayNumber % pool.length];
+}

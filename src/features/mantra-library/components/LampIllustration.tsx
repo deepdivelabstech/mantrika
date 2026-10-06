@@ -3,10 +3,10 @@ import { StyleSheet, View } from 'react-native';
 import Svg, { Circle, Defs, Ellipse, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 
 /** Decorative lit-lamp illustration matching the source design's daily recommendation card. */
-export function LampIllustration() {
+export function LampIllustration({ height = 230 }: { height?: number }) {
   return (
     <View style={styles.wrap}>
-      <Svg width="100%" height={230} viewBox="0 0 307 230">
+      <Svg width="100%" height={height} viewBox="0 0 307 230" preserveAspectRatio="xMidYMax slice">
         <Defs>
           <RadialGradient id="sm-orb" cx="50%" cy="50%" r="50%">
             <Stop offset="0" stopColor="#FFE9C4" stopOpacity={0.6} />
