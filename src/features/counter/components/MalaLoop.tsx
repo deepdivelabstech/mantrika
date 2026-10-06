@@ -44,7 +44,7 @@ const THUMB_CLIP_POINTS = [
   .join(' ');
 
 /** The teardrop-shaped 108-bead loop with a larger "guru" bead, filling as beads are counted. */
-export function MalaLoop({ beadsInRound, scale = 1 }: Props) {
+export const MalaLoop = React.memo(function MalaLoop({ beadsInRound, scale = 1 }: Props) {
   const { path, beadDashOffset, guruDashOffset, fullLoopLength } = useMalaGeometry(beadsInRound);
   const beadOffset = useSharedValue(fullLoopLength);
   const guruOffset = useSharedValue(fullLoopLength);
@@ -179,7 +179,7 @@ export function MalaLoop({ beadsInRound, scale = 1 }: Props) {
       </Svg>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: { alignSelf: 'center' },

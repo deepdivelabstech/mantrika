@@ -12,17 +12,19 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { MalaLoop } from '@/features/counter/components/MalaLoop';
+import {
+  FloatingChantLayer,
+  type FloatingChantLayerHandle,
+} from '@/features/counter/components/FloatingChantLayer';
 import { FocusTip } from '@/features/counter/components/FocusTip';
+import { MalaLoop } from '@/features/counter/components/MalaLoop';
 import { MantraPickerSheet } from '@/features/counter/components/MantraPickerSheet';
-import { RisingMantra } from '@/features/counter/components/RisingMantra';
 import {
   CELEBRATION_MS,
   milestoneText,
   RoundCelebration,
 } from '@/features/counter/components/RoundCelebration';
 import { useBeadCounter, type BeadEvent } from '@/features/counter/hooks/useBeadCounter';
-import { useFloatingChants } from '@/features/counter/hooks/useFloatingChants';
 import { Header } from '@/shared/components/Header';
 import { EyesClosedIcon } from '@/shared/components/icons';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
@@ -78,7 +80,7 @@ export function CounterScreen() {
 
   const { tick } = useHaptics();
   const countBead = useBeadCounter();
-  const { floats, spawn, remove } = useFloatingChants();
+  const floatLayer = useRef<FloatingChantLayerHandle>(null);
   const navigation = useNavigation();
 
   const [celebration, setCelebration] = useState<{ id: number; event: BeadEvent } | null>(null);
@@ -124,20 +126,18 @@ export function CounterScreen() {
     markFocusDiscovered();
   }, [markFocusDiscovered]);
 
-  const [shakeTick, setShakeTick] = useState(0);
   const beadShake = useSharedValue(0);
   const [mantraOrigin, setMantraOrigin] = useState({ x: 103, y: 500, width: 184 });
 
-  useEffect(() => {
-    if (shakeTick === 0) return;
+  // Started straight from the tap handler: no state, so no extra render per bead.
+  const shakeBead = () => {
     beadShake.value = withSequence(
       withTiming(-1, { duration: 40 }),
       withTiming(1, { duration: 60 }),
       withTiming(-0.5, { duration: 60 }),
       withTiming(0, { duration: 50 }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shakeTick]);
+  };
 
   const beadShakeStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: beadShake.value }],
@@ -168,11 +168,11 @@ export function CounterScreen() {
         setShowTip(true);
       }, CELEBRATION_MS);
     }
-    setShakeTick((n) => n + 1);
+    shakeBead();
     if (risingMantra && current) {
       const isCustom = current.id.startsWith('custom-');
       const devanagari = lang === 'hi' && !isCustom && !!current.deva;
-      spawn(devanagari ? current.deva : current.chant, animSpeed, devanagari);
+      floatLayer.current?.spawn(devanagari ? current.deva : current.chant, animSpeed, devanagari);
     }
   };
 
@@ -313,20 +313,12 @@ export function CounterScreen() {
           </TouchableOpacity>
         ) : null}
 
-        {floats.map((f) => (
-          <RisingMantra
-            key={f.key}
-            id={f.key}
-            chant={f.chant}
-            durationMs={f.durationMs}
-            dx={f.dx}
-            devanagari={f.devanagari}
-            onDone={remove}
-            originX={mantraOrigin.x}
-            originY={mantraOrigin.y}
-            originWidth={mantraOrigin.width}
-          />
-        ))}
+        <FloatingChantLayer
+          ref={floatLayer}
+          originX={mantraOrigin.x}
+          originY={mantraOrigin.y}
+          originWidth={mantraOrigin.width}
+        />
 
         {showTip ? <FocusTip onTry={openFocus} onDismiss={dismissTip} /> : null}
       </View>
