@@ -1,5 +1,5 @@
 import { createBottomTabNavigator, type BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -10,6 +10,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
+import { endPracticeSession } from '@/app/ads';
 import { CounterScreen } from '@/features/counter/CounterScreen';
 import { MantraLibraryScreen } from '@/features/mantra-library/MantraLibraryScreen';
 import { ProgressScreen } from '@/features/progress/ProgressScreen';
@@ -119,7 +120,16 @@ function MantrikaTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 
   const indicatorStyle = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }] }));
   // No ads while counting: the Counter is the meditation surface.
-  const showAd = state.routes[state.index]?.name !== 'Counter';
+  const routeName = state.routes[state.index]?.name;
+  const showAd = routeName !== 'Counter';
+
+  // Leaving the Counter tab ends a practice session (Focus mode is a modal
+  // over the tabs, so opening it doesn't count as leaving).
+  const prevRoute = useRef(routeName);
+  useEffect(() => {
+    if (prevRoute.current === 'Counter' && routeName !== 'Counter') endPracticeSession();
+    prevRoute.current = routeName;
+  }, [routeName]);
 
   return (
     <View style={styles.wrap}>

@@ -28,7 +28,7 @@ const FADE_STEPS = 15;
  * ExoPlayer keeps playing until garbage collection, so switching soundscapes
  * would stack loops. Pause first, then release the native object outright.
  */
-function disposePlayer(player: AudioPlayer) {
+export function disposePlayer(player: AudioPlayer) {
   try {
     player.pause();
     player.remove();

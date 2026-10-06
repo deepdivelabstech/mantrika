@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
 
-/** Fires a light impact per bead tap, respecting the user's haptics toggle. */
+/** Bead-tap and milestone haptics, respecting the user's haptics toggle. */
 export function useHaptics() {
   const enabled = useSettingsStore((s) => s.haptics);
 
@@ -12,5 +12,11 @@ export function useHaptics() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   }, [enabled]);
 
-  return { tick };
+  /** A distinctly stronger pattern for a completed round, felt even with eyes closed. */
+  const milestone = useCallback(() => {
+    if (!enabled) return;
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  }, [enabled]);
+
+  return { tick, milestone };
 }

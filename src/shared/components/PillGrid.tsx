@@ -9,7 +9,7 @@ type Props<T extends string> = {
   options: Option<T>[];
   value: T;
   onChange: (v: T) => void;
-  columns: 2 | 3;
+  columns: 2 | 3 | 4;
   disabled?: boolean;
 };
 

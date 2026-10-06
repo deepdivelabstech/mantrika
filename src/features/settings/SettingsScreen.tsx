@@ -4,22 +4,29 @@ import { useTranslation } from 'react-i18next';
 
 import { BackupCard } from '@/features/settings/components/BackupCard';
 import { IconRow } from '@/features/settings/components/IconRow';
-import { MalaIllustration } from '@/features/settings/components/MalaIllustration';
-import { PillGrid } from '@/features/settings/components/PillGrid';
+import { PillGrid } from '@/shared/components/PillGrid';
 import { ProfileCard } from '@/features/settings/components/ProfileCard';
 import { ReminderRow } from '@/features/settings/components/ReminderRow';
 import { SettingsCard } from '@/features/settings/components/SettingsCard';
-import { ToggleSwitch } from '@/features/settings/components/ToggleSwitch';
-import { AdBanner } from '@/shared/components/AdBanner';
+import { ToggleSwitch } from '@/shared/components/ToggleSwitch';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { useToday } from '@/shared/hooks/useToday';
-import { HapticIcon, LanguageIcon, RisingIcon, SoundIcon } from '@/shared/components/icons';
+import {
+  CounterTabIcon,
+  HapticIcon,
+  LanguageIcon,
+  ProgressTabIcon,
+  ReminderIcon,
+  RisingIcon,
+  SoundIcon,
+} from '@/shared/components/icons';
 import i18n from '@/shared/i18n';
 import { syncDailyReminder } from '@/shared/lib/notifications';
 import { selectStreakDays, useProgressStore } from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
 import { colors, fontFamily, spacing } from '@/shared/theme';
+import { DAILY_GOAL_OPTIONS } from '@/shared/types/models';
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -64,6 +71,57 @@ export function SettingsScreen() {
           totalBeadsLifetime={totalBeadsLifetime}
           streakDays={streakDays}
         />
+
+        <Text style={styles.sectionLabel}>{t('settings.practice')}</Text>
+
+        <SettingsCard style={styles.card}>
+          <IconRow
+            icon={<ProgressTabIcon color={colors.maroon} />}
+            title={t('settings.dailyGoalTitle')}
+            description={t('settings.dailyGoalDesc')}
+          />
+          <View style={styles.pillBlock}>
+            <PillGrid
+              columns={3}
+              value={String(settings.dailyGoalMalas)}
+              onChange={(v) => settings.setDailyGoalMalas(Number(v))}
+              options={DAILY_GOAL_OPTIONS.map((n) => ({
+                value: String(n),
+                label: t('common.malas', { count: n }),
+              }))}
+            />
+          </View>
+        </SettingsCard>
+
+        <SettingsCard style={styles.stackedCard}>
+          <IconRow
+            icon={<ReminderIcon color={colors.maroon} />}
+            title={t('settings.chimeTitle')}
+            description={t('settings.chimeDesc')}
+            control={
+              <ToggleSwitch
+                value={settings.roundChime}
+                onChange={settings.setRoundChime}
+                accessibilityLabel={t('settings.chimeTitle')}
+              />
+            }
+          />
+        </SettingsCard>
+
+        <SettingsCard style={styles.stackedCard}>
+          <IconRow
+            icon={<CounterTabIcon color={colors.maroon} />}
+            title={t('settings.pauseTitle')}
+            description={t('settings.pauseDesc')}
+            control={
+              <ToggleSwitch
+                value={settings.pauseAfterRound}
+                onChange={settings.setPauseAfterRound}
+                accessibilityLabel={t('settings.pauseTitle')}
+              />
+            }
+          />
+        </SettingsCard>
 
         <Text style={styles.sectionLabel}>{t('settings.sensoryExperience')}</Text>
 
@@ -156,9 +214,6 @@ export function SettingsScreen() {
         <Text style={styles.sectionLabel}>{t('settings.yourData')}</Text>
 
         <BackupCard style={styles.card} />
-
-        <MalaIllustration />
-        <AdBanner />
       </ScrollView>
     </ScreenContainer>
   );

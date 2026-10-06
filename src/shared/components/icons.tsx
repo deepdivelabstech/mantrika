@@ -153,3 +153,13 @@ export function ProgressTabIcon({ size = 22, color }: IconProps) {
     </Svg>
   );
 }
+
+/** Closed eye with lashes: eyes-closed (hands-free) counting. */
+export function EyesClosedIcon({ size = 22, color }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path stroke={color} {...strokeProps} d="M3 10c2.5 3.3 5.5 5 9 5s6.5-1.7 9-5" />
+      <Path stroke={color} {...strokeProps} d="M6.5 13.6 5 16M12 15v2.8M17.5 13.6 19 16" />
+    </Svg>
+  );
+}

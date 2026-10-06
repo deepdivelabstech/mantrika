@@ -8,6 +8,7 @@ import { DailyRecommendationCard } from '@/features/mantra-library/components/Da
 import { FilterChips } from '@/features/mantra-library/components/FilterChips';
 import { MantraListItem } from '@/features/mantra-library/components/MantraListItem';
 import { SearchBar } from '@/features/mantra-library/components/SearchBar';
+import { AdBanner } from '@/shared/components/AdBanner';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { EmptyState, ErrorState } from '@/shared/components/StatusStates';
@@ -21,6 +22,12 @@ import type { Mantra } from '@/shared/types/models';
 const DEFAULT_MANTRA_ID = 'om-namah-shivaya';
 
 type LibraryFilter = 'core' | 'all' | 'favorites' | 'mine';
+
+/** One in-list ad, after this many mantras, so it never sits at the top of the list. */
+const AD_AFTER_INDEX = 6;
+const AD_ROW = { id: '__ad__' } as const;
+type Row = Mantra | typeof AD_ROW;
+const isAdRow = (row: Row): row is typeof AD_ROW => row === AD_ROW;
 
 function Separator() {
   return <View style={styles.separator} />;
@@ -75,6 +82,14 @@ export function MantraLibraryScreen() {
   // library — otherwise most of the catalog would be unfindable from there.
   const searchPool = filter === 'core' && query.trim() ? all : pools[filter];
   const visible = useMemo(() => filterMantras(searchPool, query, lang), [searchPool, query, lang]);
+  // No ad while searching: results should be the only thing in view.
+  const rows = useMemo<Row[]>(
+    () =>
+      query.trim() || visible.length <= AD_AFTER_INDEX
+        ? visible
+        : [...visible.slice(0, AD_AFTER_INDEX), AD_ROW, ...visible.slice(AD_AFTER_INDEX)],
+    [visible, query],
+  );
 
   const goToCounter = useCallback(() => navigation.navigate('Counter' as never), [navigation]);
 
@@ -117,7 +132,7 @@ export function MantraLibraryScreen() {
     <ScreenContainer>
       <Header title={t('appTitle')} />
       <FlatList
-        data={visible}
+        data={rows}
         keyExtractor={(m) => m.id}
         contentContainerStyle={styles.listContent}
         keyboardShouldPersistTaps="handled"
@@ -147,18 +162,22 @@ export function MantraLibraryScreen() {
             {filter === 'mine' ? <AddCustomMantraForm onAdd={addCustomMantra} /> : null}
           </View>
         }
-        renderItem={({ item }) => (
-          <MantraListItem
-            mantra={item}
-            lang={lang}
-            active={item.id === currentMantraId}
-            favorite={favorites.includes(item.id)}
-            onSelect={setCurrentMantra}
-            onChant={handleChant}
-            onToggleFavorite={toggleFavorite}
-            onRemove={item.id.startsWith('custom-') ? handleRemove : undefined}
-          />
-        )}
+        renderItem={({ item }) =>
+          isAdRow(item) ? (
+            <AdBanner variant="inline" />
+          ) : (
+            <MantraListItem
+              mantra={item}
+              lang={lang}
+              active={item.id === currentMantraId}
+              favorite={favorites.includes(item.id)}
+              onSelect={setCurrentMantra}
+              onChant={handleChant}
+              onToggleFavorite={toggleFavorite}
+              onRemove={item.id.startsWith('custom-') ? handleRemove : undefined}
+            />
+          )
+        }
         ItemSeparatorComponent={Separator}
         ListEmptyComponent={
           catalogStatus === 'error' ? (

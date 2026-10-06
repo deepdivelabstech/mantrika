@@ -16,7 +16,15 @@
     "browseAll": "Browse all mantras →",
     "closeSheetAria": "Close mantra list",
     "customMantraLabel": "Custom mantra",
-    "undoAria": "Undo last bead"
+    "undoAria": "Undo last bead",
+    "focusAria": "Enter eyes-closed mode",
+    "roundComplete": "Round {{count}} complete",
+    "goalReached": "Daily sankalpa fulfilled",
+    "sankalpaDone": "Sankalpa complete",
+    "focusLabel": "Focus",
+    "focusTip": "Chant with eyes closed — the whole screen becomes your mala.",
+    "focusTipTry": "Try it",
+    "focusTipDismiss": "Got it"
   },
   "mantras": {
     "title": "Sacred Library",
@@ -51,8 +59,30 @@
     "currentStreak": "Current streak",
     "days": "days",
     "dailyFocus": "Daily Focus",
-    "ofBeads": "/ 1008 Beads",
-    "streakPaused": "Streak paused — chant today to begin anew"
+    "streakPaused": "Streak paused — chant today to begin anew",
+    "today": "Today",
+    "ofGoalBeads": "of {{goal}} beads",
+    "malasOfGoal": "{{done}} of {{goal}} malas",
+    "goalMet": "Daily sankalpa fulfilled",
+    "editGoal": "Edit goal",
+    "bestStreak": "Best streak",
+    "lifetime": "Lifetime beads",
+    "thisWeek": "This week",
+    "calendar": "Practice calendar",
+    "less": "Less",
+    "more": "More",
+    "calendarAria": "{{count}} days of practice in the last {{weeks}} weeks",
+    "byMantra": "By mantra",
+    "earlier": "Earlier practice",
+    "removedMantra": "Removed mantra",
+    "noHistory": "Your practice will appear here as you chant.",
+    "dayAria": "{{day}}: {{count}} beads",
+    "restoreTitle": "Keep your {{days}}-day streak",
+    "restoreDesc": "You missed yesterday. Watch a short ad to carry your streak forward.",
+    "restoreAction": "Watch ad to restore",
+    "restoreLoading": "Loading ad…",
+    "restoreDone": "Streak restored. Chant today to keep it going.",
+    "weekdays": ["S", "M", "T", "W", "T", "F", "S"]
   },
   "settings": {
     "title": "Settings & Guidance",
@@ -98,20 +128,62 @@
     "importInvalidDesc": "Check that you pasted the full exported text and try again.",
     "importConfirmTitle": "Replace current data?",
     "importConfirmDesc": "Your counts, streak, custom mantras and settings on this phone will be replaced by the backup.",
-    "importDone": "Backup restored"
+    "importDone": "Backup restored",
+    "practice": "Practice",
+    "dailyGoalTitle": "Daily goal",
+    "dailyGoalDesc": "Malas of 108 beads you aim to complete each day.",
+    "chimeTitle": "Round chime",
+    "chimeDesc": "A temple bell rings each time you complete 108 beads.",
+    "pauseTitle": "Pause after each round",
+    "pauseDesc": "Ignore taps for 2 seconds after a round so you don't run into the next one."
   },
   "common": {
     "loading": "Loading…",
     "somethingWentWrong": "Something went wrong",
     "tryAgain": "Try again",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "malas_one": "{{count}} mala",
+    "malas_other": "{{count}} malas",
+    "back": "Back"
   },
   "onboarding": {
     "splashTagline": "Count. Chant. Be still.",
     "title": "Welcome, sadhaka",
     "subtitle": "What shall we call you? This name appears in your settings.",
     "placeholder": "Your name",
-    "continue": "Continue"
+    "continue": "Continue",
+    "goalTitle": "Your daily sankalpa",
+    "goalSubtitle": "How many malas of 108 beads would you like to chant each day? You can change this anytime.",
+    "begin": "Begin"
+  },
+  "focus": {
+    "hint": "Tap anywhere to count · Hold to exit",
+    "tapAria": "Count one bead",
+    "tapHint": "Tap to count. Hold to exit eyes-closed mode.",
+    "exitAria": "Exit eyes-closed mode"
+  },
+  "sankalpa": {
+    "title": "Sankalpa",
+    "ctaTitle": "Take a sankalpa",
+    "ctaDesc": "Commit to a mantra count over a set number of days — like 1,25,000 Gayatri in 40 days.",
+    "ctaAction": "Set sankalpa",
+    "dayOf": "Day {{day}} of {{days}}",
+    "perDay": "{{count}} beads a day to finish on time",
+    "completed": "Sankalpa fulfilled",
+    "expired": "The {{days}} days have passed",
+    "newAction": "Start new",
+    "endAction": "End",
+    "endTitle": "End this sankalpa?",
+    "endDesc": "Beads you counted stay in your history.",
+    "sheetTitle": "Your sankalpa",
+    "dailyGoal": "Daily goal",
+    "vowToggle": "Add a long vow (anushthan)",
+    "vowMantra": "Mantra",
+    "vowMantraHint": "Only beads of your current mantra count. Change it on the Counter.",
+    "vowTarget": "Total beads",
+    "vowDays": "Days",
+    "vowReplace": "Saving starts a new vow from day 1.",
+    "daysCount": "{{count}} days"
   }
 }

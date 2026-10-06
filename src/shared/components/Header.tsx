@@ -4,9 +4,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { BrandMark } from '@/shared/components/BrandMark';
 import { colors, fontFamily, spacing } from '@/shared/theme';
 
-type Props = { title: string };
+type Props = {
+  title: string;
+  /** Optional trailing action (≤44pt wide); keep it memoized to preserve Header's memo. */
+  right?: React.ReactNode;
+};
 
-export const Header = React.memo(function Header({ title }: Props) {
+export const Header = React.memo(function Header({ title, right }: Props) {
   return (
     <View style={styles.header}>
       <View style={styles.side}>
@@ -20,7 +24,7 @@ export const Header = React.memo(function Header({ title }: Props) {
       </Text>
 
       {/* Mirrors the brand slot so the title stays centred. */}
-      <View style={styles.side} />
+      <View style={styles.side}>{right}</View>
     </View>
   );
 });

@@ -5,20 +5,59 @@ import { useTranslation } from 'react-i18next';
 
 import { BrandMark } from '@/shared/components/BrandMark';
 import { Button } from '@/shared/components/Button';
+import { PillGrid } from '@/shared/components/PillGrid';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
 import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { DAILY_GOAL_OPTIONS, DEFAULT_DAILY_GOAL_MALAS } from '@/shared/types/models';
 
-/** First-launch screen that collects the name shown in Settings. */
+/** First launch, two short steps: the name shown in Settings, then the daily sankalpa. */
 export function OnboardingScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const completeOnboarding = useSettingsStore((s) => s.completeOnboarding);
   const [name, setName] = useState('');
+  const [step, setStep] = useState<'name' | 'goal'>('name');
+  const [goal, setGoal] = useState(String(DEFAULT_DAILY_GOAL_MALAS));
 
   const canContinue = name.trim().length > 0;
-  const submit = () => {
-    if (canContinue) completeOnboarding(name);
+  const next = () => {
+    if (canContinue) setStep('goal');
   };
+  const finish = () => completeOnboarding(name, Number(goal));
+
+  if (step === 'goal') {
+    return (
+      <View
+        style={[styles.root, { paddingTop: insets.top, paddingBottom: insets.bottom + spacing.lg }]}
+      >
+        <View style={styles.body}>
+          <BrandMark size={56} />
+          <Text style={styles.title}>{t('onboarding.goalTitle')}</Text>
+          <Text style={styles.subtitle}>{t('onboarding.goalSubtitle')}</Text>
+          <View style={styles.goalGrid}>
+            <PillGrid
+              columns={3}
+              value={goal}
+              onChange={setGoal}
+              options={DAILY_GOAL_OPTIONS.map((n) => ({
+                value: String(n),
+                label: t('common.malas', { count: n }),
+              }))}
+            />
+          </View>
+        </View>
+        <View style={styles.actions}>
+          <Button
+            label={t('common.back')}
+            variant="secondary"
+            onPress={() => setStep('name')}
+            style={styles.action}
+          />
+          <Button label={t('onboarding.begin')} onPress={finish} style={styles.action} />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -38,12 +77,12 @@ export function OnboardingScreen() {
           autoFocus
           maxLength={40}
           returnKeyType="done"
-          onSubmitEditing={submit}
+          onSubmitEditing={next}
         />
       </View>
       <Button
         label={t('onboarding.continue')}
-        onPress={submit}
+        onPress={next}
         disabled={!canContinue}
         style={!canContinue && styles.disabled}
       />
@@ -84,4 +123,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   disabled: { opacity: 0.4 },
+  goalGrid: { alignSelf: 'stretch', marginTop: spacing.xl },
+  actions: { flexDirection: 'row', gap: spacing.sm },
+  action: { flex: 1 },
 });

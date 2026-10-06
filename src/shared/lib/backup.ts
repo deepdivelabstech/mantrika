@@ -1,9 +1,10 @@
 import { useMantraStore } from '@/shared/store/useMantraStore';
-import { useProgressStore } from '@/shared/store/useProgressStore';
-import { useSettingsStore } from '@/shared/store/useSettingsStore';
-import type { CustomMantra, ProgressState, Settings } from '@/shared/types/models';
+import { migrateProgress, pickProgress, useProgressStore } from '@/shared/store/useProgressStore';
+import { MAX_DAILY_GOAL_MALAS, useSettingsStore } from '@/shared/store/useSettingsStore';
+import type { CustomMantra, ProgressState, Sankalpa, Settings } from '@/shared/types/models';
 
-export const BACKUP_VERSION = 1;
+/** v2 adds the per-day log, per-mantra totals, best streak and sankalpa. v1 still imports. */
+export const BACKUP_VERSION = 2;
 
 export type Backup = {
   app: 'mantrika';
@@ -22,15 +23,7 @@ export function buildBackup(now = new Date()): Backup {
     app: 'mantrika',
     version: BACKUP_VERSION,
     exportedAt: now.toISOString(),
-    progress: {
-      currentMantraId: p.currentMantraId,
-      beadsToday: p.beadsToday,
-      roundsToday: p.roundsToday,
-      totalBeadsLifetime: p.totalBeadsLifetime,
-      streakDays: p.streakDays,
-      lastActiveDate: p.lastActiveDate,
-      activeDates: p.activeDates,
-    },
+    progress: pickProgress(p),
     settings: {
       name: s.name,
       onboarded: s.onboarded,
@@ -40,6 +33,10 @@ export function buildBackup(now = new Date()): Backup {
       animSpeed: s.animSpeed,
       sound: s.sound,
       reminderTime: s.reminderTime,
+      dailyGoalMalas: s.dailyGoalMalas,
+      roundChime: s.roundChime,
+      pauseAfterRound: s.pauseAfterRound,
+      focusDiscovered: s.focusDiscovered,
     },
     mantras: { custom: m.custom, favorites: m.favorites },
   };
@@ -50,7 +47,22 @@ const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFin
 const isStrArr = (v: unknown): v is string[] =>
   Array.isArray(v) && v.every((x) => typeof x === 'string');
 
-function isProgress(v: unknown): v is ProgressState {
+const isCountMap = (v: unknown): v is Record<string, number> =>
+  isObj(v) && Object.values(v).every(isNum);
+
+function isSankalpa(v: unknown): v is Sankalpa {
+  return (
+    isObj(v) &&
+    typeof v.mantraId === 'string' &&
+    isNum(v.targetBeads) &&
+    isNum(v.days) &&
+    typeof v.startDate === 'string' &&
+    isNum(v.count)
+  );
+}
+
+/** v2 fields are optional so v1 backups pass; when present they must be well-formed. */
+function isProgress(v: unknown): v is Partial<ProgressState> {
   return (
     isObj(v) &&
     typeof v.currentMantraId === 'string' &&
@@ -59,7 +71,12 @@ function isProgress(v: unknown): v is ProgressState {
     isNum(v.totalBeadsLifetime) &&
     isNum(v.streakDays) &&
     typeof v.lastActiveDate === 'string' &&
-    isStrArr(v.activeDates)
+    isStrArr(v.activeDates) &&
+    (v.dailyLog === undefined ||
+      (isObj(v.dailyLog) && Object.values(v.dailyLog).every(isCountMap))) &&
+    (v.mantraTotals === undefined || isCountMap(v.mantraTotals)) &&
+    (v.bestStreak === undefined || isNum(v.bestStreak)) &&
+    (v.sankalpa === undefined || v.sankalpa === null || isSankalpa(v.sankalpa))
   );
 }
 
@@ -95,7 +112,7 @@ export function parseBackup(json: string): Backup {
   ) {
     throw new Error('invalid-mantras');
   }
-  return data as Backup;
+  return { ...(data as Backup), progress: migrateProgress(progress) };
 }
 
 const SETTINGS_ENUMS: Partial<Record<keyof Settings, readonly unknown[]>> = {
@@ -116,6 +133,10 @@ function sanitizeSettings(incoming: Record<string, unknown>, current: Settings):
     } else if (key === 'reminderTime' && (value === null || typeof value === 'string')) {
       out[key] = value;
     }
+  }
+  const goal = out.dailyGoalMalas;
+  if (typeof goal === 'number' && !(goal >= 1 && goal <= MAX_DAILY_GOAL_MALAS)) {
+    delete out.dailyGoalMalas;
   }
   return out as Partial<Settings>;
 }

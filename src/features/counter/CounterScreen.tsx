@@ -1,18 +1,30 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Animated, {
   useAnimatedStyle,
+  useReducedMotion,
   useSharedValue,
+  withDelay,
+  withRepeat,
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
 
 import { MalaLoop } from '@/features/counter/components/MalaLoop';
+import { FocusTip } from '@/features/counter/components/FocusTip';
 import { MantraPickerSheet } from '@/features/counter/components/MantraPickerSheet';
 import { RisingMantra } from '@/features/counter/components/RisingMantra';
+import {
+  CELEBRATION_MS,
+  milestoneText,
+  RoundCelebration,
+} from '@/features/counter/components/RoundCelebration';
+import { useBeadCounter, type BeadEvent } from '@/features/counter/hooks/useBeadCounter';
 import { useFloatingChants } from '@/features/counter/hooks/useFloatingChants';
 import { Header } from '@/shared/components/Header';
+import { EyesClosedIcon } from '@/shared/components/icons';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { useHaptics } from '@/shared/hooks/useHaptics';
 import { MALA_CANVAS, useMalaLayout } from '@/shared/hooks/useMalaGeometry';
@@ -42,6 +54,9 @@ export function CounterScreen() {
   const lang = useSettingsStore((s) => s.lang);
   const risingMantra = useSettingsStore((s) => s.risingMantra);
   const animSpeed = useSettingsStore((s) => s.animSpeed);
+  const goalMalas = useSettingsStore((s) => s.dailyGoalMalas);
+  const focusDiscovered = useSettingsStore((s) => s.focusDiscovered);
+  const markFocusDiscovered = useSettingsStore((s) => s.markFocusDiscovered);
 
   const catalog = useMantraStore((s) => s.catalog);
   const custom = useMantraStore((s) => s.custom);
@@ -52,7 +67,6 @@ export function CounterScreen() {
   const roundsToday = useProgressStore((s) => selectRoundsToday(s, today));
   const canUndo = useProgressStore((s) => s.undoStack.length > 0);
   const setCurrentMantra = useProgressStore((s) => s.setCurrentMantra);
-  const tapBead = useProgressStore((s) => s.tapBead);
   const undoLastBead = useProgressStore((s) => s.undoLastBead);
 
   const [mainHeight, setMainHeight] = useState(0);
@@ -63,7 +77,52 @@ export function CounterScreen() {
   const textScale = Math.min(Math.max(mala.scale, 0.8), 1.3);
 
   const { tick } = useHaptics();
+  const countBead = useBeadCounter();
   const { floats, spawn, remove } = useFloatingChants();
+  const navigation = useNavigation();
+
+  const [celebration, setCelebration] = useState<{ id: number; event: BeadEvent } | null>(null);
+  const clearCelebration = useCallback(
+    (id: number) => setCelebration((c) => (c?.id === id ? null : c)),
+    [],
+  );
+
+  // Eyes-closed mode discovery: the header button pulses until the mode has been
+  // found, and a one-time tip appears after the first round (once the
+  // celebration has played, so they don't overlap).
+  const reduceMotion = useReducedMotion();
+  const focusPulse = useSharedValue(1);
+  useEffect(() => {
+    if (focusDiscovered || reduceMotion) return;
+    focusPulse.value = withDelay(
+      600,
+      withRepeat(
+        withSequence(withTiming(1.18, { duration: 380 }), withTiming(1, { duration: 380 })),
+        3,
+      ),
+    );
+  }, [focusDiscovered, reduceMotion, focusPulse]);
+  const focusPulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: focusPulse.value }],
+  }));
+
+  const [showTip, setShowTip] = useState(false);
+  const tipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (tipTimer.current) clearTimeout(tipTimer.current);
+    },
+    [],
+  );
+  const openFocus = useCallback(() => {
+    setShowTip(false);
+    markFocusDiscovered();
+    navigation.navigate('Focus' as never);
+  }, [markFocusDiscovered, navigation]);
+  const dismissTip = useCallback(() => {
+    setShowTip(false);
+    markFocusDiscovered();
+  }, [markFocusDiscovered]);
 
   const [shakeTick, setShakeTick] = useState(0);
   const beadShake = useSharedValue(0);
@@ -100,8 +159,15 @@ export function CounterScreen() {
       : beadsToday % BEADS_PER_ROUND;
 
   const handleTap = () => {
-    tick();
-    tapBead();
+    const event = countBead();
+    if (!event) return; // paused after a round
+    if (event.milestone) setCelebration({ id: Date.now(), event });
+    if (event.roundCompleted && !focusDiscovered && !showTip && !tipTimer.current) {
+      tipTimer.current = setTimeout(() => {
+        tipTimer.current = null;
+        setShowTip(true);
+      }, CELEBRATION_MS);
+    }
     setShakeTick((n) => n + 1);
     if (risingMantra && current) {
       const isCustom = current.id.startsWith('custom-');
@@ -114,6 +180,26 @@ export function CounterScreen() {
     tick();
     undoLastBead();
   };
+
+  // Memoized so Header (React.memo) doesn't re-render on every bead.
+  const focusButton = useMemo(
+    () => (
+      <TouchableOpacity
+        onPress={openFocus}
+        accessibilityRole="button"
+        accessibilityLabel={t('counter.focusAria')}
+        style={styles.focusButton}
+      >
+        <Animated.View style={focusPulseStyle}>
+          <EyesClosedIcon size={20} color={colors.maroon} />
+        </Animated.View>
+        <Text style={styles.focusLabel} numberOfLines={1}>
+          {t('counter.focusLabel')}
+        </Text>
+      </TouchableOpacity>
+    ),
+    [openFocus, focusPulseStyle, t],
+  );
 
   const closeSheet = useCallback(() => setSheetOpen(false), []);
   const pickMantra = useCallback(
@@ -130,7 +216,7 @@ export function CounterScreen() {
 
   return (
     <ScreenContainer>
-      <Header title={t('appTitle')} />
+      <Header title={t('appTitle')} right={focusButton} />
 
       <View
         style={styles.main}
@@ -179,8 +265,23 @@ export function CounterScreen() {
               <View style={[styles.fillBar, { width: `${fillFraction(beadsInRound) * 100}%` }]} />
             </View>
             <Text style={styles.statLabel}>{t('counter.rounds')}</Text>
-            <Text style={[styles.statValueSmall, scaledFont(32, textScale)]}>{roundsToday}</Text>
+            <Text
+              style={[styles.statValueSmall, scaledFont(32, textScale)]}
+              accessibilityLabel={t('progress.malasOfGoal', { done: roundsToday, goal: goalMalas })}
+            >
+              {roundsToday}
+              <Text style={[styles.statGoal, scaledFont(16, textScale)]}>/{goalMalas}</Text>
+            </Text>
           </View>
+
+          {celebration ? (
+            <RoundCelebration
+              key={celebration.id}
+              id={celebration.id}
+              {...milestoneText(celebration.event, t)}
+              onDone={clearCelebration}
+            />
+          ) : null}
         </View>
 
         <TouchableOpacity
@@ -226,6 +327,8 @@ export function CounterScreen() {
             originWidth={mantraOrigin.width}
           />
         ))}
+
+        {showTip ? <FocusTip onTry={openFocus} onDismiss={dismissTip} /> : null}
       </View>
 
       <MantraPickerSheet
@@ -284,6 +387,7 @@ const styles = StyleSheet.create({
   },
   statValue: { fontFamily: fontFamily.serif400, color: colors.ink },
   statValueSmall: { fontFamily: fontFamily.serif400, color: colors.saffronDark },
+  statGoal: { fontFamily: fontFamily.serif400, color: colors.muted },
   fillTrack: {
     height: 4,
     width: '75%',
@@ -293,6 +397,14 @@ const styles = StyleSheet.create({
     marginVertical: spacing.xs,
   },
   fillBar: { height: 4, borderRadius: 2, backgroundColor: colors.maroon },
+  focusButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  focusLabel: {
+    marginTop: 1,
+    fontFamily: fontFamily.sans600,
+    fontSize: 10,
+    lineHeight: 12,
+    color: colors.maroon,
+  },
   tapButton: {
     width: 184,
     height: TAP_BUTTON_HEIGHT,

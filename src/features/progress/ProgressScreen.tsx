@@ -1,97 +1,196 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { DailyFocusCard } from '@/features/progress/components/DailyFocusCard';
-import { StatCard } from '@/features/progress/components/StatCard';
-import { StreakDots } from '@/features/progress/components/StreakDots';
+import { MantraBreakdown } from '@/features/progress/components/MantraBreakdown';
+import { PracticeHeatmap } from '@/features/progress/components/PracticeHeatmap';
+import { SankalpaCard } from '@/features/progress/components/SankalpaCard';
+import { SankalpaSheet, type SankalpaDraft } from '@/features/progress/components/SankalpaSheet';
+import { StatTile } from '@/features/progress/components/StatTile';
+import { StreakRestoreCard } from '@/features/progress/components/StreakRestoreCard';
+import { WeekChart } from '@/features/progress/components/WeekChart';
+import { AdBanner } from '@/shared/components/AdBanner';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { useToday } from '@/shared/hooks/useToday';
+import { canRestoreStreak } from '@/shared/lib/adPacing';
+import { displayName, findMantra, mergeMantras } from '@/shared/lib/mantraDisplay';
+import { useAdStore } from '@/shared/store/useAdStore';
+import { useMantraStore } from '@/shared/store/useMantraStore';
 import {
-  selectBeadsToday,
-  selectRoundsToday,
   selectStreakDays,
+  selectTodayTotal,
   useProgressStore,
 } from '@/shared/store/useProgressStore';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { useSettingsStore } from '@/shared/store/useSettingsStore';
+import { colors, spacing } from '@/shared/theme';
+import { BEADS_PER_ROUND } from '@/shared/types/models';
 
+// The tab is frozen while blurred (freezeOnBlur), so none of this recomputes
+// during counting; every derived value is memoized on stable store references.
 export function ProgressScreen() {
   const { t } = useTranslation();
-  const totalBeadsLifetime = useProgressStore((s) => s.totalBeadsLifetime);
   const today = useToday();
-  const roundsToday = useProgressStore((s) => selectRoundsToday(s, today));
-  const beadsToday = useProgressStore((s) => selectBeadsToday(s, today));
+
+  const lang = useSettingsStore((s) => s.lang);
+  const goalMalas = useSettingsStore((s) => s.dailyGoalMalas);
+  const setDailyGoalMalas = useSettingsStore((s) => s.setDailyGoalMalas);
+
+  const catalog = useMantraStore((s) => s.catalog);
+  const custom = useMantraStore((s) => s.custom);
+
+  const dailyLog = useProgressStore((s) => s.dailyLog);
+  const activeDates = useProgressStore((s) => s.activeDates);
+  const mantraTotals = useProgressStore((s) => s.mantraTotals);
+  const totalBeadsLifetime = useProgressStore((s) => s.totalBeadsLifetime);
+  const bestStreak = useProgressStore((s) => s.bestStreak);
+  const sankalpa = useProgressStore((s) => s.sankalpa);
+  const currentMantraId = useProgressStore((s) => s.currentMantraId);
+  const setSankalpa = useProgressStore((s) => s.setSankalpa);
+  const clearSankalpa = useProgressStore((s) => s.clearSankalpa);
+  const todayTotal = useProgressStore((s) => selectTodayTotal(s, today));
   const streakDays = useProgressStore((s) => selectStreakDays(s, today));
   const streakPaused = useProgressStore(
     (s) => s.streakDays > 0 && selectStreakDays(s, today) === 0,
   );
-  const activeDates = useProgressStore((s) => s.activeDates);
+
+  const storedStreak = useProgressStore((s) => s.streakDays);
+  const lastActiveDate = useProgressStore((s) => s.lastActiveDate);
+  const restoreStreak = useProgressStore((s) => s.restoreStreak);
+  const lastStreakRestoreDate = useAdStore((s) => s.lastStreakRestoreDate);
+  const markStreakRestored = useAdStore((s) => s.markStreakRestored);
+  const canRestore =
+    Platform.OS !== 'web' &&
+    canRestoreStreak({
+      today,
+      lastActiveDate,
+      streakDays: storedStreak,
+      lastRestoreDate: lastStreakRestoreDate,
+    });
+  // Keeps the card up (as a confirmation) after the restore makes it ineligible.
+  const [restored, setRestored] = useState(false);
+  const handleRestore = useCallback(() => {
+    restoreStreak();
+    markStreakRestored(today);
+    setRestored(true);
+  }, [restoreStreak, markStreakRestored, today]);
+
+  const customLabel = t('counter.customMantraLabel');
+  const mantras = useMemo(
+    () => mergeMantras(catalog, custom, customLabel),
+    [catalog, custom, customLabel],
+  );
+  const nameOf = useCallback(
+    (id: string) => {
+      const m = findMantra(mantras, id);
+      return {
+        name: m ? displayName(m, lang) : t('progress.removedMantra'),
+        devanagari: lang === 'hi' && !!m && !id.startsWith('custom-'),
+      };
+    },
+    [mantras, lang, t],
+  );
+  const vowMantra = sankalpa ? nameOf(sankalpa.mantraId) : null;
+  const current = nameOf(currentMantraId);
+
+  const [sheet, setSheet] = useState<{ withVow: boolean } | null>(null);
+  const openGoal = useCallback(() => setSheet({ withVow: false }), []);
+  const openVow = useCallback(() => setSheet({ withVow: true }), []);
+  const closeSheet = useCallback(() => setSheet(null), []);
+  const save = useCallback(
+    (draft: SankalpaDraft) => {
+      setDailyGoalMalas(draft.dailyGoalMalas);
+      if (draft.vow) setSankalpa({ mantraId: currentMantraId, ...draft.vow });
+      setSheet(null);
+    },
+    [setDailyGoalMalas, setSankalpa, currentMantraId],
+  );
 
   return (
     <ScreenContainer>
       <Header title={t('appTitle')} />
       <ScrollView contentContainerStyle={styles.content}>
-        <StatCard
-          label={t('progress.totalBeads')}
-          value={totalBeadsLifetime.toLocaleString()}
-          sub={t('progress.lifeToDate')}
-        />
+        <DailyFocusCard todayTotal={todayTotal} goalMalas={goalMalas} onEditGoal={openGoal} />
 
-        <StatCard
-          label={t('progress.roundsDone')}
-          value={String(roundsToday)}
-          sub={t('progress.malaCompletions')}
-          valueColor={colors.saffronDark}
-          decorativeRing
-        />
-
-        <View style={styles.streakCard}>
-          <Text style={styles.streakLabel}>{t('progress.currentStreak')}</Text>
-          <View style={styles.streakValueRow}>
-            <Text style={styles.streakValue}>{streakDays}</Text>
-            <Text style={styles.streakUnit}>{t('progress.days')}</Text>
-          </View>
-          {streakPaused ? (
-            <Text style={styles.streakPaused}>{t('progress.streakPaused')}</Text>
-          ) : null}
-          <View style={styles.dotsWrap}>
-            <StreakDots activeDates={activeDates} />
-          </View>
+        <View style={styles.tiles}>
+          <StatTile
+            label={t('progress.currentStreak')}
+            value={String(streakDays)}
+            sub={streakPaused ? t('progress.streakPaused') : t('progress.days')}
+          />
+          <StatTile
+            label={t('progress.bestStreak')}
+            value={String(Math.max(bestStreak, streakDays))}
+            sub={t('progress.days')}
+            valueColor={colors.saffronDark}
+          />
+          <StatTile
+            label={t('progress.lifetime')}
+            value={compact(totalBeadsLifetime)}
+            sub={t('common.malas', { count: Math.floor(totalBeadsLifetime / BEADS_PER_ROUND) })}
+          />
         </View>
 
-        <DailyFocusCard beadsToday={beadsToday} />
+        {canRestore || restored ? (
+          <StreakRestoreCard
+            streakDays={storedStreak}
+            restored={restored}
+            onRestore={handleRestore}
+          />
+        ) : null}
+
+        <SankalpaCard
+          sankalpa={sankalpa}
+          today={today}
+          mantraName={vowMantra?.name ?? ''}
+          devanagari={vowMantra?.devanagari ?? false}
+          onSet={openVow}
+          onEnd={clearSankalpa}
+        />
+
+        <WeekChart dailyLog={dailyLog} today={today} goalBeads={goalMalas * BEADS_PER_ROUND} />
+
+        <AdBanner variant="inline" />
+
+        <PracticeHeatmap
+          dailyLog={dailyLog}
+          activeDates={activeDates}
+          today={today}
+          goalBeads={goalMalas * BEADS_PER_ROUND}
+        />
+
+        <MantraBreakdown
+          mantraTotals={mantraTotals}
+          totalBeadsLifetime={totalBeadsLifetime}
+          mantras={mantras}
+          lang={lang}
+        />
       </ScrollView>
+
+      {sheet ? (
+        <SankalpaSheet
+          startWithVow={sheet.withVow}
+          hasActiveVow={!!sankalpa}
+          dailyGoalMalas={goalMalas}
+          mantraName={current.name}
+          devanagari={current.devanagari}
+          onClose={closeSheet}
+          onSave={save}
+        />
+      ) : null}
     </ScreenContainer>
   );
 }
 
+/** Lifetime counts outgrow a third-width tile; 54,321 → 54.3k. */
+function compact(n: number): string {
+  if (n < 10000) return n.toLocaleString();
+  if (n < 1_000_000) return `${(n / 1000).toFixed(n < 100000 ? 1 : 0)}k`;
+  return `${(n / 1_000_000).toFixed(1)}M`;
+}
+
 const styles = StyleSheet.create({
   content: { paddingHorizontal: spacing.lg, paddingVertical: spacing.xl, gap: spacing.lg },
-  streakCard: {
-    height: 176,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: radius.md,
-    shadowColor: '#5A2819',
-    shadowOpacity: 0.05,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 2,
-  },
-  streakLabel: {
-    fontSize: 12,
-    letterSpacing: 1.4,
-    color: colors.ink,
-    fontFamily: fontFamily.sans600,
-    textTransform: 'uppercase',
-  },
-  streakValueRow: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs, marginTop: 10 },
-  streakValue: { fontFamily: fontFamily.serif400, fontSize: 58, lineHeight: 61, color: colors.ink },
-  streakUnit: { fontSize: 15, color: colors.muted },
-  streakPaused: { marginTop: 2, fontSize: 13, color: colors.muted },
-  dotsWrap: { marginTop: 12 },
+  tiles: { flexDirection: 'row', gap: spacing.sm },
 });

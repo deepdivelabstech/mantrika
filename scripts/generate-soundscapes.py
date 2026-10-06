@@ -9,7 +9,10 @@ Each loop is rendered into a circular buffer: noise beds get their tail
 crossfaded into their head, and one-shot events (bird calls, bowl strikes)
 wrap around the end. Playback with `player.loop = true` is therefore seamless.
 
-Usage:  python3 scripts/generate-soundscapes.py
+It also renders `chime`, the one-shot temple bell played when a mala round
+completes (not a loop, so it is written as-is).
+
+Usage:  python3 scripts/generate-soundscapes.py [name ...]   (default: all)
 """
 
 import math
@@ -17,6 +20,7 @@ import os
 import random
 import struct
 import subprocess
+import sys
 import tempfile
 import wave
 
@@ -225,6 +229,18 @@ def bowls(rng):
     return lowpass(out, 6000)
 
 
+def chime(rng):
+    """Round-complete chime: one clear temple-bell strike that rings out in ~3 s."""
+    partials = [(1.0, 1.0, 1.0), (2.76, 0.5, 0.5), (5.40, 0.22, 0.3), (8.93, 0.1, 0.18)]
+    n = int(3.2 * SR)
+    out = lowpass(bell(659.3, 3.2, partials, 0.9, rng, detune=0.9), 5000)
+    # fade the last 300 ms so the file ends in silence rather than a cut
+    f = int(0.3 * SR)
+    for i in range(f):
+        out[n - f + i] *= 1 - i / f
+    return out
+
+
 # ── output ───────────────────────────────────────────────────────────────────
 
 
@@ -246,6 +262,10 @@ def write_m4a(name, samples):
     print(f'wrote {os.path.relpath(out_path)} ({os.path.getsize(out_path) // 1024} KB)')
 
 
+SOUNDS = (('ganga', ganga, 108), ('forest', forest, 27), ('bowls', bowls, 9), ('chime', chime, 3))
+
 if __name__ == '__main__':
-    for name, fn, seed in (('ganga', ganga, 108), ('forest', forest, 27), ('bowls', bowls, 9)):
-        write_m4a(name, fn(random.Random(seed)))
+    wanted = set(sys.argv[1:])
+    for name, fn, seed in SOUNDS:
+        if not wanted or name in wanted:
+            write_m4a(name, fn(random.Random(seed)))

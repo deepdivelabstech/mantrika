@@ -77,6 +77,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       appEnv: profile,
       admobBannerAndroid: process.env.ADMOB_BANNER_ANDROID ?? '',
       admobBannerIos: process.env.ADMOB_BANNER_IOS ?? '',
+      admobInterstitialAndroid: process.env.ADMOB_INTERSTITIAL_ANDROID ?? '',
+      admobInterstitialIos: process.env.ADMOB_INTERSTITIAL_IOS ?? '',
+      admobRewardedAndroid: process.env.ADMOB_REWARDED_ANDROID ?? '',
+      admobRewardedIos: process.env.ADMOB_REWARDED_IOS ?? '',
       remoteCatalogUrl: process.env.REMOTE_CATALOG_URL ?? '',
     },
     updates: {
