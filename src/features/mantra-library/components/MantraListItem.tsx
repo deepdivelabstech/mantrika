@@ -12,6 +12,10 @@ type Props = {
   lang: Language;
   active: boolean;
   favorite: boolean;
+  /** Localized tradition name, e.g. "Shiva". */
+  categoryLabel?: string;
+  /** Lifetime beads counted on this mantra. */
+  chanted: number;
   onSelect: (id: string) => void;
   onChant: (id: string) => void;
   onToggleFavorite: (id: string) => void;
@@ -24,6 +28,8 @@ export const MantraListItem = React.memo(function MantraListItem({
   lang,
   active,
   favorite,
+  categoryLabel,
+  chanted,
   onSelect,
   onChant,
   onToggleFavorite,
@@ -52,6 +58,16 @@ export const MantraListItem = React.memo(function MantraListItem({
           <Text style={styles.description} numberOfLines={2}>
             {mantra.description}
           </Text>
+        ) : null}
+        {categoryLabel || chanted > 0 ? (
+          <View style={styles.meta}>
+            {categoryLabel ? <Text style={styles.tag}>{categoryLabel}</Text> : null}
+            {chanted > 0 ? (
+              <Text style={styles.chanted}>
+                {t('mantras.chantedCount', { beads: chanted.toLocaleString() })}
+              </Text>
+            ) : null}
+          </View>
         ) : null}
         {active ? (
           <View style={styles.chip}>
@@ -126,6 +142,18 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   description: { marginTop: 6, fontSize: 13, lineHeight: 18.5, color: colors.muted },
+  meta: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
+  tag: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    overflow: 'hidden',
+    fontFamily: fontFamily.sans600,
+    fontSize: 11,
+    color: colors.muted,
+    backgroundColor: colors.line,
+  },
+  chanted: { fontFamily: fontFamily.sans600, fontSize: 11, color: colors.saffronDark },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',

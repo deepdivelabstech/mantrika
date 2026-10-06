@@ -1,5 +1,5 @@
 import { customToMantra } from '@/shared/store/useMantraStore';
-import type { CustomMantra, Language, Mantra } from '@/shared/types/models';
+import type { CustomMantra, Language, Mantra, MantraCategory } from '@/shared/types/models';
 
 /** Catalog mantras show real Devanagari in Hindi; a user's own custom text is never auto-transliterated. */
 export function displayName(mantra: Mantra, lang: Language): string {
@@ -19,17 +19,30 @@ export function findMantra(all: Mantra[], id: string): Mantra | undefined {
   return all.find((m) => m.id === id);
 }
 
-export function filterMantras(all: Mantra[], query: string, lang: Language): Mantra[] {
+/**
+ * Matches names, chant text, description and tradition, so a search for a
+ * deity ("hanuman") or an intention ("healing") finds the right mantras.
+ * `categoryLabel` adds the localized tradition name (e.g. "हनुमान").
+ */
+export function filterMantras(
+  all: Mantra[],
+  query: string,
+  lang: Language,
+  categoryLabel?: (category: MantraCategory) => string,
+): Mantra[] {
   const q = query.trim().toLowerCase();
   if (!q) return all;
-  return all.filter((m) => {
-    const shown = displayName(m, lang).toLowerCase();
-    return (
-      shown.includes(q) ||
-      m.name.toLowerCase().includes(q) ||
-      (m.deva ?? '').toLowerCase().includes(q)
-    );
-  });
+  return all.filter((m) =>
+    [
+      displayName(m, lang),
+      m.name,
+      m.deva,
+      m.chant,
+      m.description,
+      m.category,
+      m.category && categoryLabel?.(m.category),
+    ].some((field) => field?.toLowerCase().includes(q)),
+  );
 }
 
 /**

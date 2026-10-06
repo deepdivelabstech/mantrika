@@ -9,10 +9,12 @@ type Props<T extends string> = {
   options: Option<T>[];
   value: T;
   onChange: (v: T) => void;
+  /** Smaller, quieter pills without a count — for a secondary filter row. */
+  compact?: boolean;
 };
 
 /** Horizontally scrollable filter pills with a count badge; active pill fills maroon. */
-export function FilterChips<T extends string>({ options, value, onChange }: Props<T>) {
+export function FilterChips<T extends string>({ options, value, onChange, compact }: Props<T>) {
   return (
     <ScrollView
       horizontal
@@ -29,10 +31,24 @@ export function FilterChips<T extends string>({ options, value, onChange }: Prop
             onPress={() => onChange(o.value)}
             accessibilityRole="tab"
             accessibilityState={{ selected: active }}
-            style={[styles.chip, active && styles.chipActive]}
+            style={[
+              styles.chip,
+              compact && styles.chipCompact,
+              active && (compact ? styles.chipCompactActive : styles.chipActive),
+            ]}
           >
-            <Text style={[styles.label, active && styles.labelActive]}>{o.label}</Text>
-            <Text style={[styles.count, active && styles.countActive]}>{o.count}</Text>
+            <Text
+              style={[
+                styles.label,
+                compact && styles.labelCompact,
+                active && (compact ? styles.labelCompactActive : styles.labelActive),
+              ]}
+            >
+              {o.label}
+            </Text>
+            {compact ? null : (
+              <Text style={[styles.count, active && styles.countActive]}>{o.count}</Text>
+            )}
           </TouchableOpacity>
         );
       })}
@@ -57,8 +73,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
   },
   chipActive: { backgroundColor: colors.maroon, borderColor: colors.maroon },
+  chipCompact: { height: 32, paddingHorizontal: 12, borderRadius: 16 },
+  chipCompactActive: { backgroundColor: '#FBE3C5', borderColor: colors.saffronDark },
   label: { fontFamily: fontFamily.sans600, fontSize: 13, color: colors.ink },
   labelActive: { color: colors.ground },
+  labelCompact: { fontSize: 12, color: colors.muted },
+  labelCompactActive: { color: '#7A3E12' },
   count: {
     minWidth: 20,
     paddingHorizontal: 5,

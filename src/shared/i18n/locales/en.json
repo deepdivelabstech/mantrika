@@ -28,7 +28,7 @@
   },
   "mantras": {
     "title": "Sacred Library",
-    "searchPlaceholder": "Search sacred chants…",
+    "searchPlaceholder": "Search by name, deity or intention…",
     "searchLabel": "Search sacred chants",
     "dailyRecommendation": "Daily recommendation",
     "startSadhana": "Start Sadhana",
@@ -48,7 +48,22 @@
     "noCustom": "Add your own mantra above to chant it on the mala.",
     "chantAria": "Chant {{name}}",
     "clearSearch": "Clear search",
-    "continueSadhana": "Continue Sadhana"
+    "continueSadhana": "Continue Sadhana",
+    "anyCategory": "All traditions",
+    "chantedCount": "{{beads}} chanted",
+    "categories": {
+      "universal": "Universal",
+      "shiva": "Shiva",
+      "vishnu": "Vishnu",
+      "krishna": "Krishna",
+      "rama": "Rama",
+      "hanuman": "Hanuman",
+      "ganesha": "Ganesha",
+      "devi": "Devi",
+      "guru": "Guru",
+      "buddhist": "Buddhist",
+      "sikh": "Sikh"
+    }
   },
   "progress": {
     "title": "Your Progress",

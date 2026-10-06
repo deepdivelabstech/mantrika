@@ -5,6 +5,7 @@
     "deva": "ॐ नमः शिवाय",
     "chant": "Om Namah Shivaya",
     "description": "A salutation to Shiva, the inner Self. Chanted for surrender, transformation, and inner stillness.",
+    "category": "shiva",
     "core": true
   },
   {
@@ -12,7 +13,9 @@
     "name": "Maha Mrityunjaya Mantra",
     "deva": "ॐ त्र्यम्बकं यजामहे",
     "chant": "Om Tryambakam Yajamahe",
+    "excerpt": "ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्…",
     "description": "The 'great death-conquering' mantra, chanted for healing, protection, and longevity.",
+    "category": "shiva",
     "core": true
   },
   {
@@ -20,7 +23,9 @@
     "name": "Hare Krishna Maha Mantra",
     "deva": "हरे कृष्ण हरे कृष्ण",
     "chant": "Hare Krishna Hare Rama",
+    "excerpt": "हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे…",
     "description": "The maha-mantra of bhakti yoga, chanted for devotion and joyful surrender.",
+    "category": "krishna",
     "core": true
   },
   {
@@ -29,6 +34,7 @@
     "deva": "ॐ मणि पद्मे हूँ",
     "chant": "Om Mani Padme Hum",
     "description": "The jewel in the lotus — a mantra of compassion central to Tibetan Buddhist practice.",
+    "category": "buddhist",
     "core": true
   },
   {
@@ -36,56 +42,253 @@
     "name": "Gayatri Mantra",
     "deva": "ॐ भूर्भुवः स्वः",
     "chant": "Om Bhur Bhuvah Svah",
+    "excerpt": "ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं…",
     "description": "The ultimate prayer for enlightenment and universal light. It stimulates the intellect and purifies the subconscious mind, leading the practitioner toward higher consciousness.",
-    "excerpt": "ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं…"
-  },
-  {
-    "id": "om-namo-bhagavate-vasudevaya",
-    "name": "Om Namo Bhagavate Vasudevaya",
-    "deva": "ॐ नमो भगवते वासुदेवाय",
-    "chant": "Om Namo Bhagavate Vasudevaya",
-    "description": "A salutation to Vasudeva (Krishna/Vishnu), chanted for grace and devotion."
+    "category": "universal",
+    "core": true
   },
   {
     "id": "om-gam-ganapataye-namaha",
     "name": "Om Gam Ganapataye Namaha",
     "deva": "ॐ गं गणपतये नमः",
     "chant": "Om Gam Ganapataye Namaha",
-    "description": "An invocation to Ganesha, remover of obstacles, chanted before new beginnings."
-  },
-  {
-    "id": "sri-rama-jaya-rama",
-    "name": "Sri Rama Jaya Rama",
-    "deva": "श्री राम जय राम जय जय राम",
-    "chant": "Shri Ram Jai Ram Jai Jai Ram",
-    "description": "A devotional chant to Rama, embodiment of dharma and steadfastness."
-  },
-  {
-    "id": "om-namo-narayanaya",
-    "name": "Om Namo Narayanaya",
-    "deva": "ॐ नमो नारायणाय",
-    "chant": "Om Namo Narayanaya",
-    "description": "A salutation to Narayana (Vishnu), chanted for protection and equanimity."
+    "description": "An invocation to Ganesha, remover of obstacles, chanted before new beginnings.",
+    "category": "ganesha",
+    "core": true
   },
   {
     "id": "om-shanti-shanti-shanti",
     "name": "Om Shanti Shanti Shanti",
     "deva": "ॐ शान्तिः शान्तिः शान्तिः",
     "chant": "Om Shanti Shanti Shanti",
-    "description": "A threefold invocation of peace — of body, speech, and mind."
-  },
-  {
-    "id": "om-aim-saraswatyai-namah",
-    "name": "Om Aim Saraswatyai Namah",
-    "deva": "ॐ ऐं सरस्वत्यै नमः",
-    "chant": "Om Aim Saraswatyai Namah",
-    "description": "An invocation to Saraswati, goddess of knowledge, art, and clarity of speech."
+    "description": "A threefold invocation of peace — of body, speech, and mind.",
+    "category": "universal"
   },
   {
     "id": "lokah-samastah",
     "name": "Lokah Samastah Sukhino Bhavantu",
     "deva": "लोकाः समस्ताः सुखिनो भवन्तु",
     "chant": "Lokah Samastah Sukhino Bhavantu",
-    "description": "May all beings everywhere be happy and free — a closing dedication chant."
+    "description": "May all beings everywhere be happy and free — a closing dedication chant.",
+    "category": "universal"
+  },
+  {
+    "id": "om",
+    "name": "Om",
+    "deva": "ॐ",
+    "chant": "Om",
+    "description": "The primordial sound — the vibration from which all creation arises. Chanted to still and centre the mind.",
+    "category": "universal"
+  },
+  {
+    "id": "so-hum",
+    "name": "So Hum",
+    "deva": "सोऽहम्",
+    "chant": "So Hum",
+    "description": "\"I am That\" — a breath mantra: So on the in-breath, Hum on the out-breath.",
+    "category": "universal"
+  },
+  {
+    "id": "asato-ma-sadgamaya",
+    "name": "Asato Ma Sadgamaya",
+    "deva": "असतो मा सद्गमय",
+    "chant": "Asato Ma Sadgamaya",
+    "excerpt": "असतो मा सद्गमय। तमसो मा ज्योतिर्गमय…",
+    "description": "Lead me from the unreal to the real, from darkness to light, from death to immortality.",
+    "category": "universal"
+  },
+  {
+    "id": "om-suryaya-namah",
+    "name": "Om Suryaya Namah",
+    "deva": "ॐ सूर्याय नमः",
+    "chant": "Om Suryaya Namah",
+    "description": "A salutation to Surya, the sun, chanted at dawn for vitality and clarity.",
+    "category": "universal"
+  },
+  {
+    "id": "har-har-mahadev",
+    "name": "Har Har Mahadev",
+    "deva": "हर हर महादेव",
+    "chant": "Har Har Mahadev",
+    "description": "A joyful cry of praise to Mahadeva, the great god Shiva.",
+    "category": "shiva"
+  },
+  {
+    "id": "shivoham",
+    "name": "Shivoham",
+    "deva": "शिवोऽहम्",
+    "chant": "Shivoham",
+    "description": "\"I am Shiva\" — a non-dual mantra affirming oneness with pure consciousness.",
+    "category": "shiva"
+  },
+  {
+    "id": "om-namo-narayanaya",
+    "name": "Om Namo Narayanaya",
+    "deva": "ॐ नमो नारायणाय",
+    "chant": "Om Namo Narayanaya",
+    "description": "A salutation to Narayana (Vishnu), chanted for protection and equanimity.",
+    "category": "vishnu"
+  },
+  {
+    "id": "om-vishnave-namah",
+    "name": "Om Vishnave Namah",
+    "deva": "ॐ विष्णवे नमः",
+    "chant": "Om Vishnave Namah",
+    "description": "A salutation to Vishnu, the preserver, chanted for balance and protection.",
+    "category": "vishnu"
+  },
+  {
+    "id": "om-namo-bhagavate-vasudevaya",
+    "name": "Om Namo Bhagavate Vasudevaya",
+    "deva": "ॐ नमो भगवते वासुदेवाय",
+    "chant": "Om Namo Bhagavate Vasudevaya",
+    "description": "A salutation to Vasudeva (Krishna/Vishnu), chanted for grace and devotion.",
+    "category": "krishna"
+  },
+  {
+    "id": "om-shri-krishnaya-namah",
+    "name": "Om Shri Krishnaya Namah",
+    "deva": "ॐ श्री कृष्णाय नमः",
+    "chant": "Om Shri Krishnaya Namah",
+    "description": "A salutation to Krishna, the beloved, chanted for love and devotion.",
+    "category": "krishna"
+  },
+  {
+    "id": "radhe-radhe",
+    "name": "Radhe Radhe",
+    "deva": "राधे राधे",
+    "chant": "Radhe Radhe",
+    "description": "The name of Radha, Krishna's beloved — the heartbeat of devotion in Vrindavan.",
+    "category": "krishna"
+  },
+  {
+    "id": "sri-rama-jaya-rama",
+    "name": "Sri Rama Jaya Rama",
+    "deva": "श्री राम जय राम जय जय राम",
+    "chant": "Shri Ram Jai Ram Jai Jai Ram",
+    "description": "A devotional chant to Rama, embodiment of dharma and steadfastness.",
+    "category": "rama"
+  },
+  {
+    "id": "sita-ram",
+    "name": "Sita Ram",
+    "deva": "सीता राम",
+    "chant": "Sita Ram",
+    "description": "The names of the divine couple Sita and Rama, chanted for devotion and harmony.",
+    "category": "rama"
+  },
+  {
+    "id": "om-shri-ramaya-namah",
+    "name": "Om Shri Ramaya Namah",
+    "deva": "ॐ श्री रामाय नमः",
+    "chant": "Om Shri Ramaya Namah",
+    "description": "A salutation to Rama, embodiment of dharma, chanted for strength of character.",
+    "category": "rama"
+  },
+  {
+    "id": "om-ham-hanumate-namah",
+    "name": "Om Ham Hanumate Namah",
+    "deva": "ॐ हं हनुमते नमः",
+    "chant": "Om Ham Hanumate Namah",
+    "description": "Invokes Hanuman for courage, strength, and fearless devotion.",
+    "category": "hanuman"
+  },
+  {
+    "id": "om-shri-hanumate-namah",
+    "name": "Om Shri Hanumate Namah",
+    "deva": "ॐ श्री हनुमते नमः",
+    "chant": "Om Shri Hanumate Namah",
+    "description": "A salutation to Hanuman, Rama's devoted servant, chanted for protection and resolve.",
+    "category": "hanuman"
+  },
+  {
+    "id": "shri-ganeshaya-namah",
+    "name": "Shri Ganeshaya Namah",
+    "deva": "श्री गणेशाय नमः",
+    "chant": "Shri Ganeshaya Namah",
+    "description": "Salutations to Ganesha — the auspicious first words before any undertaking.",
+    "category": "ganesha"
+  },
+  {
+    "id": "vakratunda-mahakaya",
+    "name": "Vakratunda Mahakaya",
+    "deva": "वक्रतुण्ड महाकाय",
+    "chant": "Vakratunda Mahakaya Suryakoti Samaprabha",
+    "excerpt": "वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ…",
+    "description": "A prayer to Ganesha to keep every endeavour free of obstacles, always.",
+    "category": "ganesha"
+  },
+  {
+    "id": "om-aim-saraswatyai-namah",
+    "name": "Om Aim Saraswatyai Namah",
+    "deva": "ॐ ऐं सरस्वत्यै नमः",
+    "chant": "Om Aim Saraswatyai Namah",
+    "description": "An invocation to Saraswati, goddess of knowledge, art, and clarity of speech.",
+    "category": "devi"
+  },
+  {
+    "id": "om-dum-durgayei-namaha",
+    "name": "Om Dum Durgayei Namaha",
+    "deva": "ॐ दुं दुर्गायै नमः",
+    "chant": "Om Dum Durgayei Namaha",
+    "description": "Invokes Durga, the protective Mother, for strength and freedom from fear.",
+    "category": "devi"
+  },
+  {
+    "id": "om-shri-mahalakshmyai-namah",
+    "name": "Om Shri Mahalakshmyai Namah",
+    "deva": "ॐ श्री महालक्ष्म्यै नमः",
+    "chant": "Om Shri Mahalakshmyai Namah",
+    "description": "Invokes Lakshmi, goddess of abundance, for prosperity and grace.",
+    "category": "devi"
+  },
+  {
+    "id": "navarna-mantra",
+    "name": "Navarna Mantra",
+    "deva": "ॐ ऐं ह्रीं क्लीं चामुण्डायै विच्चे",
+    "chant": "Om Aim Hreem Kleem Chamundaye Vichche",
+    "description": "The nine-syllable mantra of the Divine Mother, central to Navratri sadhana.",
+    "category": "devi"
+  },
+  {
+    "id": "om-kreem-kalikayei-namah",
+    "name": "Om Kreem Kalikayei Namah",
+    "deva": "ॐ क्रीं कालिकायै नमः",
+    "chant": "Om Kreem Kalikayei Namah",
+    "description": "Invokes Kali, who cuts through ego and fear.",
+    "category": "devi"
+  },
+  {
+    "id": "guru-brahma",
+    "name": "Guru Brahma Guru Vishnu",
+    "deva": "गुरुर्ब्रह्मा गुरुर्विष्णुः",
+    "chant": "Gurur Brahma Gurur Vishnu",
+    "excerpt": "गुरुर्ब्रह्मा गुरुर्विष्णुः गुरुर्देवो महेश्वरः…",
+    "description": "Honours the guru as Brahma, Vishnu, and Shiva — the teacher as the Absolute itself.",
+    "category": "guru"
+  },
+  {
+    "id": "om-sai-ram",
+    "name": "Om Sai Ram",
+    "deva": "ॐ साईं राम",
+    "chant": "Om Sai Ram",
+    "description": "A remembrance of Shirdi Sai Baba, chanted for faith (shraddha) and patience (saburi).",
+    "category": "guru"
+  },
+  {
+    "id": "namo-buddhaya",
+    "name": "Namo Buddhaya",
+    "deva": "नमो बुद्धाय",
+    "chant": "Namo Buddhaya",
+    "description": "Homage to the Buddha, the awakened one — chanted for mindfulness and refuge.",
+    "category": "buddhist"
+  },
+  {
+    "id": "waheguru",
+    "name": "Waheguru",
+    "deva": "वाहेगुरु",
+    "chant": "Waheguru",
+    "description": "\"Wondrous Enlightener\" — the Sikh name of the Divine, repeated in simran (remembrance).",
+    "category": "sikh"
   }
 ]

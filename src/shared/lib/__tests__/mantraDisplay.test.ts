@@ -1,5 +1,6 @@
-import { pickDailyMantra } from '@/shared/lib/mantraDisplay';
-import type { Mantra } from '@/shared/types/models';
+import BUNDLED from '@/shared/data/mantraCatalog.json';
+import { filterMantras, pickDailyMantra } from '@/shared/lib/mantraDisplay';
+import { MANTRA_CATEGORIES, type Mantra } from '@/shared/types/models';
 
 const m = (id: string, description?: string): Mantra => ({
   id,
@@ -28,5 +29,38 @@ describe('pickDailyMantra', () => {
 
   it('falls back to the first entry when nothing has a description', () => {
     expect(pickDailyMantra([m('a'), m('b')], new Date())?.id).toBe('a');
+  });
+});
+
+describe('filterMantras', () => {
+  const catalog: Mantra[] = [
+    { ...m('om-ham-hanumate-namah', 'Invokes Hanuman for courage.'), category: 'hanuman' },
+    { ...m('om-dum-durgayei-namaha', 'Freedom from fear.'), category: 'devi' },
+    { ...m('maha-mrityunjaya', 'Chanted for healing.'), category: 'shiva' },
+  ];
+
+  it('matches the intention in the description', () => {
+    expect(filterMantras(catalog, 'healing', 'en').map((x) => x.id)).toEqual(['maha-mrityunjaya']);
+  });
+
+  it('matches the tradition, including its localized label', () => {
+    expect(filterMantras(catalog, 'devi', 'en')).toHaveLength(1);
+    const hindi = filterMantras(catalog, 'हनुमान', 'hi', (c) => (c === 'hanuman' ? 'हनुमान' : c));
+    expect(hindi.map((x) => x.id)).toEqual(['om-ham-hanumate-namah']);
+  });
+
+  it('returns everything for a blank query', () => {
+    expect(filterMantras(catalog, '  ', 'en')).toBe(catalog);
+  });
+});
+
+describe('bundled catalog', () => {
+  it('has unique ids, a known tradition and a description for every mantra', () => {
+    const ids = BUNDLED.map((x) => x.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const x of BUNDLED) {
+      expect(MANTRA_CATEGORIES).toContain(x.category);
+      expect(x.description).toBeTruthy();
+    }
   });
 });

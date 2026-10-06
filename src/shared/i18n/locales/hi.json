@@ -28,7 +28,7 @@
   },
   "mantras": {
     "title": "पवित्र संग्रह",
-    "searchPlaceholder": "पवित्र मंत्र खोजें…",
+    "searchPlaceholder": "नाम, देवता या भाव से खोजें…",
     "searchLabel": "पवित्र मंत्र खोजें",
     "dailyRecommendation": "आज का सुझाव",
     "startSadhana": "साधना शुरू करें",
@@ -48,7 +48,22 @@
     "noCustom": "माला पर जप करने के लिए ऊपर अपना मंत्र जोड़ें।",
     "chantAria": "{{name}} का जप करें",
     "clearSearch": "खोज साफ़ करें",
-    "continueSadhana": "साधना जारी रखें"
+    "continueSadhana": "साधना जारी रखें",
+    "anyCategory": "सभी परंपराएँ",
+    "chantedCount": "{{beads}} जप",
+    "categories": {
+      "universal": "सार्वभौमिक",
+      "shiva": "शिव",
+      "vishnu": "विष्णु",
+      "krishna": "कृष्ण",
+      "rama": "राम",
+      "hanuman": "हनुमान",
+      "ganesha": "गणेश",
+      "devi": "देवी",
+      "guru": "गुरु",
+      "buddhist": "बौद्ध",
+      "sikh": "सिख"
+    }
   },
   "progress": {
     "title": "आपकी प्रगति",

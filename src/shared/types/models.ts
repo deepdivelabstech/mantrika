@@ -1,3 +1,18 @@
+export const MANTRA_CATEGORIES = [
+  'universal',
+  'shiva',
+  'vishnu',
+  'krishna',
+  'rama',
+  'hanuman',
+  'ganesha',
+  'devi',
+  'guru',
+  'buddhist',
+  'sikh',
+] as const;
+export type MantraCategory = (typeof MANTRA_CATEGORIES)[number];
+
 export type Mantra = {
   id: string;
   name: string;
@@ -5,6 +20,7 @@ export type Mantra = {
   chant: string;
   description?: string;
   excerpt?: string;
+  category?: MantraCategory;
   core?: boolean;
 };
 

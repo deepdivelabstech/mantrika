@@ -17,11 +17,12 @@ import { useMantraStore } from '@/shared/store/useMantraStore';
 import { useProgressStore } from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
 import { colors, fontFamily, spacing } from '@/shared/theme';
-import type { Mantra } from '@/shared/types/models';
+import { MANTRA_CATEGORIES, type Mantra, type MantraCategory } from '@/shared/types/models';
 
 const DEFAULT_MANTRA_ID = 'om-namah-shivaya';
 
 type LibraryFilter = 'core' | 'all' | 'favorites' | 'mine';
+type CategoryFilter = MantraCategory | 'any';
 
 /** One in-list ad, after this many mantras, so it never sits at the top of the list. */
 const AD_AFTER_INDEX = 6;
@@ -42,6 +43,7 @@ export function MantraLibraryScreen() {
   const navigation = useNavigation();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<LibraryFilter>('core');
+  const [category, setCategory] = useState<CategoryFilter>('any');
 
   const lang = useSettingsStore((s) => s.lang);
   const catalog = useMantraStore((s) => s.catalog);
@@ -54,6 +56,7 @@ export function MantraLibraryScreen() {
   const toggleFavorite = useMantraStore((s) => s.toggleFavorite);
 
   const currentMantraId = useProgressStore((s) => s.currentMantraId);
+  const mantraTotals = useProgressStore((s) => s.mantraTotals);
   const setCurrentMantra = useProgressStore((s) => s.setCurrentMantra);
 
   useEffect(() => {
@@ -78,10 +81,35 @@ export function MantraLibraryScreen() {
     [all, favorites],
   );
 
+  const categoryLabel = useCallback((c: MantraCategory) => t(`mantras.categories.${c}`), [t]);
+
+  // Only traditions that actually have mantras get a chip.
+  const categoryOptions = useMemo(() => {
+    const present = new Set(all.map((m) => m.category));
+    return [
+      { value: 'any' as const, label: t('mantras.anyCategory'), count: all.length },
+      ...MANTRA_CATEGORIES.filter((c) => present.has(c)).map((c) => ({
+        value: c,
+        label: categoryLabel(c),
+        count: 0,
+      })),
+    ];
+  }, [all, categoryLabel, t]);
+
   // A search from the default "Essentials" view looks through the whole
   // library — otherwise most of the catalog would be unfindable from there.
   const searchPool = filter === 'core' && query.trim() ? all : pools[filter];
-  const visible = useMemo(() => filterMantras(searchPool, query, lang), [searchPool, query, lang]);
+  const categoryPool = useMemo(
+    () =>
+      filter === 'all' && category !== 'any'
+        ? searchPool.filter((m) => m.category === category)
+        : searchPool,
+    [searchPool, filter, category],
+  );
+  const visible = useMemo(
+    () => filterMantras(categoryPool, query, lang, categoryLabel),
+    [categoryPool, query, lang, categoryLabel],
+  );
   // No ad while searching: results should be the only thing in view.
   const rows = useMemo<Row[]>(
     () =>
@@ -158,6 +186,14 @@ export function MantraLibraryScreen() {
 
             <Text style={styles.libraryTitle}>{t('mantras.title')}</Text>
             <FilterChips options={filterOptions} value={filter} onChange={setFilter} />
+            {filter === 'all' ? (
+              <FilterChips
+                compact
+                options={categoryOptions}
+                value={category}
+                onChange={setCategory}
+              />
+            ) : null}
 
             {filter === 'mine' ? <AddCustomMantraForm onAdd={addCustomMantra} /> : null}
           </View>
@@ -171,6 +207,8 @@ export function MantraLibraryScreen() {
               lang={lang}
               active={item.id === currentMantraId}
               favorite={favorites.includes(item.id)}
+              categoryLabel={item.category ? categoryLabel(item.category) : undefined}
+              chanted={mantraTotals[item.id] ?? 0}
               onSelect={setCurrentMantra}
               onChant={handleChant}
               onToggleFavorite={toggleFavorite}

@@ -4,7 +4,8 @@ import type { Mantra } from '@/shared/types/models';
 
 import localCatalog from './mantraCatalog.json';
 
-export const BUNDLED_CATALOG: Mantra[] = localCatalog;
+// JSON imports widen `category` to string; the bundled file only uses known categories.
+export const BUNDLED_CATALOG = localCatalog as Mantra[];
 
 function isMantraArray(value: unknown): value is Mantra[] {
   return (
