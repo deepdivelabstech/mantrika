@@ -19,6 +19,14 @@ import { colors, fontFamily, spacing } from '@/shared/theme';
 const DEFAULT_MANTRA_ID = 'om-namah-shivaya';
 const FEATURED_MANTRA_ID = 'gayatri-mantra';
 
+function Separator() {
+  return <View style={styles.separator} />;
+}
+
+function Footer() {
+  return <View style={styles.footer} />;
+}
+
 export function MantraLibraryScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -112,7 +120,7 @@ export function MantraLibraryScreen() {
             onRemove={item.id.startsWith('custom-') ? () => handleRemove(item.id) : undefined}
           />
         )}
-        ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
+        ItemSeparatorComponent={Separator}
         ListEmptyComponent={
           catalogStatus === 'error' ? (
             <ErrorState
@@ -124,7 +132,7 @@ export function MantraLibraryScreen() {
             <EmptyState label={t('mantras.noResults')} />
           )
         }
-        ListFooterComponent={<View style={{ height: spacing.xl }} />}
+        ListFooterComponent={Footer}
       />
     </ScreenContainer>
   );
@@ -132,6 +140,8 @@ export function MantraLibraryScreen() {
 
 const styles = StyleSheet.create({
   listContent: { paddingHorizontal: spacing.lg },
+  separator: { height: spacing.sm },
+  footer: { height: spacing.xl },
   headerSection: { gap: spacing.md, paddingTop: spacing.md },
   eyebrow: {
     marginTop: spacing.sm,

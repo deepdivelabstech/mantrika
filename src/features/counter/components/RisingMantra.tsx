@@ -11,18 +11,20 @@ import Animated, {
 import { colors, fontFamily } from '@/shared/theme';
 
 type Props = {
+  id: number;
   chant: string;
   durationMs: number;
   dx: number;
   devanagari: boolean;
-  onDone: () => void;
+  onDone: (id: number) => void;
   originX: number;
   originY: number;
   originWidth: number;
 };
 
 /** One floating chant instance: rises from the tap button and fades out, then unmounts itself. */
-export function RisingMantra({
+export const RisingMantra = React.memo(function RisingMantra({
+  id,
   chant,
   durationMs,
   dx,
@@ -39,7 +41,7 @@ export function RisingMantra({
       1,
       { duration: durationMs, easing: Easing.out(Easing.cubic) },
       (finished) => {
-        if (finished) runOnJS(onDone)();
+        if (finished) runOnJS(onDone)(id);
       },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,7 +78,7 @@ export function RisingMantra({
       </Text>
     </Animated.View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrap: { position: 'absolute', alignItems: 'center', zIndex: 10 },

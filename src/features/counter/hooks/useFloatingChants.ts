@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import type { AnimSpeed } from '@/shared/types/models';
 
@@ -18,25 +18,22 @@ let nextKey = 0;
 /** Manages up to SLOT_COUNT concurrent rising-mantra animations, round-robining slots like the design's float indices. */
 export function useFloatingChants() {
   const [floats, setFloats] = useState<FloatingChant[]>([]);
-  const [nextSlot, setNextSlot] = useState(0);
+  // A ref (not state) so `spawn` stays stable across taps.
+  const nextSlot = useRef(0);
 
-  const spawn = useCallback(
-    (chant: string, speed: AnimSpeed, devanagari: boolean) => {
-      const idx = nextSlot % SLOT_COUNT;
-      const key = nextKey++;
-      const float: FloatingChant = {
-        key,
-        chant,
-        durationMs: SPEEDS[speed],
-        dx: ((idx % 3) - 1) * 14,
-        devanagari,
-      };
-      setFloats((prev) => [...prev, float]);
-      setNextSlot((n) => n + 1);
-      return key;
-    },
-    [nextSlot],
-  );
+  const spawn = useCallback((chant: string, speed: AnimSpeed, devanagari: boolean) => {
+    const idx = nextSlot.current++ % SLOT_COUNT;
+    const key = nextKey++;
+    const float: FloatingChant = {
+      key,
+      chant,
+      durationMs: SPEEDS[speed],
+      dx: ((idx % 3) - 1) * 14,
+      devanagari,
+    };
+    setFloats((prev) => [...prev, float]);
+    return key;
+  }, []);
 
   const remove = useCallback((key: number) => {
     setFloats((prev) => prev.filter((f) => f.key !== key));

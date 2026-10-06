@@ -31,6 +31,12 @@ function withBoundary(Screen: React.ComponentType, label: string) {
   };
 }
 
+// Wrapped once at module scope: creating them inside render would give each
+// tab a new component type on every TabNavigator render and remount it.
+const CounterTab = withBoundary(CounterScreen, 'Counter');
+const MantrasTab = withBoundary(MantraLibraryScreen, 'Mantras');
+const ProgressTab = withBoundary(ProgressScreen, 'Progress');
+
 // Matches the design's nav pill: icon + label share one rounded background,
 // not the default bottom-tabs layout of a bare icon over a small caption.
 function TabPillButton({
@@ -72,12 +78,14 @@ export function TabNavigator() {
       )}
       screenOptions={{
         headerShown: false,
+        // Unfocused tabs (e.g. Progress) skip re-renders from per-tap store updates.
+        freezeOnBlur: true,
         tabBarStyle: styles.tabBar,
       }}
     >
       <Tab.Screen
         name="Counter"
-        component={withBoundary(CounterScreen, 'Counter')}
+        component={CounterTab}
         options={{
           tabBarLabel: t('nav.counter'),
           tabBarButton: ({ onPress, 'aria-selected': selected }) => (
@@ -92,7 +100,7 @@ export function TabNavigator() {
       />
       <Tab.Screen
         name="Mantras"
-        component={withBoundary(MantraLibraryScreen, 'Mantras')}
+        component={MantrasTab}
         options={{
           tabBarLabel: t('nav.mantras'),
           tabBarButton: ({ onPress, 'aria-selected': selected }) => (
@@ -107,7 +115,7 @@ export function TabNavigator() {
       />
       <Tab.Screen
         name="Progress"
-        component={withBoundary(ProgressScreen, 'Progress')}
+        component={ProgressTab}
         options={{
           tabBarLabel: t('nav.progress'),
           tabBarButton: ({ onPress, 'aria-selected': selected }) => (

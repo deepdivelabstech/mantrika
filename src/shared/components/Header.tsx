@@ -14,7 +14,7 @@ type Props = {
   showBack?: boolean;
 };
 
-export function Header({ title, showSettings, showBack }: Props) {
+export const Header = React.memo(function Header({ title, showSettings, showBack }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -51,7 +51,7 @@ export function Header({ title, showSettings, showBack }: Props) {
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   header: {

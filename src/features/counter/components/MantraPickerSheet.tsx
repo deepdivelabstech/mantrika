@@ -24,7 +24,14 @@ const SHEET_IDS = [
   'om-mani-padme-hum',
 ];
 
-export function MantraPickerSheet({ visible, onClose, options, currentId, lang, onPick }: Props) {
+export const MantraPickerSheet = React.memo(function MantraPickerSheet({
+  visible,
+  onClose,
+  options,
+  currentId,
+  lang,
+  onPick,
+}: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -88,7 +95,7 @@ export function MantraPickerSheet({ visible, onClose, options, currentId, lang, 
       </View>
     </Modal>
   );
-}
+});
 
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: colors.overlay },

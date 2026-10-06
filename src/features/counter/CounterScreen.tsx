@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Animated, {
@@ -66,8 +66,15 @@ export function CounterScreen() {
     transform: [{ translateX: beadShake.value }],
   }));
 
-  const allMantras = mergeMantras(catalog, custom, t('counter.customMantraLabel'));
-  const current = findMantra(allMantras, currentMantraId) ?? allMantras[0];
+  const customLabel = t('counter.customMantraLabel');
+  const allMantras = useMemo(
+    () => mergeMantras(catalog, custom, customLabel),
+    [catalog, custom, customLabel],
+  );
+  const current = useMemo(
+    () => findMantra(allMantras, currentMantraId) ?? allMantras[0],
+    [allMantras, currentMantraId],
+  );
 
   const beadsInRound =
     beadsToday % BEADS_PER_ROUND === 0 && beadsToday > 0
@@ -84,6 +91,15 @@ export function CounterScreen() {
       spawn(devanagari ? current.deva : current.chant, animSpeed, devanagari);
     }
   };
+
+  const closeSheet = useCallback(() => setSheetOpen(false), []);
+  const pickMantra = useCallback(
+    (id: string) => {
+      setCurrentMantra(id);
+      setSheetOpen(false);
+    },
+    [setCurrentMantra],
+  );
 
   const curName = current ? displayName(current, lang) : '';
   const curIsCustom = current?.id.startsWith('custom-');
@@ -130,7 +146,9 @@ export function CounterScreen() {
           onPress={handleTap}
           onLayout={(e) => {
             const { x, y, width } = e.nativeEvent.layout;
-            setMantraOrigin({ x, y, width });
+            setMantraOrigin((prev) =>
+              prev.x === x && prev.y === y && prev.width === width ? prev : { x, y, width },
+            );
           }}
           accessibilityRole="button"
           accessibilityLabel={t('counter.countAria')}
@@ -144,11 +162,12 @@ export function CounterScreen() {
         {floats.map((f) => (
           <RisingMantra
             key={f.key}
+            id={f.key}
             chant={f.chant}
             durationMs={f.durationMs}
             dx={f.dx}
             devanagari={f.devanagari}
-            onDone={() => remove(f.key)}
+            onDone={remove}
             originX={mantraOrigin.x}
             originY={mantraOrigin.y}
             originWidth={mantraOrigin.width}
@@ -158,14 +177,11 @@ export function CounterScreen() {
 
       <MantraPickerSheet
         visible={sheetOpen}
-        onClose={() => setSheetOpen(false)}
+        onClose={closeSheet}
         options={allMantras}
         currentId={currentMantraId}
         lang={lang}
-        onPick={(id) => {
-          setCurrentMantra(id);
-          setSheetOpen(false);
-        }}
+        onPick={pickMantra}
       />
     </ScreenContainer>
   );
