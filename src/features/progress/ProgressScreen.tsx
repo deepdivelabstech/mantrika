@@ -7,15 +7,25 @@ import { StatCard } from '@/features/progress/components/StatCard';
 import { StreakDots } from '@/features/progress/components/StreakDots';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
-import { useProgressStore } from '@/shared/store/useProgressStore';
+import { useToday } from '@/shared/hooks/useToday';
+import {
+  selectBeadsToday,
+  selectRoundsToday,
+  selectStreakDays,
+  useProgressStore,
+} from '@/shared/store/useProgressStore';
 import { colors, fontFamily, radius, spacing } from '@/shared/theme';
 
 export function ProgressScreen() {
   const { t } = useTranslation();
   const totalBeadsLifetime = useProgressStore((s) => s.totalBeadsLifetime);
-  const roundsToday = useProgressStore((s) => s.roundsToday);
-  const beadsToday = useProgressStore((s) => s.beadsToday);
-  const streakDays = useProgressStore((s) => s.streakDays);
+  const today = useToday();
+  const roundsToday = useProgressStore((s) => selectRoundsToday(s, today));
+  const beadsToday = useProgressStore((s) => selectBeadsToday(s, today));
+  const streakDays = useProgressStore((s) => selectStreakDays(s, today));
+  const streakPaused = useProgressStore(
+    (s) => s.streakDays > 0 && selectStreakDays(s, today) === 0,
+  );
   const activeDates = useProgressStore((s) => s.activeDates);
 
   return (
@@ -42,6 +52,9 @@ export function ProgressScreen() {
             <Text style={styles.streakValue}>{streakDays}</Text>
             <Text style={styles.streakUnit}>{t('progress.days')}</Text>
           </View>
+          {streakPaused ? (
+            <Text style={styles.streakPaused}>{t('progress.streakPaused')}</Text>
+          ) : null}
           <View style={styles.dotsWrap}>
             <StreakDots activeDates={activeDates} />
           </View>
@@ -79,5 +92,6 @@ const styles = StyleSheet.create({
   streakValueRow: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs, marginTop: 10 },
   streakValue: { fontFamily: fontFamily.serif400, fontSize: 58, lineHeight: 61, color: colors.ink },
   streakUnit: { fontSize: 15, color: colors.muted },
+  streakPaused: { marginTop: 2, fontSize: 13, color: colors.muted },
   dotsWrap: { marginTop: 12 },
 });

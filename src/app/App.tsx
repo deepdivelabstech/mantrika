@@ -6,7 +6,6 @@ import React from 'react';
 import { AnimatedSplash } from '@/app/AnimatedSplash';
 import { initAds } from '@/app/ads';
 import { AppProviders } from '@/app/AppProviders';
-import { initSentry } from '@/app/sentry';
 import { RootNavigator } from '@/app/RootNavigator';
 import i18n from '@/shared/i18n';
 import { useAppFonts } from '@/shared/hooks/useAppFonts';
@@ -14,7 +13,6 @@ import { useSound } from '@/shared/hooks/useSound';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
 
 void SplashScreen.preventAutoHideAsync();
-initSentry();
 initAds();
 
 function LanguageSync() {

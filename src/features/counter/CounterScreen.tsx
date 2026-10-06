@@ -15,15 +15,25 @@ import { useFloatingChants } from '@/features/counter/hooks/useFloatingChants';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { useHaptics } from '@/shared/hooks/useHaptics';
+import { MALA_CANVAS, useMalaLayout } from '@/shared/hooks/useMalaGeometry';
+import { useToday } from '@/shared/hooks/useToday';
 import { fillFraction } from '@/shared/lib/beadMath';
 import { displayName, findMantra, mergeMantras } from '@/shared/lib/mantraDisplay';
 import { useMantraStore } from '@/shared/store/useMantraStore';
-import { useProgressStore } from '@/shared/store/useProgressStore';
+import {
+  selectBeadsToday,
+  selectRoundsToday,
+  useProgressStore,
+} from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
 import { colors, fontFamily, radius, spacing, typeScale } from '@/shared/theme';
 import { BEADS_PER_ROUND } from '@/shared/types/models';
 
 const beadImage = require('../../../assets/images/rudraksha-bead.png');
+
+const TAP_BUTTON_HEIGHT = 80;
+const MAIN_PADDING_BOTTOM = 22;
+const TAP_GAP = 12;
 
 export function CounterScreen() {
   const { t } = useTranslation();
@@ -36,11 +46,21 @@ export function CounterScreen() {
   const catalog = useMantraStore((s) => s.catalog);
   const custom = useMantraStore((s) => s.custom);
 
+  const today = useToday();
   const currentMantraId = useProgressStore((s) => s.currentMantraId);
-  const beadsToday = useProgressStore((s) => s.beadsToday);
-  const roundsToday = useProgressStore((s) => s.roundsToday);
+  const beadsToday = useProgressStore((s) => selectBeadsToday(s, today));
+  const roundsToday = useProgressStore((s) => selectRoundsToday(s, today));
+  const canUndo = useProgressStore((s) => s.undoStack.length > 0);
   const setCurrentMantra = useProgressStore((s) => s.setCurrentMantra);
   const tapBead = useProgressStore((s) => s.tapBead);
+  const undoLastBead = useProgressStore((s) => s.undoLastBead);
+
+  const [mainHeight, setMainHeight] = useState(0);
+  const mala = useMalaLayout(
+    mainHeight > 0 ? mainHeight - TAP_BUTTON_HEIGHT - MAIN_PADDING_BOTTOM - TAP_GAP : 0,
+  );
+  // Text tracks the canvas scale, but within readable bounds.
+  const textScale = Math.min(Math.max(mala.scale, 0.8), 1.3);
 
   const { tick } = useHaptics();
   const { floats, spawn, remove } = useFloatingChants();
@@ -90,6 +110,11 @@ export function CounterScreen() {
     }
   };
 
+  const handleUndo = () => {
+    tick();
+    undoLastBead();
+  };
+
   const closeSheet = useCallback(() => setSheetOpen(false), []);
   const pickMantra = useCallback(
     (id: string) => {
@@ -107,21 +132,30 @@ export function CounterScreen() {
     <ScreenContainer>
       <Header title={t('appTitle')} />
 
-      <View style={styles.main}>
-        <View style={styles.malaWrap}>
-          <MalaLoop beadsInRound={beadsInRound} />
+      <View
+        style={styles.main}
+        onLayout={(e) => {
+          const h = Math.round(e.nativeEvent.layout.height);
+          setMainHeight((prev) => (prev === h ? prev : h));
+        }}
+      >
+        <View style={[styles.malaWrap, { width: mala.width, height: mala.height }]}>
+          <MalaLoop beadsInRound={beadsInRound} scale={mala.scale} />
 
           <TouchableOpacity
             onPress={() => setSheetOpen(true)}
             accessibilityRole="button"
-            style={styles.mantraSelector}
+            style={[
+              styles.mantraSelector,
+              { left: 20 * mala.scale, top: 24 * mala.scale, width: 190 * mala.scale },
+            ]}
           >
             <Text style={styles.mantraLabel}>{t('counter.currentMantra')} ▾</Text>
             <Text
               style={[
                 styles.mantraName,
                 curDevanagari && styles.devanagari,
-                curName.length > 17 && styles.mantraNameSmall,
+                scaledFont(curName.length > 17 ? 26 : 32, textScale, 36),
               ]}
               numberOfLines={2}
             >
@@ -129,14 +163,23 @@ export function CounterScreen() {
             </Text>
           </TouchableOpacity>
 
-          <View style={styles.statCard}>
+          <View
+            style={[
+              styles.statCard,
+              {
+                right: (MALA_CANVAS.width - 382) * mala.scale,
+                top: 388 * mala.scale,
+                width: Math.max(96, 112 * textScale),
+              },
+            ]}
+          >
             <Text style={styles.statLabel}>{t('counter.beads')}</Text>
-            <Text style={styles.statValue}>{beadsToday}</Text>
+            <Text style={[styles.statValue, scaledFont(46, textScale)]}>{beadsToday}</Text>
             <View style={styles.fillTrack}>
               <View style={[styles.fillBar, { width: `${fillFraction(beadsInRound) * 100}%` }]} />
             </View>
             <Text style={styles.statLabel}>{t('counter.rounds')}</Text>
-            <Text style={styles.statValueSmall}>{roundsToday}</Text>
+            <Text style={[styles.statValueSmall, scaledFont(32, textScale)]}>{roundsToday}</Text>
           </View>
         </View>
 
@@ -156,6 +199,18 @@ export function CounterScreen() {
             <Image source={beadImage} style={styles.tapButtonBead} resizeMode="cover" />
           </Animated.View>
         </TouchableOpacity>
+
+        {canUndo ? (
+          <TouchableOpacity
+            onPress={handleUndo}
+            accessibilityRole="button"
+            accessibilityLabel={t('counter.undoAria')}
+            hitSlop={8}
+            style={styles.undoButton}
+          >
+            <Text style={styles.undoGlyph}>↺</Text>
+          </TouchableOpacity>
+        ) : null}
 
         {floats.map((f) => (
           <RisingMantra
@@ -185,15 +240,21 @@ export function CounterScreen() {
   );
 }
 
+function scaledFont(fontSize: number, scale: number, lineHeight?: number) {
+  return lineHeight
+    ? { fontSize: Math.round(fontSize * scale), lineHeight: Math.round(lineHeight * scale) }
+    : { fontSize: Math.round(fontSize * scale) };
+}
+
 const styles = StyleSheet.create({
   main: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: 22,
+    paddingBottom: MAIN_PADDING_BOTTOM,
   },
-  malaWrap: { width: 390, height: 584, position: 'relative', overflow: 'hidden' },
-  mantraSelector: { position: 'absolute', left: 20, top: 24, width: 190 },
+  malaWrap: { position: 'relative', overflow: 'hidden' },
+  mantraSelector: { position: 'absolute' },
   mantraLabel: {
     ...typeScale.caption,
     color: colors.muted,
@@ -202,18 +263,12 @@ const styles = StyleSheet.create({
   },
   mantraName: {
     fontFamily: fontFamily.serif400Italic,
-    fontSize: 32,
-    lineHeight: 36,
     color: colors.ink,
     marginTop: spacing.xs,
   },
-  mantraNameSmall: { fontSize: 26 },
   devanagari: { fontFamily: fontFamily.devanagari400Italic },
   statCard: {
     position: 'absolute',
-    left: 270,
-    top: 388,
-    width: 112,
     paddingVertical: spacing.md,
     borderRadius: radius.lg,
     backgroundColor: 'rgba(255,252,247,0.92)',
@@ -227,8 +282,8 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontFamily: fontFamily.sans600,
   },
-  statValue: { fontFamily: fontFamily.serif400, fontSize: 46, color: colors.ink },
-  statValueSmall: { fontFamily: fontFamily.serif400, fontSize: 32, color: colors.saffronDark },
+  statValue: { fontFamily: fontFamily.serif400, color: colors.ink },
+  statValueSmall: { fontFamily: fontFamily.serif400, color: colors.saffronDark },
   fillTrack: {
     height: 4,
     width: '75%',
@@ -240,8 +295,8 @@ const styles = StyleSheet.create({
   fillBar: { height: 4, borderRadius: 2, backgroundColor: colors.maroon },
   tapButton: {
     width: 184,
-    height: 80,
-    borderRadius: 40,
+    height: TAP_BUTTON_HEIGHT,
+    borderRadius: TAP_BUTTON_HEIGHT / 2,
     backgroundColor: colors.maroon,
     alignItems: 'center',
     justifyContent: 'center',
@@ -261,4 +316,20 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   tapButtonBead: { width: 54, height: 54 },
+  // Sits beside the tap button, far enough from it that a missed tap doesn't land here.
+  undoButton: {
+    position: 'absolute',
+    left: '50%',
+    marginLeft: 92 + 20,
+    bottom: MAIN_PADDING_BOTTOM + (TAP_BUTTON_HEIGHT - 44) / 2,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.card,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  undoGlyph: { fontSize: 22, color: colors.muted, marginTop: -2 },
 });

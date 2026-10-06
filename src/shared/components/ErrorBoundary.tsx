@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -21,9 +20,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    Sentry.captureException(error, {
-      extra: { componentStack: info.componentStack, boundary: this.props.label },
-    });
+    console.error(`[ErrorBoundary:${this.props.label}]`, error, info.componentStack);
   }
 
   reset = () => this.setState({ error: null });

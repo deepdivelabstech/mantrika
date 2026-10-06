@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useWindowDimensions } from 'react-native';
 
 /**
  * Teardrop mala loop geometry, ported from the approved visual design.
@@ -24,4 +25,29 @@ export function useMalaGeometry(beadsInRound: number) {
       fullLoopLength: FULL_LOOP_LENGTH,
     };
   }, [beadsInRound]);
+}
+
+/** Design canvas the mala path, hand photo and counter overlays are drawn in. */
+export const MALA_CANVAS = { width: 390, height: 584 } as const;
+
+// Past this the photo starts to look soft and the loop dwarfs the controls.
+const MAX_SCALE = 1.6;
+
+/**
+ * Uniform scale that fits the mala canvas into the window width and the given
+ * available height (measured by the screen; falls back to width-only fit
+ * before the first layout pass).
+ */
+export function useMalaLayout(availableHeight: number) {
+  const { width: windowWidth } = useWindowDimensions();
+  return useMemo(() => {
+    const byWidth = windowWidth / MALA_CANVAS.width;
+    const byHeight = availableHeight > 0 ? availableHeight / MALA_CANVAS.height : byWidth;
+    const scale = Math.max(0.5, Math.min(byWidth, byHeight, MAX_SCALE));
+    return {
+      scale,
+      width: MALA_CANVAS.width * scale,
+      height: MALA_CANVAS.height * scale,
+    };
+  }, [windowWidth, availableHeight]);
 }

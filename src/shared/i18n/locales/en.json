@@ -15,7 +15,8 @@
     "chooseMantra": "Choose mantra",
     "browseAll": "Browse all mantras →",
     "closeSheetAria": "Close mantra list",
-    "customMantraLabel": "Custom mantra"
+    "customMantraLabel": "Custom mantra",
+    "undoAria": "Undo last bead"
   },
   "mantras": {
     "title": "Sacred Library",
@@ -50,7 +51,8 @@
     "currentStreak": "Current streak",
     "days": "days",
     "dailyFocus": "Daily Focus",
-    "ofBeads": "/ 1008 Beads"
+    "ofBeads": "/ 1008 Beads",
+    "streakPaused": "Streak paused — chant today to begin anew"
   },
   "settings": {
     "title": "Settings & Guidance",
@@ -83,7 +85,20 @@
     "languageTitle": "Language",
     "languageDesc": "Choose the language for the app.",
     "langEn": "English",
-    "langHi": "हिंदी"
+    "langHi": "हिंदी",
+    "yourData": "Your data",
+    "backupTitle": "Backup & restore",
+    "backupDesc": "Your counts live only on this phone. Export a backup before reinstalling or switching phones.",
+    "backupShareTitle": "Mantrika backup",
+    "exportAction": "Export",
+    "importAction": "Import",
+    "importTitle": "Import backup",
+    "importHint": "Paste the backup text you exported earlier.",
+    "importInvalidTitle": "Not a Mantrika backup",
+    "importInvalidDesc": "Check that you pasted the full exported text and try again.",
+    "importConfirmTitle": "Replace current data?",
+    "importConfirmDesc": "Your counts, streak, custom mantras and settings on this phone will be replaced by the backup.",
+    "importDone": "Backup restored"
   },
   "common": {
     "loading": "Loading…",

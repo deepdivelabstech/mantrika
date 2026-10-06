@@ -14,7 +14,6 @@ TypeScript.
 - expo-font + @expo-google-fonts/{manrope,newsreader,tiro-devanagari-hindi} for brand
   typefaces (bundled locally, not fetched from a CDN)
 - expo-notifications for the daily practice reminder
-- Sentry (`@sentry/react-native`), env-gated behind `SENTRY_DSN`
 - Jest + React Native Testing Library for unit/component tests; Maestro for one
   critical-path E2E flow
 
@@ -59,11 +58,11 @@ Requires Node 20+. Run on a simulator/device with `npm run ios` / `npm run andro
 ## Environment variables
 
 See `.env.example` for the full list. Locally, none are required — the app runs fully
-offline with sane defaults (no Sentry, no remote catalog, bundled fonts/sounds). For EAS
+offline with sane defaults (no remote catalog, bundled fonts/sounds). For EAS
 builds, set the same variable names via `eas env:create` / the EAS dashboard, scoped to the
 `development` / `preview` / `production` profiles in `eas.json`.
 
-Read at build time by `app.config.ts` (`APP_ENV`, Sentry org/project, EAS project id/update
+Read at build time by `app.config.ts` (`APP_ENV`, EAS project id/update
 URL, `REMOTE_CATALOG_URL`) and surfaced to the app at runtime via `expo-constants`
 (`Constants.expoConfig.extra`).
 

@@ -3,7 +3,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { ClipPath, Defs, Image as SvgImage, Pattern, Polygon, Rect } from 'react-native-svg';
 
-import { useMalaGeometry } from '@/shared/hooks/useMalaGeometry';
+import { MALA_CANVAS, useMalaGeometry } from '@/shared/hooks/useMalaGeometry';
 import { colors } from '@/shared/theme';
 
 const handImage = require('../../../../assets/images/mala-hand.png');
@@ -11,10 +11,12 @@ const beadImage = require('../../../../assets/images/rudraksha-bead.png');
 
 const AnimatedPath = Animated.createAnimatedComponent(require('react-native-svg').Path);
 
-const WIDTH = 390;
-const HEIGHT = 584;
+const { width: WIDTH, height: HEIGHT } = MALA_CANVAS;
 
-type Props = { beadsInRound: number };
+// Hand photo's box on the design canvas.
+const HAND = { left: 155.5, top: -35, width: 236.5, height: 332.5 };
+
+type Props = { beadsInRound: number; scale?: number };
 
 // clip-path polygon from the source design, given in the hand image's own
 // local box — offset here by the image's canvas position (155.5, -35) since
@@ -42,7 +44,7 @@ const THUMB_CLIP_POINTS = [
   .join(' ');
 
 /** The teardrop-shaped 108-bead loop with a larger "guru" bead, filling as beads are counted. */
-export function MalaLoop({ beadsInRound }: Props) {
+export function MalaLoop({ beadsInRound, scale = 1 }: Props) {
   const { path, beadDashOffset, guruDashOffset, fullLoopLength } = useMalaGeometry(beadsInRound);
   const beadOffset = useSharedValue(fullLoopLength);
   const guruOffset = useSharedValue(fullLoopLength);
@@ -56,17 +58,25 @@ export function MalaLoop({ beadsInRound }: Props) {
   const guruAnimatedProps = useAnimatedProps(() => ({ strokeDashoffset: guruOffset.value }));
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { width: WIDTH * scale, height: HEIGHT * scale }]}>
       <Image
         source={handImage}
         resizeMode="contain"
-        style={styles.hand}
+        style={[
+          styles.hand,
+          {
+            left: HAND.left * scale,
+            top: HAND.top * scale,
+            width: HAND.width * scale,
+            height: HAND.height * scale,
+          },
+        ]}
         accessibilityIgnoresInvertColors
         accessible={false}
       />
       <Svg
-        width={WIDTH}
-        height={HEIGHT}
+        width={WIDTH * scale}
+        height={HEIGHT * scale}
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         style={StyleSheet.absoluteFill}
       >
@@ -159,10 +169,10 @@ export function MalaLoop({ beadsInRound }: Props) {
 
         <SvgImage
           href={handImage}
-          x={155.5}
-          y={-35}
-          width={236.5}
-          height={332.5}
+          x={HAND.left}
+          y={HAND.top}
+          width={HAND.width}
+          height={HAND.height}
           preserveAspectRatio="xMidYMid slice"
           clipPath="url(#thumbClip)"
         />
@@ -172,6 +182,6 @@ export function MalaLoop({ beadsInRound }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { width: WIDTH, height: HEIGHT, alignSelf: 'center' },
-  hand: { position: 'absolute', left: 155.5, top: -35, width: 236.5, height: 332.5 },
+  container: { alignSelf: 'center' },
+  hand: { position: 'absolute' },
 });

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { BackupCard } from '@/features/settings/components/BackupCard';
 import { IconRow } from '@/features/settings/components/IconRow';
 import { MalaIllustration } from '@/features/settings/components/MalaIllustration';
 import { PillGrid } from '@/features/settings/components/PillGrid';
@@ -12,10 +13,11 @@ import { ToggleSwitch } from '@/features/settings/components/ToggleSwitch';
 import { AdBanner } from '@/shared/components/AdBanner';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
+import { useToday } from '@/shared/hooks/useToday';
 import { HapticIcon, LanguageIcon, RisingIcon, SoundIcon } from '@/shared/components/icons';
 import i18n from '@/shared/i18n';
 import { syncDailyReminder } from '@/shared/lib/notifications';
-import { useProgressStore } from '@/shared/store/useProgressStore';
+import { selectStreakDays, useProgressStore } from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
 import { colors, fontFamily, spacing } from '@/shared/theme';
 
@@ -28,7 +30,8 @@ export function SettingsScreen() {
   const { t } = useTranslation();
   const settings = useSettingsStore();
   const totalBeadsLifetime = useProgressStore((s) => s.totalBeadsLifetime);
-  const streakDays = useProgressStore((s) => s.streakDays);
+  const today = useToday();
+  const streakDays = useProgressStore((s) => selectStreakDays(s, today));
 
   useEffect(() => {
     void i18n.changeLanguage(settings.lang);
@@ -149,6 +152,10 @@ export function SettingsScreen() {
         <SettingsCard style={styles.card}>
           <ReminderRow time={settings.reminderTime} onChange={settings.setReminderTime} />
         </SettingsCard>
+
+        <Text style={styles.sectionLabel}>{t('settings.yourData')}</Text>
+
+        <BackupCard style={styles.card} />
 
         <MalaIllustration />
         <AdBanner />

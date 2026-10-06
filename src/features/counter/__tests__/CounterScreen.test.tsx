@@ -27,6 +27,7 @@ describe('CounterScreen', () => {
       streakDays: 0,
       lastActiveDate: '',
       activeDates: [],
+      undoStack: [],
     });
   });
 
@@ -43,5 +44,21 @@ describe('CounterScreen', () => {
       expect(screen.getByText('3')).toBeTruthy();
     });
     expect(useProgressStore.getState().beadsToday).toBe(3);
+  });
+
+  it('undoes the last bead', async () => {
+    renderScreen();
+
+    expect(screen.queryByLabelText(i18n.t('counter.undoAria'))).toBeNull();
+
+    const tapButton = screen.getByLabelText(i18n.t('counter.countAria'));
+    fireEvent.press(tapButton);
+    fireEvent.press(tapButton);
+    fireEvent.press(screen.getByLabelText(i18n.t('counter.undoAria')));
+
+    await waitFor(() => {
+      expect(useProgressStore.getState().beadsToday).toBe(1);
+    });
+    expect(useProgressStore.getState().totalBeadsLifetime).toBe(1);
   });
 });

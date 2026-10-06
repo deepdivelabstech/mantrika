@@ -118,10 +118,12 @@ function MantrikaTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   }, [state.index, tabWidth, x]);
 
   const indicatorStyle = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }] }));
+  // No ads while counting: the Counter is the meditation surface.
+  const showAd = state.routes[state.index]?.name !== 'Counter';
 
   return (
     <View style={styles.wrap}>
-      <AdBanner />
+      {showAd ? <AdBanner /> : null}
       <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, 8) }]}>
         <View
           style={styles.row}

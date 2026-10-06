@@ -69,20 +69,12 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           iosAppId: process.env.ADMOB_IOS_APP_ID ?? 'ca-app-pub-3940256099942544~1458002511',
         },
       ],
-      [
-        '@sentry/react-native/expo',
-        {
-          organization: process.env.SENTRY_ORG,
-          project: process.env.SENTRY_PROJECT,
-        },
-      ],
     ],
     extra: {
       eas: {
         projectId: process.env.EAS_PROJECT_ID,
       },
       appEnv: profile,
-      sentryDsn: process.env.SENTRY_DSN ?? '',
       admobBannerAndroid: process.env.ADMOB_BANNER_ANDROID ?? '',
       admobBannerIos: process.env.ADMOB_BANNER_IOS ?? '',
       remoteCatalogUrl: process.env.REMOTE_CATALOG_URL ?? '',

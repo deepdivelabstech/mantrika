@@ -15,7 +15,8 @@
     "chooseMantra": "मंत्र चुनें",
     "browseAll": "सभी मंत्र देखें →",
     "closeSheetAria": "मंत्र सूची बंद करें",
-    "customMantraLabel": "निजी मंत्र"
+    "customMantraLabel": "निजी मंत्र",
+    "undoAria": "पिछला मनका वापस लें"
   },
   "mantras": {
     "title": "पवित्र संग्रह",
@@ -50,7 +51,8 @@
     "currentStreak": "लगातार दिन",
     "days": "दिन",
     "dailyFocus": "दैनिक लक्ष्य",
-    "ofBeads": "/ 1008 मनके"
+    "ofBeads": "/ 1008 मनके",
+    "streakPaused": "क्रम रुका है — आज जप करके फिर शुरू करें"
   },
   "settings": {
     "title": "सेटिंग्स और मार्गदर्शन",
@@ -83,7 +85,20 @@
     "languageTitle": "भाषा",
     "languageDesc": "ऐप के लिए भाषा चुनें।",
     "langEn": "English",
-    "langHi": "हिंदी"
+    "langHi": "हिंदी",
+    "yourData": "आपका डेटा",
+    "backupTitle": "बैकअप और पुनर्स्थापना",
+    "backupDesc": "आपकी गिनती केवल इसी फ़ोन पर है। ऐप दोबारा इंस्टॉल करने या फ़ोन बदलने से पहले बैकअप निर्यात करें।",
+    "backupShareTitle": "मंत्रिका बैकअप",
+    "exportAction": "निर्यात",
+    "importAction": "आयात",
+    "importTitle": "बैकअप आयात करें",
+    "importHint": "पहले निर्यात किया गया बैकअप टेक्स्ट यहाँ चिपकाएँ।",
+    "importInvalidTitle": "यह मंत्रिका बैकअप नहीं है",
+    "importInvalidDesc": "जाँचें कि आपने पूरा निर्यात किया गया टेक्स्ट चिपकाया है और फिर प्रयास करें।",
+    "importConfirmTitle": "मौजूदा डेटा बदलें?",
+    "importConfirmDesc": "इस फ़ोन की गिनती, क्रम, निजी मंत्र और सेटिंग्स बैकअप से बदल दी जाएँगी।",
+    "importDone": "बैकअप पुनर्स्थापित हुआ"
   },
   "common": {
     "loading": "लोड हो रहा है…",
