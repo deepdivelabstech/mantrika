@@ -72,7 +72,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ],
     extra: {
       eas: {
-        projectId: process.env.EAS_PROJECT_ID,
+        // Not a secret: identifies the EAS project so any machine or CI can build.
+        projectId: process.env.EAS_PROJECT_ID ?? 'd0f5c96e-5812-4671-82d5-dc1c0d3de9bf',
       },
       appEnv: profile,
       admobBannerAndroid: process.env.ADMOB_BANNER_ANDROID ?? '',
