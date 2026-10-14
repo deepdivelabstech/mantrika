@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Text, useWindowDimensions, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { addDays, dayTotal } from '@/shared/lib/practiceLog';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing, useColors } from '@/shared/theme';
 import type { DailyLog } from '@/shared/types/models';
 
 type Props = { dailyLog: DailyLog; activeDates: string[]; today: string; goalBeads: number };
@@ -13,7 +13,6 @@ const GAP = 3;
 const MAX_CELL = 18;
 // Screen gutter + card padding on both sides (spacing.lg each).
 const HORIZONTAL_CHROME = spacing.lg * 4;
-const LEVELS = ['#EDE3D6', '#F6D3A8', colors.saffron, colors.saffronDark, colors.maroon];
 
 /** 0 = no practice; 1–4 scale with the share of the daily goal reached. */
 function level(total: number, active: boolean, goal: number): number {
@@ -29,6 +28,15 @@ export const PracticeHeatmap = React.memo(function PracticeHeatmap({
   today,
   goalBeads,
 }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
+  const levels = [
+    colors.heatEmpty,
+    colors.heatLow,
+    colors.saffron,
+    colors.saffronDark,
+    colors.maroon,
+  ];
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
   const cell = Math.min(
@@ -70,7 +78,7 @@ export const PracticeHeatmap = React.memo(function PracticeHeatmap({
                   width: cell,
                   height: cell,
                   borderRadius: 3,
-                  backgroundColor: lv < 0 ? 'transparent' : LEVELS[lv],
+                  backgroundColor: lv < 0 ? 'transparent' : levels[lv],
                 }}
               />
             ))}
@@ -79,7 +87,7 @@ export const PracticeHeatmap = React.memo(function PracticeHeatmap({
       </View>
       <View style={styles.legend} importantForAccessibility="no-hide-descendants">
         <Text style={styles.legendText}>{t('progress.less')}</Text>
-        {LEVELS.map((c) => (
+        {levels.map((c) => (
           <View key={c} style={[styles.swatch, { backgroundColor: c }]} />
         ))}
         <Text style={styles.legendText}>{t('progress.more')}</Text>
@@ -88,7 +96,7 @@ export const PracticeHeatmap = React.memo(function PracticeHeatmap({
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     padding: spacing.lg,
     backgroundColor: colors.card,
@@ -107,4 +115,4 @@ const styles = StyleSheet.create({
   },
   legendText: { fontSize: 11, color: colors.muted, marginHorizontal: 2 },
   swatch: { width: 10, height: 10, borderRadius: 2 },
-});
+}));

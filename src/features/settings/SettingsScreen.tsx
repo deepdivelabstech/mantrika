@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { BackupCard } from '@/features/settings/components/BackupCard';
@@ -16,16 +16,20 @@ import {
   CounterTabIcon,
   HapticIcon,
   LanguageIcon,
+  MoonIcon,
   ProgressTabIcon,
   ReminderIcon,
   RisingIcon,
+  ShareIcon,
   SoundIcon,
+  StarIcon,
 } from '@/shared/components/icons';
 import i18n from '@/shared/i18n';
 import { syncDailyReminder } from '@/shared/lib/notifications';
+import { openStoreListing, shareApp } from '@/shared/lib/storeReview';
 import { selectStreakDays, useProgressStore } from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
-import { colors, fontFamily, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, spacing, useColors } from '@/shared/theme';
 import { DAILY_GOAL_OPTIONS } from '@/shared/types/models';
 
 function initials(name: string): string {
@@ -34,6 +38,8 @@ function initials(name: string): string {
 }
 
 export function SettingsScreen() {
+  const styles = useStyles();
+  const colors = useColors();
   const { t } = useTranslation();
   const settings = useSettingsStore();
   const totalBeadsLifetime = useProgressStore((s) => s.totalBeadsLifetime);
@@ -52,6 +58,14 @@ export function SettingsScreen() {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings.reminderTime]);
+
+  const share = async () => {
+    try {
+      await shareApp(t('settings.shareTitle'), t('settings.shareMessage'));
+    } catch {
+      Alert.alert(t('common.somethingWentWrong'));
+    }
+  };
 
   return (
     <ScreenContainer>
@@ -205,6 +219,26 @@ export function SettingsScreen() {
           </View>
         </SettingsCard>
 
+        <SettingsCard style={styles.stackedCard}>
+          <IconRow
+            icon={<MoonIcon color={colors.maroon} />}
+            title={t('settings.appearanceTitle')}
+            description={t('settings.appearanceDesc')}
+          />
+          <View style={styles.pillBlock}>
+            <PillGrid
+              columns={3}
+              value={settings.appearance}
+              onChange={settings.setAppearance}
+              options={[
+                { value: 'system', label: t('settings.themeSystem') },
+                { value: 'light', label: t('settings.themeLight') },
+                { value: 'dark', label: t('settings.themeDark') },
+              ]}
+            />
+          </View>
+        </SettingsCard>
+
         <Text style={styles.sectionLabel}>{t('settings.mindfulnessCues')}</Text>
 
         <SettingsCard style={styles.card}>
@@ -214,12 +248,34 @@ export function SettingsScreen() {
         <Text style={styles.sectionLabel}>{t('settings.yourData')}</Text>
 
         <BackupCard style={styles.card} />
+
+        <Text style={styles.sectionLabel}>{t('settings.shareSupport')}</Text>
+
+        <TouchableOpacity onPress={share} accessibilityRole="button">
+          <SettingsCard style={styles.card}>
+            <IconRow
+              icon={<ShareIcon color={colors.maroon} />}
+              title={t('settings.shareTitle')}
+              description={t('settings.shareDesc')}
+            />
+          </SettingsCard>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => void openStoreListing()} accessibilityRole="button">
+          <SettingsCard style={styles.stackedCard}>
+            <IconRow
+              icon={<StarIcon color={colors.maroon} />}
+              title={t('settings.rateTitle')}
+              description={t('settings.rateDesc')}
+            />
+          </SettingsCard>
+        </TouchableOpacity>
       </ScrollView>
     </ScreenContainer>
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   content: { paddingBottom: spacing.xxl },
   titleBlock: { paddingHorizontal: spacing.lg, paddingTop: spacing.xl, alignItems: 'center' },
   h1: {
@@ -261,4 +317,4 @@ const styles = StyleSheet.create({
   speedBlock: { marginTop: spacing.md },
   speedBlockOff: { opacity: 0.45 },
   pillBlock: { marginTop: spacing.md },
-});
+}));

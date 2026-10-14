@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
-import { colors, fontFamily, radius } from '@/shared/theme';
+import { fontFamily, makeStyles, radius } from '@/shared/theme';
 
 type Option<T extends string> = { value: T; label: string };
 
@@ -21,6 +21,7 @@ export function PillGrid<T extends string>({
   columns,
   disabled,
 }: Props<T>) {
+  const styles = useStyles();
   const rows: Option<T>[][] = [];
   for (let i = 0; i < options.length; i += columns) rows.push(options.slice(i, i + columns));
 
@@ -51,7 +52,7 @@ export function PillGrid<T extends string>({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   grid: { gap: 10 },
   row: { flexDirection: 'row', gap: 10 },
   pill: {
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   pillActive: { backgroundColor: colors.maroon, borderColor: colors.maroon },
-  pillInactive: { backgroundColor: colors.ground, borderColor: '#E1D2C0' },
+  pillInactive: { backgroundColor: colors.ground, borderColor: colors.pillBorder },
   label: { fontFamily: fontFamily.sans600, fontSize: 13, color: colors.ink },
   labelActive: { color: colors.ground },
-});
+}));

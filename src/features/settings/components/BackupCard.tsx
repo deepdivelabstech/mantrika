@@ -1,19 +1,10 @@
 import React, { useState } from 'react';
-import {
-  Alert,
-  Modal,
-  Share,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, Modal, Share, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { SettingsCard } from '@/features/settings/components/SettingsCard';
 import { applyBackup, buildBackup, parseBackup } from '@/shared/lib/backup';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing, useColors } from '@/shared/theme';
 
 type Props = { style?: React.ComponentProps<typeof View>['style'] };
 
@@ -23,6 +14,8 @@ type Props = { style?: React.ComponentProps<typeof View>['style'] };
  * so it ships without a native rebuild.
  */
 export function BackupCard({ style }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   const { t } = useTranslation();
   const [importing, setImporting] = useState(false);
   const [draft, setDraft] = useState('');
@@ -126,7 +119,7 @@ export function BackupCard({ style }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   title: { fontFamily: fontFamily.sans700, fontSize: 15, color: colors.ink },
   desc: { marginTop: 4, fontSize: 13, lineHeight: 18, color: colors.muted },
   row: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md },
@@ -140,7 +133,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   primary: { backgroundColor: colors.maroon, borderColor: colors.maroon },
-  primaryText: { fontFamily: fontFamily.sans700, fontSize: 13, color: colors.white },
+  primaryText: { fontFamily: fontFamily.sans700, fontSize: 13, color: colors.onAccent },
   secondaryText: { fontFamily: fontFamily.sans700, fontSize: 13, color: colors.maroon },
   backdrop: {
     flex: 1,
@@ -178,4 +171,4 @@ const styles = StyleSheet.create({
   dialogCancel: { fontFamily: fontFamily.sans700, fontSize: 14, color: colors.muted },
   dialogSave: { fontFamily: fontFamily.sans700, fontSize: 14, color: colors.maroon },
   disabled: { opacity: 0.4 },
-});
+}));

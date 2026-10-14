@@ -1,10 +1,10 @@
 import React from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/shared/components/Button';
 import { sankalpaStatus } from '@/shared/lib/practiceLog';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing } from '@/shared/theme';
 import type { Sankalpa } from '@/shared/types/models';
 
 type Props = {
@@ -25,6 +25,7 @@ export const SankalpaCard = React.memo(function SankalpaCard({
   onSet,
   onEnd,
 }: Props) {
+  const styles = useStyles();
   const { t } = useTranslation();
 
   if (!sankalpa) {
@@ -97,7 +98,7 @@ export const SankalpaCard = React.memo(function SankalpaCard({
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     padding: spacing.lg,
     backgroundColor: colors.card,
@@ -148,4 +149,4 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.sans700,
     color: colors.saffronDark,
   },
-});
+}));

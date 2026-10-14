@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, type TouchableOpacityProps } from 'react-native';
+import { Text, TouchableOpacity, type TouchableOpacityProps } from 'react-native';
 
-import { colors, radius, spacing, typeScale } from '@/shared/theme';
+import { makeStyles, radius, spacing, typeScale } from '@/shared/theme';
 
 type Variant = 'primary' | 'secondary';
 
@@ -11,6 +11,7 @@ type Props = TouchableOpacityProps & {
 };
 
 export function Button({ label, variant = 'primary', style, ...rest }: Props) {
+  const styles = useStyles();
   return (
     <TouchableOpacity
       accessibilityRole="button"
@@ -23,7 +24,7 @@ export function Button({ label, variant = 'primary', style, ...rest }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   base: {
     minHeight: 44,
     paddingHorizontal: spacing.lg,
@@ -33,6 +34,6 @@ const styles = StyleSheet.create({
   },
   primary: { backgroundColor: colors.maroon },
   secondary: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line },
-  text: { ...typeScale.bodyStrong, color: colors.white },
+  text: { ...typeScale.bodyStrong, color: colors.onAccent },
   textSecondary: { color: colors.ink },
-});
+}));

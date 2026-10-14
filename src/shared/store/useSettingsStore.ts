@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 import {
   DEFAULT_DAILY_GOAL_MALAS,
   type AnimSpeed,
+  type Appearance,
   type Language,
   type Settings,
   type SoundscapeId,
@@ -24,6 +25,7 @@ const DEFAULT_SETTINGS: Settings = {
   roundChime: true,
   pauseAfterRound: false,
   focusDiscovered: false,
+  appearance: 'system',
 };
 
 export const MAX_DAILY_GOAL_MALAS = 108;
@@ -41,6 +43,7 @@ type SettingsStore = Settings & {
   setRoundChime: (on: boolean) => void;
   setPauseAfterRound: (on: boolean) => void;
   markFocusDiscovered: () => void;
+  setAppearance: (appearance: Appearance) => void;
 };
 
 export function clampGoalMalas(malas: number): number {
@@ -70,6 +73,7 @@ export const useSettingsStore = create<SettingsStore>()(
       setRoundChime: (roundChime) => set({ roundChime }),
       setPauseAfterRound: (pauseAfterRound) => set({ pauseAfterRound }),
       markFocusDiscovered: () => set({ focusDiscovered: true }),
+      setAppearance: (appearance) => set({ appearance }),
     }),
     // New fields need no migration: persist shallow-merges stored state over these defaults.
     { name: 'mantrika.settings.v1', storage: asyncStorageAdapter },

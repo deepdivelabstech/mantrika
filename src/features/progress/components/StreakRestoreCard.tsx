@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRewardedAd } from 'react-native-google-mobile-ads';
 import { useTranslation } from 'react-i18next';
 
 import { getRewardedUnitId } from '@/app/ads';
 import { Button } from '@/shared/components/Button';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing } from '@/shared/theme';
 
 type Props = {
   streakDays: number;
@@ -15,6 +15,7 @@ type Props = {
 
 /** Opt-in rewarded ad: after one missed day, watching an ad carries the streak forward. */
 export function StreakRestoreCard({ streakDays, restored, onRestore }: Props) {
+  const styles = useStyles();
   const { t } = useTranslation();
   const { isLoaded, isClosed, isEarnedReward, load, show } = useRewardedAd(getRewardedUnitId());
 
@@ -48,7 +49,7 @@ export function StreakRestoreCard({ streakDays, restored, onRestore }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     padding: spacing.lg,
     backgroundColor: colors.card,
@@ -60,4 +61,4 @@ const styles = StyleSheet.create({
   desc: { marginTop: spacing.xs, fontSize: 14, lineHeight: 20, color: colors.muted },
   button: { marginTop: spacing.md },
   buttonWaiting: { opacity: 0.6 },
-});
+}));

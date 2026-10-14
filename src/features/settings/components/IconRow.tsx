@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { colors, fontFamily, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, spacing } from '@/shared/theme';
 
 type Props = {
   icon: React.ReactNode;
@@ -12,6 +12,7 @@ type Props = {
 
 /** Icon + title/description + trailing control, the row pattern used throughout Settings. */
 export function IconRow({ icon, title, description, control }: Props) {
+  const styles = useStyles();
   return (
     <View style={styles.row}>
       <View style={styles.icon}>{icon}</View>
@@ -24,10 +25,10 @@ export function IconRow({ icon, title, description, control }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   row: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   icon: { flexShrink: 0 },
   textCol: { flex: 1 },
   title: { fontSize: 15, fontFamily: fontFamily.sans600, lineHeight: 20, color: colors.ink },
   description: { marginTop: spacing.xxs, fontSize: 12, lineHeight: 16.8, color: colors.muted },
-});
+}));

@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { AddCustomMantraForm } from '@/features/mantra-library/components/AddCustomMantraForm';
@@ -16,7 +16,7 @@ import { filterMantras, mergeMantras, pickDailyMantra } from '@/shared/lib/mantr
 import { useMantraStore } from '@/shared/store/useMantraStore';
 import { useProgressStore } from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
-import { colors, fontFamily, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, spacing } from '@/shared/theme';
 import { MANTRA_CATEGORIES, type Mantra, type MantraCategory } from '@/shared/types/models';
 
 const DEFAULT_MANTRA_ID = 'om-namah-shivaya';
@@ -31,14 +31,17 @@ type Row = Mantra | typeof AD_ROW;
 const isAdRow = (row: Row): row is typeof AD_ROW => row === AD_ROW;
 
 function Separator() {
+  const styles = useStyles();
   return <View style={styles.separator} />;
 }
 
 function Footer() {
+  const styles = useStyles();
   return <View style={styles.footer} />;
 }
 
 export function MantraLibraryScreen() {
+  const styles = useStyles();
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [query, setQuery] = useState('');
@@ -234,7 +237,7 @@ export function MantraLibraryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   listContent: { paddingHorizontal: spacing.lg },
   separator: { height: spacing.sm },
   footer: { height: spacing.xl },
@@ -245,4 +248,4 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: colors.ink,
   },
-});
+}));

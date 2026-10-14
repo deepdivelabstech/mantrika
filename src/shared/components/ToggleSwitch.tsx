@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable } from 'react-native';
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { colors } from '@/shared/theme';
+import { makeStyles, useColors } from '@/shared/theme';
 
 type Props = { value: boolean; onChange: (v: boolean) => void; accessibilityLabel: string };
 
@@ -16,7 +16,6 @@ const TRACK_WIDTH = 52;
 const KNOB = 24;
 const INSET = 3;
 const TRAVEL = TRACK_WIDTH - KNOB - INSET * 2;
-const TRACK_OFF = '#D8C7B4';
 // Slightly overdamped: settles quickly with no visible wobble.
 const SPRING = { damping: 20, stiffness: 260, mass: 0.7 };
 
@@ -26,6 +25,8 @@ const SPRING = { damping: 20, stiffness: 260, mass: 0.7 };
  * thread, so the switch stays smooth even while JS re-renders the screen.
  */
 export function ToggleSwitch({ value, onChange, accessibilityLabel }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   const progress = useSharedValue(value ? 1 : 0);
   const pressed = useSharedValue(0);
 
@@ -34,7 +35,7 @@ export function ToggleSwitch({ value, onChange, accessibilityLabel }: Props) {
   }, [value, progress]);
 
   const trackStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(progress.value, [0, 1], [TRACK_OFF, colors.maroon]),
+    backgroundColor: interpolateColor(progress.value, [0, 1], [colors.trackOff, colors.maroon]),
   }));
 
   // The knob stretches a little while held, like iOS, so the press feels physical.
@@ -68,7 +69,7 @@ export function ToggleSwitch({ value, onChange, accessibilityLabel }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   hitArea: { width: 56, height: 44, alignItems: 'flex-end', justifyContent: 'center' },
   track: { width: TRACK_WIDTH, height: 30, borderRadius: 15, justifyContent: 'center' },
   knob: {
@@ -77,11 +78,11 @@ const styles = StyleSheet.create({
     left: INSET,
     height: KNOB,
     borderRadius: KNOB / 2,
-    backgroundColor: colors.ground,
+    backgroundColor: colors.knob,
     shadowColor: '#000',
     shadowOpacity: 0.25,
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 1 },
     elevation: 2,
   },
-});
+}));

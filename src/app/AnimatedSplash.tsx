@@ -12,7 +12,7 @@ import Animated, {
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 
-import { colors, fontFamily } from '@/shared/theme';
+import { fontFamily, makeStyles, useColors } from '@/shared/theme';
 
 const ring = require('../../assets/images/splash-ring.png');
 
@@ -38,6 +38,8 @@ type Props = { onFinish: () => void };
  * Tap anywhere to skip.
  */
 export function AnimatedSplash({ onFinish }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
 
@@ -164,7 +166,7 @@ export function AnimatedSplash({ onFinish }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   root: { ...StyleSheet.absoluteFill, backgroundColor: colors.ground },
   fill: { flex: 1 },
   center: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center' },
@@ -206,4 +208,4 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.muted,
   },
-});
+}));

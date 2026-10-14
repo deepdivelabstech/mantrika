@@ -1,10 +1,10 @@
 import React from 'react';
-import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Modal, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 
 import { displayName } from '@/shared/lib/mantraDisplay';
-import { colors, fontFamily, radius, spacing, typeScale } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing, typeScale } from '@/shared/theme';
 import type { Language, Mantra } from '@/shared/types/models';
 
 type Props = {
@@ -32,6 +32,7 @@ export const MantraPickerSheet = React.memo(function MantraPickerSheet({
   lang,
   onPick,
 }: Props) {
+  const styles = useStyles();
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -97,7 +98,7 @@ export const MantraPickerSheet = React.memo(function MantraPickerSheet({
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   backdrop: { flex: 1, backgroundColor: colors.overlay },
   sheet: {
     maxHeight: '75%',
@@ -137,4 +138,4 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     minHeight: 44,
   },
-});
+}));

@@ -75,3 +75,13 @@ jest.mock('react-native-google-mobile-ads', () => ({
     show: jest.fn(),
   })),
 }));
+
+jest.mock('expo-store-review', () => ({
+  isAvailableAsync: jest.fn(async () => true),
+  requestReview: jest.fn(async () => undefined),
+  storeUrl: jest.fn(() => null),
+}));
+
+jest.mock('expo-system-ui', () => ({
+  setBackgroundColorAsync: jest.fn(async () => undefined),
+}));

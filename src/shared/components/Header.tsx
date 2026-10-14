@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { BrandMark } from '@/shared/components/BrandMark';
-import { colors, fontFamily, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, spacing } from '@/shared/theme';
 
 type Props = {
   title: string;
@@ -11,6 +11,7 @@ type Props = {
 };
 
 export const Header = React.memo(function Header({ title, right }: Props) {
+  const styles = useStyles();
   return (
     <View style={styles.header}>
       <View style={styles.side}>
@@ -29,7 +30,7 @@ export const Header = React.memo(function Header({ title, right }: Props) {
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -48,4 +49,4 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: colors.ink,
   },
-});
+}));

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
-import { colors, fontFamily } from '@/shared/theme';
+import { fontFamily, makeStyles, useColors } from '@/shared/theme';
 
 type Props = {
   fraction: number; // 0..1
@@ -19,10 +19,12 @@ export function ProgressRing({
   size = 120,
   strokeWidth = 10,
   label,
-  trackColor = colors.line,
-  progressColor = colors.saffronDark,
+  trackColor,
+  progressColor,
   children,
 }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const clamped = Math.min(1, Math.max(0, fraction));
@@ -40,7 +42,7 @@ export function ProgressRing({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={trackColor}
+          stroke={trackColor ?? colors.line}
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -48,7 +50,7 @@ export function ProgressRing({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={progressColor}
+          stroke={progressColor ?? colors.saffronDark}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={`${circumference} ${circumference}`}
@@ -68,7 +70,7 @@ export function ProgressRing({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   label: { fontFamily: fontFamily.serif400, fontSize: 20, color: colors.ink },
-});
+}));

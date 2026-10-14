@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -7,11 +7,13 @@ import { BrandMark } from '@/shared/components/BrandMark';
 import { Button } from '@/shared/components/Button';
 import { PillGrid } from '@/shared/components/PillGrid';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing, useColors } from '@/shared/theme';
 import { DAILY_GOAL_OPTIONS, DEFAULT_DAILY_GOAL_MALAS } from '@/shared/types/models';
 
 /** First launch, two short steps: the name shown in Settings, then the daily sankalpa. */
 export function OnboardingScreen() {
+  const styles = useStyles();
+  const colors = useColors();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const completeOnboarding = useSettingsStore((s) => s.completeOnboarding);
@@ -62,7 +64,8 @@ export function OnboardingScreen() {
   return (
     <KeyboardAvoidingView
       style={[styles.root, { paddingTop: insets.top, paddingBottom: insets.bottom + spacing.lg }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      // Padding on Android too: with edge-to-edge the window no longer resizes for the keyboard.
+      behavior="padding"
     >
       <View style={styles.body}>
         <BrandMark size={72} />
@@ -90,7 +93,7 @@ export function OnboardingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   root: { flex: 1, backgroundColor: colors.ground, paddingHorizontal: spacing.lg },
   body: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   title: {
@@ -126,4 +129,4 @@ const styles = StyleSheet.create({
   goalGrid: { alignSelf: 'stretch', marginTop: spacing.xl },
   actions: { flexDirection: 'row', gap: spacing.sm },
   action: { flex: 1 },
-});
+}));

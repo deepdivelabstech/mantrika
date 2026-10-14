@@ -1,17 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { colors, fontFamily, radius } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, useColors } from '@/shared/theme';
 
 type Props = { label: string; value: string; sub?: string; valueColor?: string };
 
 /** Compact stat for the three-up row on Progress. */
-export const StatTile = React.memo(function StatTile({
-  label,
-  value,
-  sub,
-  valueColor = colors.ink,
-}: Props) {
+export const StatTile = React.memo(function StatTile({ label, value, sub, valueColor }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <View
       style={styles.tile}
@@ -21,7 +18,11 @@ export const StatTile = React.memo(function StatTile({
       <Text style={styles.label} numberOfLines={2}>
         {label}
       </Text>
-      <Text style={[styles.value, { color: valueColor }]} numberOfLines={1} adjustsFontSizeToFit>
+      <Text
+        style={[styles.value, { color: valueColor ?? colors.ink }]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+      >
         {value}
       </Text>
       {sub ? (
@@ -33,7 +34,7 @@ export const StatTile = React.memo(function StatTile({
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   tile: {
     flex: 1,
     minHeight: 112,
@@ -56,4 +57,4 @@ const styles = StyleSheet.create({
   },
   value: { marginTop: 6, fontFamily: fontFamily.serif400, fontSize: 34, lineHeight: 38 },
   sub: { marginTop: 2, fontSize: 11, lineHeight: 14, color: colors.muted, textAlign: 'center' },
-});
+}));

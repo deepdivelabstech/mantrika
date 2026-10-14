@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { dayTotal, lastNDates } from '@/shared/lib/practiceLog';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing } from '@/shared/theme';
 import type { DailyLog } from '@/shared/types/models';
 
 type Props = { dailyLog: DailyLog; today: string; goalBeads: number };
@@ -13,6 +13,7 @@ const LABEL_ROW = 22; // weekday label height + its top margin
 
 /** Last seven days as bars against the daily goal line. */
 export const WeekChart = React.memo(function WeekChart({ dailyLog, today, goalBeads }: Props) {
+  const styles = useStyles();
   const { t } = useTranslation();
   const weekdays = t('progress.weekdays', { returnObjects: true }) as string[];
 
@@ -70,7 +71,7 @@ export const WeekChart = React.memo(function WeekChart({ dailyLog, today, goalBe
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     padding: spacing.lg,
     backgroundColor: colors.card,
@@ -106,4 +107,4 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   today: { color: colors.ink, fontFamily: fontFamily.sans700 },
-});
+}));

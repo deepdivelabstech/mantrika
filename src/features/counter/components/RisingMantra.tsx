@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Text } from 'react-native';
 import Animated, {
   Easing,
   runOnJS,
@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { colors, fontFamily } from '@/shared/theme';
+import { fontFamily, makeStyles } from '@/shared/theme';
 
 type Props = {
   id: number;
@@ -34,6 +34,7 @@ export const RisingMantra = React.memo(function RisingMantra({
   originY,
   originWidth,
 }: Props) {
+  const styles = useStyles();
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -80,8 +81,8 @@ export const RisingMantra = React.memo(function RisingMantra({
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   wrap: { position: 'absolute', alignItems: 'center', zIndex: 10 },
   text: { fontFamily: fontFamily.serif400Italic, color: colors.maroon },
   devanagari: { fontFamily: fontFamily.devanagari400Italic },
-});
+}));

@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { displayName } from '@/shared/lib/mantraDisplay';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing } from '@/shared/theme';
 import type { Language, Mantra } from '@/shared/types/models';
 
 type Props = {
@@ -22,6 +22,7 @@ export const MantraBreakdown = React.memo(function MantraBreakdown({
   mantras,
   lang,
 }: Props) {
+  const styles = useStyles();
   const { t } = useTranslation();
 
   const rows = useMemo(() => {
@@ -92,7 +93,7 @@ export const MantraBreakdown = React.memo(function MantraBreakdown({
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     padding: spacing.lg,
     backgroundColor: colors.card,
@@ -116,5 +117,5 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   fill: { height: 5, borderRadius: 3, backgroundColor: colors.maroon },
-  fillMuted: { backgroundColor: '#C9B5A2' },
-});
+  fillMuted: { backgroundColor: colors.trackMuted },
+}));

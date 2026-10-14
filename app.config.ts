@@ -16,7 +16,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
-    userInterfaceStyle: 'light',
+    userInterfaceStyle: 'automatic',
     scheme: 'mantrika',
     backgroundColor: '#FBF7F1',
     ios: {
@@ -47,6 +47,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           imageWidth: 120,
           resizeMode: 'contain',
           backgroundColor: '#FBF7F1',
+          dark: { image: './assets/splash-icon.png', backgroundColor: '#150D09' },
         },
       ],
       'expo-localization',

@@ -12,7 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import type { BeadEvent } from '@/features/counter/hooks/useBeadCounter';
-import { colors, fontFamily } from '@/shared/theme';
+import { fontFamily, makeStyles, useIsDark } from '@/shared/theme';
 
 export const CELEBRATION_MS = 1900;
 
@@ -20,7 +20,7 @@ type Props = {
   id: number;
   title: string;
   subtitle?: string;
-  /** Colour scheme: light for the Counter, dark for eyes-closed mode. */
+  /** Colour scheme; eyes-closed mode is always dark. Defaults to the app's scheme. */
   tone?: 'light' | 'dark';
   onDone: (id: number) => void;
 };
@@ -34,9 +34,10 @@ export const RoundCelebration = React.memo(function RoundCelebration({
   id,
   title,
   subtitle,
-  tone = 'light',
+  tone,
   onDone,
 }: Props) {
+  const styles = useStyles();
   const reduceMotion = useReducedMotion();
   const progress = useSharedValue(0);
   const opacity = useSharedValue(0);
@@ -69,7 +70,8 @@ export const RoundCelebration = React.memo(function RoundCelebration({
     transform: [{ translateY: reduceMotion ? 0 : 12 - progress.value * 18 }],
   }));
 
-  const dark = tone === 'dark';
+  const isDark = useIsDark();
+  const dark = (tone ?? (isDark ? 'dark' : 'light')) === 'dark';
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
       <View style={styles.center}>
@@ -105,7 +107,7 @@ export function milestoneText(event: BeadEvent, t: TFn): { title: string; subtit
 
 const HALO = 260;
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   halo: {
     position: 'absolute',
@@ -131,4 +133,4 @@ const styles = StyleSheet.create({
   titleDark: { color: '#E9B987' },
   subtitle: { marginTop: 2, fontFamily: fontFamily.sans600, fontSize: 13, color: colors.muted },
   subtitleDark: { color: '#9C7A63' },
-});
+}));

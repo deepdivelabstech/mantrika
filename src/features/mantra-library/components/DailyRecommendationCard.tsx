@@ -1,17 +1,19 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { LampIllustration } from '@/features/mantra-library/components/LampIllustration';
 import { PlayIcon } from '@/shared/components/icons';
 import { displayName } from '@/shared/lib/mantraDisplay';
-import { colors, fontFamily, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, spacing, useColors } from '@/shared/theme';
 import type { Language, Mantra } from '@/shared/types/models';
 
 type Props = { mantra: Mantra; lang: Language; active: boolean; onStart: () => void };
 
 /** Compact spotlight for the day's mantra: lamp banner with the eyebrow overlaid, then text + CTA. */
 export function DailyRecommendationCard({ mantra, lang, active, onStart }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   const { t } = useTranslation();
   const showDeva = lang === 'hi';
   const secondary = mantra.excerpt ?? (showDeva ? mantra.name : mantra.deva);
@@ -49,10 +51,10 @@ export function DailyRecommendationCard({ mantra, lang, active, onStart }: Props
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     overflow: 'hidden',
-    backgroundColor: '#F8F1E8',
+    backgroundColor: colors.surfaceWarm,
     borderWidth: 1,
     borderColor: colors.line,
     borderRadius: 16,
@@ -99,4 +101,4 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.ground,
   },
-});
+}));

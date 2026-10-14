@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  type ViewStyle,
-} from 'react-native';
+import { Modal, Text, TextInput, TouchableOpacity, View, type ViewStyle } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { SettingsCard } from '@/features/settings/components/SettingsCard';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing } from '@/shared/theme';
 
 type Props = {
   name: string;
@@ -37,6 +29,7 @@ export function ProfileCard({
   streakDays,
   style,
 }: Props) {
+  const styles = useStyles();
   const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);
@@ -122,14 +115,14 @@ export function ProfileCard({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: { paddingVertical: 20 },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   avatar: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#EBD7C1',
+    backgroundColor: colors.surfaceDeep,
     borderWidth: 2,
     borderColor: colors.maroon,
     alignItems: 'center',
@@ -199,4 +192,4 @@ const styles = StyleSheet.create({
   dialogButton: { minHeight: 32, justifyContent: 'center' },
   dialogCancel: { fontFamily: fontFamily.sans700, fontSize: 14, color: colors.muted },
   dialogSave: { fontFamily: fontFamily.sans700, fontSize: 14, color: colors.maroon },
-});
+}));

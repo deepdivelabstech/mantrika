@@ -4,7 +4,7 @@ import Animated, { useAnimatedProps, useSharedValue, withTiming } from 'react-na
 import Svg, { ClipPath, Defs, Image as SvgImage, Pattern, Polygon, Rect } from 'react-native-svg';
 
 import { MALA_CANVAS, useMalaGeometry } from '@/shared/hooks/useMalaGeometry';
-import { colors } from '@/shared/theme';
+import { useColors } from '@/shared/theme';
 
 const handImage = require('../../../../assets/images/mala-hand.png');
 const beadImage = require('../../../../assets/images/rudraksha-bead.png');
@@ -45,6 +45,7 @@ const THUMB_CLIP_POINTS = [
 
 /** The teardrop-shaped 108-bead loop with a larger "guru" bead, filling as beads are counted. */
 export const MalaLoop = React.memo(function MalaLoop({ beadsInRound, scale = 1 }: Props) {
+  const colors = useColors();
   const { path, beadDashOffset, guruDashOffset, fullLoopLength } = useMalaGeometry(beadsInRound);
   const beadOffset = useSharedValue(fullLoopLength);
   const guruOffset = useSharedValue(fullLoopLength);

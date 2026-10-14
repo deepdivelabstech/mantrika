@@ -163,3 +163,35 @@ export function EyesClosedIcon({ size = 22, color }: IconProps) {
     </Svg>
   );
 }
+
+export function ShareIcon({ size = 22, color }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Circle cx={18} cy={5} r={2.6} stroke={color} {...strokeProps} />
+      <Circle cx={6} cy={12} r={2.6} stroke={color} {...strokeProps} />
+      <Circle cx={18} cy={19} r={2.6} stroke={color} {...strokeProps} />
+      <Path stroke={color} {...strokeProps} d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4" />
+    </Svg>
+  );
+}
+
+export function StarIcon({ size = 22, color }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        stroke={color}
+        {...strokeProps}
+        d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8L12 3z"
+      />
+    </Svg>
+  );
+}
+
+/** Crescent moon: appearance / night mode. */
+export function MoonIcon({ size = 22, color }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path stroke={color} {...strokeProps} d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+    </Svg>
+  );
+}

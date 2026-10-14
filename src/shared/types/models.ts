@@ -33,6 +33,7 @@ export type CustomMantra = {
 export type Language = 'en' | 'hi';
 export type AnimSpeed = 'gentle' | 'steady' | 'quick';
 export type SoundscapeId = 'silence' | 'ganga' | 'forest' | 'bowls';
+export type Appearance = 'system' | 'light' | 'dark';
 
 export type Settings = {
   name: string;
@@ -47,6 +48,7 @@ export type Settings = {
   roundChime: boolean;
   pauseAfterRound: boolean;
   focusDiscovered: boolean; // has opened or dismissed the eyes-closed mode tip
+  appearance: Appearance;
 };
 
 /** Beads per mantra per local day: { 'yyyy-mm-dd': { mantraId: beads } }. */

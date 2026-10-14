@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 
 import { CloseIcon, SearchIcon } from '@/shared/components/icons';
-import { colors } from '@/shared/theme';
+import { makeStyles, useColors } from '@/shared/theme';
 
 type Props = {
   value: string;
@@ -13,6 +13,8 @@ type Props = {
 };
 
 export function SearchBar({ value, onChange, placeholder, accessibilityLabel, clearLabel }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <View style={styles.wrap}>
       <View style={styles.icon}>
@@ -42,7 +44,7 @@ export function SearchBar({ value, onChange, placeholder, accessibilityLabel, cl
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   wrap: { position: 'relative', justifyContent: 'center' },
   icon: { position: 'absolute', left: 14, zIndex: 1 },
   input: {
@@ -51,7 +53,7 @@ const styles = StyleSheet.create({
     paddingRight: 44,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: '#DCCBB8',
+    borderColor: colors.inputBorder,
     backgroundColor: colors.ground,
     fontSize: 14,
     color: colors.ink,
@@ -64,4 +66,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+}));

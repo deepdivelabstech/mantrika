@@ -1,7 +1,7 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, Text, TouchableOpacity } from 'react-native';
 
-import { colors, fontFamily, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, spacing } from '@/shared/theme';
 
 type Option<T extends string> = { value: T; label: string; count: number };
 
@@ -15,6 +15,7 @@ type Props<T extends string> = {
 
 /** Horizontally scrollable filter pills with a count badge; active pill fills maroon. */
 export function FilterChips<T extends string>({ options, value, onChange, compact }: Props<T>) {
+  const styles = useStyles();
   return (
     <ScrollView
       horizontal
@@ -56,7 +57,7 @@ export function FilterChips<T extends string>({ options, value, onChange, compac
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   // Bleed to the screen edges (the list has spacing.lg side padding) so chips
   // scroll under the edge instead of being clipped by the padding.
   scroller: { marginHorizontal: -spacing.lg },
@@ -74,11 +75,11 @@ const styles = StyleSheet.create({
   },
   chipActive: { backgroundColor: colors.maroon, borderColor: colors.maroon },
   chipCompact: { height: 32, paddingHorizontal: 12, borderRadius: 16 },
-  chipCompactActive: { backgroundColor: '#FBE3C5', borderColor: colors.saffronDark },
+  chipCompactActive: { backgroundColor: colors.highlight, borderColor: colors.saffronDark },
   label: { fontFamily: fontFamily.sans600, fontSize: 13, color: colors.ink },
   labelActive: { color: colors.ground },
   labelCompact: { fontSize: 12, color: colors.muted },
-  labelCompactActive: { color: '#7A3E12' },
+  labelCompactActive: { color: colors.highlightInk },
   count: {
     minWidth: 20,
     paddingHorizontal: 5,
@@ -91,5 +92,5 @@ const styles = StyleSheet.create({
     color: colors.muted,
     backgroundColor: colors.line,
   },
-  countActive: { color: colors.maroon, backgroundColor: '#FBE3C5' },
-});
+  countActive: { color: colors.maroon, backgroundColor: colors.highlight },
+}));

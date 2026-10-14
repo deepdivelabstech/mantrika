@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { IconRow } from '@/features/settings/components/IconRow';
 import { ReminderIcon } from '@/shared/components/icons';
-import { colors, fontFamily } from '@/shared/theme';
+import { fontFamily, useColors } from '@/shared/theme';
 
 type Props = { time: string | null; onChange: (time: string | null) => void };
 
@@ -21,6 +21,7 @@ function timeStringToDate(time: string | null): Date {
 }
 
 export function ReminderRow({ time, onChange }: Props) {
+  const colors = useColors();
   const { t } = useTranslation();
   const [pickerOpen, setPickerOpen] = useState(false);
 

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { colors, fontFamily, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, spacing, useColors } from '@/shared/theme';
 
 type Props = { onAdd: (text: string) => void };
 
 export function AddCustomMantraForm({ onAdd }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   const { t } = useTranslation();
   const [text, setText] = useState('');
 
@@ -38,12 +40,12 @@ export function AddCustomMantraForm({ onAdd }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     padding: spacing.md,
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderColor: '#C9B49B',
+    borderColor: colors.dashedBorder,
     borderRadius: 12,
   },
   label: {
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
     height: 48,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: '#DCCBB8',
+    borderColor: colors.inputBorder,
     borderRadius: 8,
     backgroundColor: colors.ground,
     fontSize: 14,
@@ -80,4 +82,4 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.ground,
   },
-});
+}));

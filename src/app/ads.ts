@@ -3,6 +3,7 @@ import { InteractionManager, Platform } from 'react-native';
 import mobileAds, { AdEventType, InterstitialAd, TestIds } from 'react-native-google-mobile-ads';
 
 import { shouldShowInterstitial } from '@/shared/lib/adPacing';
+import { toLocalDateString } from '@/shared/lib/dateHelpers';
 import { useAdStore } from '@/shared/store/useAdStore';
 import { useProgressStore } from '@/shared/store/useProgressStore';
 
@@ -65,8 +66,11 @@ export function endPracticeSession() {
   const ads = useAdStore.getState();
   if (!ads.endSession()) return;
 
-  const { sessionsSinceInterstitial, lastInterstitialAt } = useAdStore.getState();
+  const { sessionsSinceInterstitial, lastInterstitialAt, lastReviewPromptDate } =
+    useAdStore.getState();
   const now = Date.now();
+  // A session that ended in the rating dialog doesn't also end in an ad.
+  if (lastReviewPromptDate === toLocalDateString(new Date(now))) return;
   const due = shouldShowInterstitial({
     now,
     lastShownAt: lastInterstitialAt,

@@ -23,7 +23,7 @@ import {
   ProgressTabIcon,
   SettingsIcon,
 } from '@/shared/components/icons';
-import { colors, fontFamily } from '@/shared/theme';
+import { fontFamily, makeStyles, useColors } from '@/shared/theme';
 
 export type TabParamList = {
   Counter: undefined;
@@ -34,8 +34,6 @@ export type TabParamList = {
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const ACTIVE_TEXT = '#4A2118';
-const HIGHLIGHT = '#FBE3C5';
 const BAR_PADDING = 12;
 const INDICATOR_INSET = 6;
 const SPRING = { damping: 18, stiffness: 220, mass: 0.6 };
@@ -77,6 +75,8 @@ function TabItem({
   focused: boolean;
   onPress: () => void;
 }) {
+  const styles = useStyles();
+  const colors = useColors();
   const lift = useSharedValue(focused ? 1 : 0);
 
   useEffect(() => {
@@ -87,7 +87,7 @@ function TabItem({
     transform: [{ translateY: -2 * lift.value }, { scale: 1 + 0.08 * lift.value }],
   }));
 
-  const color = focused ? ACTIVE_TEXT : colors.muted;
+  const color = focused ? colors.tabActiveInk : colors.muted;
   return (
     <Pressable
       onPress={onPress}
@@ -109,6 +109,7 @@ function TabItem({
 // Custom bar: a single highlight pill slides between tabs instead of each tab
 // toggling its own background, so the active state reads as one moving piece.
 function MantrikaTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+  const styles = useStyles();
   const insets = useSafeAreaInsets();
   const [rowWidth, setRowWidth] = useState(0);
   const tabWidth = rowWidth / state.routes.length;
@@ -215,7 +216,7 @@ export function TabNavigator() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   wrap: { backgroundColor: colors.ground },
   bar: {
     paddingHorizontal: BAR_PADDING,
@@ -231,11 +232,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: INDICATOR_INSET,
     borderRadius: 18,
-    backgroundColor: HIGHLIGHT,
+    backgroundColor: colors.highlight,
     borderWidth: 1,
-    borderColor: 'rgba(240,162,84,0.45)',
+    borderColor: colors.highlightBorder,
   },
   item: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 4 },
   label: { fontFamily: fontFamily.sans600, fontSize: 11, letterSpacing: 0.4 },
   labelActive: { fontFamily: fontFamily.sans700 },
-});
+}));

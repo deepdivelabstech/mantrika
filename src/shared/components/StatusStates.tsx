@@ -1,9 +1,11 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 
-import { colors, spacing, typeScale } from '@/shared/theme';
+import { makeStyles, spacing, typeScale, useColors } from '@/shared/theme';
 
 export function LoadingState({ label }: { label: string }) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <View style={styles.container} accessibilityRole="progressbar" accessibilityLabel={label}>
       <ActivityIndicator color={colors.maroon} />
@@ -13,6 +15,7 @@ export function LoadingState({ label }: { label: string }) {
 }
 
 export function EmptyState({ label }: { label: string }) {
+  const styles = useStyles();
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{label}</Text>
@@ -29,6 +32,7 @@ export function ErrorState({
   onRetry?: () => void;
   retryLabel?: string;
 }) {
+  const styles = useStyles();
   return (
     <View style={styles.container} accessibilityRole="alert">
       <Text style={styles.text}>{label}</Text>
@@ -46,7 +50,7 @@ export function ErrorState({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -55,4 +59,4 @@ const styles = StyleSheet.create({
   },
   text: { ...typeScale.body, color: colors.muted, textAlign: 'center' },
   retry: { ...typeScale.bodyStrong, color: colors.maroon },
-});
+}));

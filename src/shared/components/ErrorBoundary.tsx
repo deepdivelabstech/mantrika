@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { colors, radius, spacing, typeScale } from '@/shared/theme';
+import { makeStyles, radius, spacing, typeScale } from '@/shared/theme';
 
 type Props = { children: React.ReactNode; label: string };
 type State = { error: Error | null };
@@ -34,6 +34,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
 }
 
 function ErrorFallback({ onRetry }: { onRetry: () => void }) {
+  const styles = useStyles();
   const { t } = useTranslation();
   return (
     <View style={styles.container}>
@@ -50,7 +51,7 @@ function ErrorFallback({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -66,5 +67,5 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     borderRadius: radius.pill,
   },
-  buttonText: { ...typeScale.bodyStrong, color: colors.white },
-});
+  buttonText: { ...typeScale.bodyStrong, color: colors.onAccent },
+}));

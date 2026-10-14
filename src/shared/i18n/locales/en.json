@@ -131,6 +131,11 @@
     "languageDesc": "Choose the language for the app.",
     "langEn": "English",
     "langHi": "हिंदी",
+    "appearanceTitle": "Appearance",
+    "appearanceDesc": "Dark mode is easier on the eyes for early-morning and night practice.",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
     "yourData": "Your data",
     "backupTitle": "Backup & restore",
     "backupDesc": "Your counts live only on this phone. Export a backup before reinstalling or switching phones.",
@@ -150,7 +155,13 @@
     "chimeTitle": "Round chime",
     "chimeDesc": "A temple bell rings each time you complete 108 beads.",
     "pauseTitle": "Pause after each round",
-    "pauseDesc": "Ignore taps for 2 seconds after a round so you don't run into the next one."
+    "pauseDesc": "Ignore taps for 2 seconds after a round so you don't run into the next one.",
+    "shareSupport": "Share & support",
+    "shareTitle": "Share Mantrika",
+    "shareDesc": "Invite friends and your satsang to chant with you.",
+    "shareMessage": "I've been using Mantrika for my daily japa: a calm 108-bead mala counter with streaks, reminders and mantras in Hindi and English. Chant with me:",
+    "rateTitle": "Rate Mantrika",
+    "rateDesc": "A review on Google Play helps other sadhakas find the app."
   },
   "common": {
     "loading": "Loading…",

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/shared/components/Button';
 import { PillGrid } from '@/shared/components/PillGrid';
 import { ToggleSwitch } from '@/shared/components/ToggleSwitch';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing } from '@/shared/theme';
 import { DAILY_GOAL_OPTIONS } from '@/shared/types/models';
 
 const TARGET_OPTIONS = [11000, 21000, 51000, 125000] as const;
@@ -42,6 +42,7 @@ export function SankalpaSheet({
   onClose,
   onSave,
 }: Props) {
+  const styles = useStyles();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [goal, setGoal] = useState(String(dailyGoalMalas));
@@ -131,7 +132,7 @@ export function SankalpaSheet({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   backdrop: { flex: 1, backgroundColor: colors.overlay },
   sheet: {
     position: 'absolute',
@@ -169,4 +170,4 @@ const styles = StyleSheet.create({
   warn: { marginTop: spacing.sm, fontSize: 12, color: colors.saffronDark },
   actions: { flexDirection: 'row', gap: spacing.sm, paddingTop: spacing.sm },
   action: { flex: 1 },
-});
+}));

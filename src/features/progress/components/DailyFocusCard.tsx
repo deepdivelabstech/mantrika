@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ProgressRing } from '@/shared/components/ProgressRing';
 import { dailyFocusFraction } from '@/shared/lib/beadMath';
-import { colors, fontFamily, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, spacing, useColors } from '@/shared/theme';
 import { BEADS_PER_ROUND } from '@/shared/types/models';
 
 type Props = { todayTotal: number; goalMalas: number; onEditGoal: () => void };
@@ -15,6 +15,8 @@ export const DailyFocusCard = React.memo(function DailyFocusCard({
   goalMalas,
   onEditGoal,
 }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   const { t } = useTranslation();
   const goalBeads = goalMalas * BEADS_PER_ROUND;
   const met = todayTotal >= goalBeads;
@@ -33,7 +35,7 @@ export const DailyFocusCard = React.memo(function DailyFocusCard({
           fraction={dailyFocusFraction(todayTotal, goalBeads)}
           size={200}
           strokeWidth={9}
-          trackColor="#E0CEBB"
+          trackColor={colors.track}
           progressColor={met ? colors.saffronDark : colors.maroon}
         >
           <View style={StyleSheet.absoluteFill}>
@@ -55,11 +57,11 @@ export const DailyFocusCard = React.memo(function DailyFocusCard({
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     alignItems: 'center',
     padding: spacing.xl,
-    backgroundColor: '#F0E7DC',
+    backgroundColor: colors.surfaceSoft,
     borderWidth: 1,
     borderColor: colors.line,
     borderRadius: 12,
@@ -78,4 +80,4 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   statusMet: { color: colors.saffronDark },
-});
+}));

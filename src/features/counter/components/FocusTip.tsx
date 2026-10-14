@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { AccessibilityInfo, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AccessibilityInfo, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useReducedMotion,
@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing } from '@/shared/theme';
 
 type Props = { onTry: () => void; onDismiss: () => void };
 
@@ -22,6 +22,7 @@ const CARET_MARGIN_RIGHT = 19;
  * tap button stays reachable and counting can continue underneath.
  */
 export function FocusTip({ onTry, onDismiss }: Props) {
+  const styles = useStyles();
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
   const shown = useSharedValue(0);
@@ -54,7 +55,7 @@ export function FocusTip({ onTry, onDismiss }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   wrap: { position: 'absolute', top: 4, right: 8, width: 250, alignItems: 'flex-end' },
   caret: {
     marginRight: CARET_MARGIN_RIGHT,
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     gap: spacing.md,
   },
-  dismiss: { fontFamily: fontFamily.sans600, fontSize: 13, color: '#E9C9B3' },
+  dismiss: { fontFamily: fontFamily.sans600, fontSize: 13, color: colors.onAccentMuted },
   try: {
     paddingHorizontal: 14,
     paddingVertical: 7,
@@ -91,4 +92,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.ground,
   },
   tryText: { fontFamily: fontFamily.sans700, fontSize: 13, color: colors.maroon },
-});
+}));

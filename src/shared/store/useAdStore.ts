@@ -7,6 +7,7 @@ type AdStore = {
   lastInterstitialAt: number;
   sessionsSinceInterstitial: number;
   lastStreakRestoreDate: string;
+  lastReviewPromptDate: string;
   /** Rounds completed since the current practice session began; session-only, never persisted. */
   roundsThisSession: number;
   noteRoundCompleted: () => void;
@@ -14,15 +15,17 @@ type AdStore = {
   endSession: () => boolean;
   markInterstitialShown: (now: number) => void;
   markStreakRestored: (today: string) => void;
+  markReviewPrompted: (today: string) => void;
 };
 
-/** Ad pacing state. Device-local on purpose: it is not part of backups. */
+/** Ad and rating-prompt pacing state. Device-local on purpose: it is not part of backups. */
 export const useAdStore = create<AdStore>()(
   persist(
     (set, get) => ({
       lastInterstitialAt: 0,
       sessionsSinceInterstitial: 0,
       lastStreakRestoreDate: '',
+      lastReviewPromptDate: '',
       roundsThisSession: 0,
       noteRoundCompleted: () => set((s) => ({ roundsThisSession: s.roundsThisSession + 1 })),
       endSession: () => {
@@ -36,6 +39,7 @@ export const useAdStore = create<AdStore>()(
       markInterstitialShown: (now) =>
         set({ lastInterstitialAt: now, sessionsSinceInterstitial: 0 }),
       markStreakRestored: (today) => set({ lastStreakRestoreDate: today }),
+      markReviewPrompted: (today) => set({ lastReviewPromptDate: today }),
     }),
     {
       name: 'mantrika.ads.v1',
@@ -44,6 +48,7 @@ export const useAdStore = create<AdStore>()(
         lastInterstitialAt: s.lastInterstitialAt,
         sessionsSinceInterstitial: s.sessionsSinceInterstitial,
         lastStreakRestoreDate: s.lastStreakRestoreDate,
+        lastReviewPromptDate: s.lastReviewPromptDate,
       }),
     },
   ),

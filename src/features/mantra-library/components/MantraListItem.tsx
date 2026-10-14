@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { displayName } from '@/shared/lib/mantraDisplay';
 import { CloseIcon, HeartIcon, PlayIcon } from '@/shared/components/icons';
-import { colors, fontFamily, radius, spacing } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing, useColors } from '@/shared/theme';
 import type { Language, Mantra } from '@/shared/types/models';
 
 type Props = {
@@ -35,6 +35,8 @@ export const MantraListItem = React.memo(function MantraListItem({
   onToggleFavorite,
   onRemove,
 }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   const { t } = useTranslation();
   const isCustom = mantra.id.startsWith('custom-');
   const showDeva = lang === 'hi' && !isCustom;
@@ -114,7 +116,7 @@ export const MantraListItem = React.memo(function MantraListItem({
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
   },
   rowActive: {
-    backgroundColor: '#F8EDE0',
+    backgroundColor: colors.surfaceSelected,
     borderColor: colors.maroon,
     borderLeftWidth: 4,
     paddingLeft: 15,
@@ -163,7 +165,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: 10,
-    backgroundColor: '#FBE3C5',
+    backgroundColor: colors.highlight,
   },
   chipDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.saffronDark },
   chipText: {
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.sans700,
     letterSpacing: 0.8,
     textTransform: 'uppercase',
-    color: '#7A3E12',
+    color: colors.highlightInk,
   },
   actions: { alignItems: 'center', marginLeft: spacing.xs },
   iconButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
@@ -183,4 +185,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.maroon,
   },
-});
+}));

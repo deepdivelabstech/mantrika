@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Animated, {
   useAnimatedStyle,
@@ -33,6 +33,7 @@ import { MALA_CANVAS, useMalaLayout } from '@/shared/hooks/useMalaGeometry';
 import { useToday } from '@/shared/hooks/useToday';
 import { fillFraction } from '@/shared/lib/beadMath';
 import { displayName, findMantra, mergeMantras } from '@/shared/lib/mantraDisplay';
+import { maybeRequestReview } from '@/shared/lib/storeReview';
 import { useMantraStore } from '@/shared/store/useMantraStore';
 import {
   selectBeadsToday,
@@ -40,7 +41,7 @@ import {
   useProgressStore,
 } from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
-import { colors, fontFamily, radius, spacing, typeScale } from '@/shared/theme';
+import { fontFamily, makeStyles, radius, spacing, typeScale, useColors } from '@/shared/theme';
 import { BEADS_PER_ROUND } from '@/shared/types/models';
 
 const beadImage = require('../../../assets/images/rudraksha-bead.png');
@@ -50,6 +51,8 @@ const MAIN_PADDING_BOTTOM = 22;
 const TAP_GAP = 12;
 
 export function CounterScreen() {
+  const styles = useStyles();
+  const colors = useColors();
   const { t } = useTranslation();
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -110,9 +113,13 @@ export function CounterScreen() {
 
   const [showTip, setShowTip] = useState(false);
   const tipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Reaching the day's goal or a vow is when a rating ask feels natural; it
+  // waits for the celebration so the two don't overlap.
+  const reviewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
     () => () => {
       if (tipTimer.current) clearTimeout(tipTimer.current);
+      if (reviewTimer.current) clearTimeout(reviewTimer.current);
     },
     [],
   );
@@ -168,6 +175,12 @@ export function CounterScreen() {
         setShowTip(true);
       }, CELEBRATION_MS);
     }
+    if ((event.milestone === 'goal' || event.milestone === 'sankalpa') && !reviewTimer.current) {
+      reviewTimer.current = setTimeout(() => {
+        reviewTimer.current = null;
+        void maybeRequestReview();
+      }, CELEBRATION_MS);
+    }
     shakeBead();
     if (risingMantra && current) {
       const isCustom = current.id.startsWith('custom-');
@@ -198,7 +211,7 @@ export function CounterScreen() {
         </Text>
       </TouchableOpacity>
     ),
-    [openFocus, focusPulseStyle, t],
+    [openFocus, focusPulseStyle, t, styles, colors],
   );
 
   const closeSheet = useCallback(() => setSheetOpen(false), []);
@@ -341,7 +354,7 @@ function scaledFont(fontSize: number, scale: number, lineHeight?: number) {
     : { fontSize: Math.round(fontSize * scale) };
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   main: {
     flex: 1,
     alignItems: 'center',
@@ -366,7 +379,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     paddingVertical: spacing.md,
     borderRadius: radius.lg,
-    backgroundColor: 'rgba(255,252,247,0.92)',
+    backgroundColor: colors.glass,
     borderWidth: 1,
     borderColor: colors.line,
     alignItems: 'center',
@@ -436,4 +449,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   undoGlyph: { fontSize: 22, color: colors.muted, marginTop: -2 },
-});
+}));

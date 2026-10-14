@@ -1,7 +1,7 @@
 import React from 'react';
 import Svg, { Circle, Defs, Image as SvgImage, Line, Pattern, Rect } from 'react-native-svg';
 
-import { colors } from '@/shared/theme';
+import { useColors } from '@/shared/theme';
 
 const bead = require('../../../assets/images/rudraksha-bead.png');
 
@@ -17,6 +17,7 @@ type Props = { size?: number };
  * in-app header mark and as the source for the app icon / splash image.
  */
 export function BrandMark({ size = 36 }: Props) {
+  const colors = useColors();
   const dots = Array.from({ length: RING_DOT_COUNT }, (_, i) => {
     const angle = (i / RING_DOT_COUNT) * Math.PI * 2 - Math.PI / 2;
     return {

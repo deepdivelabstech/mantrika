@@ -24,12 +24,13 @@ import {
   useProgressStore,
 } from '@/shared/store/useProgressStore';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
-import { colors, spacing } from '@/shared/theme';
+import { spacing, useColors } from '@/shared/theme';
 import { BEADS_PER_ROUND } from '@/shared/types/models';
 
 // The tab is frozen while blurred (freezeOnBlur), so none of this recomputes
 // during counting; every derived value is memoized on stable store references.
 export function ProgressScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const today = useToday();
 

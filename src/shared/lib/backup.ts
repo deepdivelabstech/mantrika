@@ -37,6 +37,7 @@ export function buildBackup(now = new Date()): Backup {
       roundChime: s.roundChime,
       pauseAfterRound: s.pauseAfterRound,
       focusDiscovered: s.focusDiscovered,
+      appearance: s.appearance,
     },
     mantras: { custom: m.custom, favorites: m.favorites },
   };
@@ -119,6 +120,7 @@ const SETTINGS_ENUMS: Partial<Record<keyof Settings, readonly unknown[]>> = {
   lang: ['en', 'hi'],
   animSpeed: ['gentle', 'steady', 'quick'],
   sound: ['silence', 'ganga', 'forest', 'bowls'],
+  appearance: ['system', 'light', 'dark'],
 };
 
 /** Keeps only known settings whose type matches the current value; anything else keeps its current value. */
