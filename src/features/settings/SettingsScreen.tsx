@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { BackupCard } from '@/features/settings/components/BackupCard';
@@ -13,6 +13,7 @@ import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { useToday } from '@/shared/hooks/useToday';
 import {
+  ChevronIcon,
   CounterTabIcon,
   HapticIcon,
   LanguageIcon,
@@ -251,25 +252,23 @@ export function SettingsScreen() {
 
         <Text style={styles.sectionLabel}>{t('settings.shareSupport')}</Text>
 
-        <TouchableOpacity onPress={share} accessibilityRole="button">
-          <SettingsCard style={styles.card}>
-            <IconRow
-              icon={<ShareIcon color={colors.maroon} />}
-              title={t('settings.shareTitle')}
-              description={t('settings.shareDesc')}
-            />
-          </SettingsCard>
-        </TouchableOpacity>
+        <SettingsCard style={styles.card} onPress={share}>
+          <IconRow
+            icon={<ShareIcon color={colors.maroon} />}
+            title={t('settings.shareTitle')}
+            description={t('settings.shareDesc')}
+            control={<ChevronIcon color={colors.muted} />}
+          />
+        </SettingsCard>
 
-        <TouchableOpacity onPress={() => void openStoreListing()} accessibilityRole="button">
-          <SettingsCard style={styles.stackedCard}>
-            <IconRow
-              icon={<StarIcon color={colors.maroon} />}
-              title={t('settings.rateTitle')}
-              description={t('settings.rateDesc')}
-            />
-          </SettingsCard>
-        </TouchableOpacity>
+        <SettingsCard style={styles.stackedCard} onPress={() => void openStoreListing()}>
+          <IconRow
+            icon={<StarIcon color={colors.maroon} />}
+            title={t('settings.rateTitle')}
+            description={t('settings.rateDesc')}
+            control={<ChevronIcon color={colors.muted} />}
+          />
+        </SettingsCard>
       </ScrollView>
     </ScreenContainer>
   );
