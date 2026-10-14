@@ -1,16 +1,22 @@
 import { useColorScheme, StyleSheet } from 'react-native';
 
+import { useSettingsStore } from '@/shared/store/useSettingsStore';
+
 import { darkColors, lightColors, type Palette } from './colors';
 
+/**
+ * Resolved from the user's Appearance setting first. `Appearance.setColorScheme`
+ * (applied in App for native UI) doesn't notify `useColorScheme` subscribers,
+ * so an override must not depend on it; the system scheme is only consulted
+ * when the setting is "system".
+ */
 export function useIsDark(): boolean {
-  return useColorScheme() === 'dark';
+  const appearance = useSettingsStore((s) => s.appearance);
+  const system = useColorScheme();
+  return appearance === 'system' ? system === 'dark' : appearance === 'dark';
 }
 
-/**
- * The palette for the current scheme. The Appearance setting is applied
- * app-wide through `Appearance.setColorScheme`, so this follows both the
- * system and the user's override.
- */
+/** The palette for the current scheme. */
 export function useColors(): Palette {
   return useIsDark() ? darkColors : lightColors;
 }

@@ -13,7 +13,7 @@ import i18n from '@/shared/i18n';
 import { useAppFonts } from '@/shared/hooks/useAppFonts';
 import { useSound } from '@/shared/hooks/useSound';
 import { useSettingsStore } from '@/shared/store/useSettingsStore';
-import { useColors } from '@/shared/theme';
+import { useColors, useIsDark } from '@/shared/theme';
 
 void SplashScreen.preventAutoHideAsync();
 initAds();
@@ -38,6 +38,10 @@ function AppearanceSync() {
     void SystemUI.setBackgroundColorAsync(ground);
   }, [ground]);
   return null;
+}
+
+function ThemedStatusBar() {
+  return <StatusBar style={useIsDark() ? 'light' : 'dark'} />;
 }
 
 // Lives at the root, not in a screen: tab screens freeze while unfocused, so a
@@ -71,7 +75,7 @@ export default function App() {
       <AppearanceSync />
       <SoundscapePlayer />
       <RootNavigator />
-      <StatusBar style="auto" />
+      <ThemedStatusBar />
       {!splashDone && <AnimatedSplash onFinish={finishSplash} />}
     </AppProviders>
   );
