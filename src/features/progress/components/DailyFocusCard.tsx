@@ -51,7 +51,7 @@ export const DailyFocusCard = React.memo(function DailyFocusCard({
       <Text style={[styles.status, met && styles.statusMet]}>
         {met
           ? t('progress.goalMet')
-          : t('progress.malasOfGoal', { done: malasDone, goal: goalMalas })}
+          : t('progress.malasOfGoal', { done: malasDone, count: goalMalas })}
       </Text>
     </View>
   );

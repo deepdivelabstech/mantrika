@@ -280,7 +280,10 @@ export function CounterScreen() {
             <Text style={styles.statLabel}>{t('counter.rounds')}</Text>
             <Text
               style={[styles.statValueSmall, scaledFont(32, textScale)]}
-              accessibilityLabel={t('progress.malasOfGoal', { done: roundsToday, goal: goalMalas })}
+              accessibilityLabel={t('progress.malasOfGoal', {
+                done: roundsToday,
+                count: goalMalas,
+              })}
             >
               {roundsToday}
               <Text style={[styles.statGoal, scaledFont(16, textScale)]}>/{goalMalas}</Text>

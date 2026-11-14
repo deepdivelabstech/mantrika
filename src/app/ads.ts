@@ -1,6 +1,13 @@
 import Constants from 'expo-constants';
 import { InteractionManager, Platform } from 'react-native';
-import mobileAds, { AdEventType, InterstitialAd, TestIds } from 'react-native-google-mobile-ads';
+import mobileAds, {
+  AdEventType,
+  AdsConsent,
+  AdsConsentPrivacyOptionsRequirementStatus,
+  InterstitialAd,
+  TestIds,
+} from 'react-native-google-mobile-ads';
+import { create } from 'zustand';
 
 import { shouldShowInterstitial } from '@/shared/lib/adPacing';
 import { toLocalDateString } from '@/shared/lib/dateHelpers';
@@ -22,6 +29,16 @@ function unitId(kind: AdKind): string {
     string | undefined;
   return __DEV__ || !id ? TEST_IDS[kind] : id;
 }
+
+/**
+ * Consent state from Google's UMP flow. Session-only: UMP itself persists the
+ * user's choice, and every launch re-reads it. No ad is requested until
+ * `canRequestAds` is true.
+ */
+export const useAdsConsentStore = create<{
+  canRequestAds: boolean;
+  privacyOptionsRequired: boolean;
+}>(() => ({ canRequestAds: false, privacyOptionsRequired: false }));
 
 export const getBannerUnitId = () => unitId('Banner');
 export const getRewardedUnitId = () => unitId('Rewarded');
@@ -47,12 +64,54 @@ function preloadInterstitial() {
   if (!interstitialReady) interstitial.load();
 }
 
+async function syncConsentInfo() {
+  const info = await AdsConsent.getConsentInfo();
+  useAdsConsentStore.setState({
+    canRequestAds: info.canRequestAds,
+    privacyOptionsRequired:
+      info.privacyOptionsRequirementStatus === AdsConsentPrivacyOptionsRequirementStatus.REQUIRED,
+  });
+  return info.canRequestAds;
+}
+
+let adsStarted = false;
+async function startAds() {
+  if (adsStarted) return;
+  adsStarted = true;
+  await mobileAds().initialize();
+  preloadInterstitial();
+}
+
 export function initAds() {
   if (Platform.OS === 'web') return;
-  void mobileAds()
-    .initialize()
-    .then(preloadInterstitial)
-    .catch(() => undefined);
+  void (async () => {
+    try {
+      // Shows Google's consent form only where required (EEA/UK); a no-op elsewhere.
+      await AdsConsent.gatherConsent();
+    } catch {
+      // Network or form errors: fall through and use whatever consent is already stored.
+    }
+    try {
+      if (await syncConsentInfo()) await startAds();
+    } catch {
+      // Ads never block the app.
+    }
+  })();
+}
+
+/** Reopens the consent form from Settings (only offered when UMP says it is required). */
+export async function showAdPrivacyOptions() {
+  if (Platform.OS === 'web') return;
+  try {
+    await AdsConsent.showPrivacyOptionsForm();
+  } catch {
+    // Form unavailable: keep the current choice.
+  }
+  try {
+    if (await syncConsentInfo()) await startAds();
+  } catch {
+    // Ads never block the app.
+  }
 }
 
 /**
@@ -65,6 +124,7 @@ export function endPracticeSession() {
   if (Platform.OS === 'web') return;
   const ads = useAdStore.getState();
   if (!ads.endSession()) return;
+  if (!useAdsConsentStore.getState().canRequestAds) return;
 
   const { sessionsSinceInterstitial, lastInterstitialAt, lastReviewPromptDate } =
     useAdStore.getState();

@@ -115,7 +115,7 @@ export function FocusModeScreen() {
           </Text>
           <Text style={styles.count}>{beadsInRound}</Text>
           <Text style={styles.meta}>
-            {t('progress.malasOfGoal', { done: roundsToday, goal: goalMalas })}
+            {t('progress.malasOfGoal', { done: roundsToday, count: goalMalas })}
           </Text>
         </View>
         <Animated.Text

@@ -77,7 +77,8 @@
     "streakPaused": "क्रम रुका है — आज जप करके फिर शुरू करें",
     "today": "आज",
     "ofGoalBeads": "{{goal}} मनकों में से",
-    "malasOfGoal": "{{goal}} में से {{done}} माला",
+    "malasOfGoal_one": "{{count}} में से {{done}} माला",
+    "malasOfGoal_other": "{{count}} में से {{done}} माला",
     "goalMet": "आज का संकल्प पूर्ण",
     "editGoal": "लक्ष्य बदलें",
     "bestStreak": "सर्वश्रेष्ठ क्रम",
@@ -161,7 +162,9 @@
     "shareDesc": "मित्रों और अपने सत्संग को साथ जप करने के लिए आमंत्रित करें।",
     "shareMessage": "मंत्रिका मेरे दैनिक जप का साथी है: 108 मनकों का शांत माला काउंटर, क्रम, अनुस्मारक और हिंदी-अंग्रेज़ी में मंत्र। मेरे साथ जप करें:",
     "rateTitle": "मंत्रिका को रेट करें",
-    "rateDesc": "Google Play पर आपकी समीक्षा दूसरे साधकों को ऐप खोजने में मदद करती है।"
+    "rateDesc": "Google Play पर आपकी समीक्षा दूसरे साधकों को ऐप खोजने में मदद करती है।",
+    "adPrivacyTitle": "विज्ञापन गोपनीयता विकल्प",
+    "adPrivacyDesc": "विज्ञापन आपके डेटा का उपयोग कैसे करें, इसे देखें या बदलें।"
   },
   "common": {
     "loading": "लोड हो रहा है…",
@@ -211,5 +214,14 @@
     "vowDays": "दिन",
     "vowReplace": "सहेजने पर नया संकल्प दिन 1 से शुरू होगा।",
     "daysCount": "{{count}} दिन"
+  },
+  "about": {
+    "appTagline": "टैप करें। जाप करें। शांति पाएँ।",
+    "version": "संस्करण {{version}} ({{build}})",
+    "versionNoBuild": "संस्करण {{version}}",
+    "devSuffix": " · dev",
+    "studioName": "DeepDive Apps",
+    "madeBy": "{{studio}} द्वारा निर्मित",
+    "studioTagline": "Think Deep. Dive Beyond."
   }
 }

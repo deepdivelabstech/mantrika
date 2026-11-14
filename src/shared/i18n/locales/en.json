@@ -77,7 +77,8 @@
     "streakPaused": "Streak paused — chant today to begin anew",
     "today": "Today",
     "ofGoalBeads": "of {{goal}} beads",
-    "malasOfGoal": "{{done}} of {{goal}} malas",
+    "malasOfGoal_one": "{{done}} of {{count}} mala",
+    "malasOfGoal_other": "{{done}} of {{count}} malas",
     "goalMet": "Daily sankalpa fulfilled",
     "editGoal": "Edit goal",
     "bestStreak": "Best streak",
@@ -161,7 +162,9 @@
     "shareDesc": "Invite friends and your satsang to chant with you.",
     "shareMessage": "I've been using Mantrika for my daily japa: a calm 108-bead mala counter with streaks, reminders and mantras in Hindi and English. Chant with me:",
     "rateTitle": "Rate Mantrika",
-    "rateDesc": "A review on Google Play helps other sadhakas find the app."
+    "rateDesc": "A review on Google Play helps other sadhakas find the app.",
+    "adPrivacyTitle": "Ad privacy choices",
+    "adPrivacyDesc": "Review or change how ads may use your data."
   },
   "common": {
     "loading": "Loading…",
@@ -211,5 +214,14 @@
     "vowDays": "Days",
     "vowReplace": "Saving starts a new vow from day 1.",
     "daysCount": "{{count}} days"
+  },
+  "about": {
+    "appTagline": "Tap. Chant. Find your stillness.",
+    "version": "Version {{version}} ({{build}})",
+    "versionNoBuild": "Version {{version}}",
+    "devSuffix": " · dev",
+    "studioName": "DeepDive Apps",
+    "madeBy": "Made by {{studio}}",
+    "studioTagline": "Think Deep. Dive Beyond."
   }
 }

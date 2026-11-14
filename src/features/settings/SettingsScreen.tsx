@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Alert, ScrollView, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { showAdPrivacyOptions, useAdsConsentStore } from '@/app/ads';
 import { BackupCard } from '@/features/settings/components/BackupCard';
 import { IconRow } from '@/features/settings/components/IconRow';
 import { PillGrid } from '@/shared/components/PillGrid';
@@ -9,6 +10,7 @@ import { ProfileCard } from '@/features/settings/components/ProfileCard';
 import { ReminderRow } from '@/features/settings/components/ReminderRow';
 import { SettingsCard } from '@/features/settings/components/SettingsCard';
 import { ToggleSwitch } from '@/shared/components/ToggleSwitch';
+import { AboutFooter } from '@/shared/components/AboutFooter';
 import { Header } from '@/shared/components/Header';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { useToday } from '@/shared/hooks/useToday';
@@ -21,6 +23,7 @@ import {
   ProgressTabIcon,
   ReminderIcon,
   RisingIcon,
+  SettingsIcon,
   ShareIcon,
   SoundIcon,
   StarIcon,
@@ -46,6 +49,7 @@ export function SettingsScreen() {
   const totalBeadsLifetime = useProgressStore((s) => s.totalBeadsLifetime);
   const today = useToday();
   const streakDays = useProgressStore((s) => selectStreakDays(s, today));
+  const privacyOptionsRequired = useAdsConsentStore((s) => s.privacyOptionsRequired);
 
   useEffect(() => {
     void i18n.changeLanguage(settings.lang);
@@ -250,6 +254,17 @@ export function SettingsScreen() {
 
         <BackupCard style={styles.card} />
 
+        {privacyOptionsRequired && (
+          <SettingsCard style={styles.stackedCard} onPress={() => void showAdPrivacyOptions()}>
+            <IconRow
+              icon={<SettingsIcon color={colors.maroon} />}
+              title={t('settings.adPrivacyTitle')}
+              description={t('settings.adPrivacyDesc')}
+              control={<ChevronIcon color={colors.muted} />}
+            />
+          </SettingsCard>
+        )}
+
         <Text style={styles.sectionLabel}>{t('settings.shareSupport')}</Text>
 
         <SettingsCard style={styles.card} onPress={share}>
@@ -269,6 +284,8 @@ export function SettingsScreen() {
             control={<ChevronIcon color={colors.muted} />}
           />
         </SettingsCard>
+
+        <AboutFooter style={styles.about} />
       </ScrollView>
     </ScreenContainer>
   );
@@ -316,4 +333,5 @@ const useStyles = makeStyles((colors) => ({
   speedBlock: { marginTop: spacing.md },
   speedBlockOff: { opacity: 0.45 },
   pillBlock: { marginTop: spacing.md },
+  about: { marginTop: spacing.xxl, marginHorizontal: spacing.lg },
 }));

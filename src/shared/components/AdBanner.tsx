@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
-import { getBannerUnitId } from '@/app/ads';
+import { getBannerUnitId, useAdsConsentStore } from '@/app/ads';
 
 type Props = {
   /** 'anchored': full-width adaptive strip above the tab bar. 'inline': 300x250 in-content rectangle. */
@@ -12,7 +12,8 @@ type Props = {
 /** A banner ad that collapses entirely if the ad fails to load. */
 export function AdBanner({ variant = 'anchored' }: Props) {
   const [failed, setFailed] = useState(false);
-  if (Platform.OS === 'web' || failed) return null;
+  const canRequestAds = useAdsConsentStore((s) => s.canRequestAds);
+  if (Platform.OS === 'web' || failed || !canRequestAds) return null;
 
   const inline = variant === 'inline';
   return (

@@ -31,7 +31,8 @@ function AppearanceSync() {
   const appearance = useSettingsStore((s) => s.appearance);
   const ground = useColors().ground;
   useEffect(() => {
-    Appearance.setColorScheme(appearance === 'system' ? 'unspecified' : appearance);
+    // Not implemented by react-native-web.
+    Appearance.setColorScheme?.(appearance === 'system' ? 'unspecified' : appearance);
   }, [appearance]);
   // The window behind the screens, seen during transitions and keyboard moves.
   useEffect(() => {

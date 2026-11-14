@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { useRewardedAd } from 'react-native-google-mobile-ads';
 import { useTranslation } from 'react-i18next';
 
-import { getRewardedUnitId } from '@/app/ads';
+import { getRewardedUnitId, useAdsConsentStore } from '@/app/ads';
 import { Button } from '@/shared/components/Button';
 import { fontFamily, makeStyles, radius, spacing } from '@/shared/theme';
 
@@ -19,9 +19,11 @@ export function StreakRestoreCard({ streakDays, restored, onRestore }: Props) {
   const { t } = useTranslation();
   const { isLoaded, isClosed, isEarnedReward, load, show } = useRewardedAd(getRewardedUnitId());
 
+  const canRequestAds = useAdsConsentStore((s) => s.canRequestAds);
+
   useEffect(() => {
-    if (!restored) load();
-  }, [load, restored, isClosed]);
+    if (!restored && canRequestAds) load();
+  }, [load, restored, isClosed, canRequestAds]);
 
   useEffect(() => {
     if (isEarnedReward && !restored) onRestore();

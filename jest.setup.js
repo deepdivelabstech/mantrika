@@ -45,9 +45,27 @@ jest.mock('expo-notifications', () => ({
   SchedulableTriggerInputTypes: { DAILY: 'daily' },
 }));
 
+jest.mock('expo-application', () => ({
+  nativeApplicationVersion: '1.0.0',
+  nativeBuildVersion: '1',
+}));
+
 jest.mock('react-native-google-mobile-ads', () => ({
   __esModule: true,
-  default: () => ({ initialize: jest.fn() }),
+  default: () => ({ initialize: jest.fn(async () => []) }),
+  AdsConsent: {
+    gatherConsent: jest.fn(async () => ({})),
+    getConsentInfo: jest.fn(async () => ({
+      canRequestAds: true,
+      privacyOptionsRequirementStatus: 'NOT_REQUIRED',
+    })),
+    showPrivacyOptionsForm: jest.fn(async () => ({})),
+  },
+  AdsConsentPrivacyOptionsRequirementStatus: {
+    UNKNOWN: 'UNKNOWN',
+    REQUIRED: 'REQUIRED',
+    NOT_REQUIRED: 'NOT_REQUIRED',
+  },
   BannerAd: () => null,
   BannerAdSize: {
     ANCHORED_ADAPTIVE_BANNER: 'ANCHORED_ADAPTIVE_BANNER',

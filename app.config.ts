@@ -32,6 +32,12 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         monochromeImage: './assets/android-icon-monochrome.png',
       },
       predictiveBackGestureEnabled: false,
+      // Added by prebuild defaults (expo-audio recording, RN dev overlay) but never used;
+      // a mic permission in a counter app trips Play review and Data safety checks.
+      blockedPermissions: [
+        'android.permission.RECORD_AUDIO',
+        'android.permission.SYSTEM_ALERT_WINDOW',
+      ],
     },
     web: {
       favicon: './assets/favicon.png',
@@ -51,7 +57,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         },
       ],
       'expo-localization',
-      'expo-audio',
+      ['expo-audio', { microphonePermission: false, recordAudioAndroid: false }],
       '@react-native-community/datetimepicker',
       [
         'expo-notifications',
@@ -68,6 +74,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           androidAppId:
             process.env.ADMOB_ANDROID_APP_ID ?? 'ca-app-pub-5747186985760540~6992342734',
           iosAppId: process.env.ADMOB_IOS_APP_ID ?? 'ca-app-pub-3940256099942544~1458002511',
+          // Hold measurement until the UMP consent flow in src/app/ads.ts has run.
+          delayAppMeasurementInit: true,
         },
       ],
     ],
