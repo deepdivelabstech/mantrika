@@ -13,7 +13,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...config,
     name: isProd ? 'Mantrika' : `Mantrika (${profile})`,
     slug: 'mantrika',
-    version: '1.0.0',
+    version: '1.1.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'automatic',
@@ -94,8 +94,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       admobRewardedAndroid:
         process.env.ADMOB_REWARDED_ANDROID ?? 'ca-app-pub-5747186985760540/4908603863',
       admobRewardedIos: process.env.ADMOB_REWARDED_IOS ?? '',
-      // Native Advanced unit for the Mantra Library list. Unset: release builds show no native ad.
-      admobNativeAndroid: process.env.ADMOB_NATIVE_ANDROID ?? '',
+      // Native Advanced unit for the Mantra Library list.
+      admobNativeAndroid:
+        process.env.ADMOB_NATIVE_ANDROID ?? 'ca-app-pub-5747186985760540/1210735697',
       admobNativeIos: process.env.ADMOB_NATIVE_IOS ?? '',
       remoteCatalogUrl: process.env.REMOTE_CATALOG_URL ?? '',
     },
