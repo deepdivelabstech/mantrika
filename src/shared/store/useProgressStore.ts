@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { isRestorableGap } from '@/shared/lib/adPacing';
 import { advanceBead } from '@/shared/lib/beadMath';
 import { daysBetween, toLocalDateString } from '@/shared/lib/dateHelpers';
 import { dayTotal, isInSankalpaWindow, recordBead } from '@/shared/lib/practiceLog';
@@ -176,7 +177,11 @@ export const useProgressStore = create<ProgressStore>()(
       clearSankalpa: () => set({ sankalpa: null, undoStack: [] }),
       restoreStreak: (now = new Date()) => {
         const { lastActiveDate } = get();
-        if (!lastActiveDate || daysBetween(lastActiveDate, toLocalDateString(now)) !== 2) return;
+        if (
+          !lastActiveDate ||
+          !isRestorableGap(daysBetween(lastActiveDate, toLocalDateString(now)))
+        )
+          return;
         const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
         set({ lastActiveDate: toLocalDateString(yesterday), undoStack: [] });
       },

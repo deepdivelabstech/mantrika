@@ -94,7 +94,7 @@
     "noHistory": "Your practice will appear here as you chant.",
     "dayAria": "{{day}}: {{count}} beads",
     "restoreTitle": "Keep your {{days}}-day streak",
-    "restoreDesc": "You missed yesterday. Watch a short ad to carry your streak forward.",
+    "restoreDesc": "You missed a day or two. Watch a short ad to carry your streak forward.",
     "restoreAction": "Watch ad to restore",
     "restoreLoading": "Loading ad…",
     "restoreDone": "Streak restored. Chant today to keep it going.",
@@ -164,7 +164,35 @@
     "rateTitle": "Rate Mantrika",
     "rateDesc": "A review on Google Play helps other sadhakas find the app.",
     "adPrivacyTitle": "Ad privacy choices",
-    "adPrivacyDesc": "Review or change how ads may use your data."
+    "adPrivacyDesc": "Review or change how ads may use your data.",
+    "moreSounds": "More soundscapes",
+    "moreSoundsHint": "Tap ▶ to hear a preview. Watch one short ad to unlock a sound for 48 hours.",
+    "sound_rain": "Monsoon Rain",
+    "sound_ocean": "Ocean Shore",
+    "sound_thunder": "Distant Storm",
+    "sound_crickets": "Night Crickets",
+    "sound_havan": "Havan Fire",
+    "sound_windchimes": "Wind Chimes",
+    "sound_templebells": "Temple Aarti Bells",
+    "sound_tanpura": "Tanpura Drone",
+    "sound_om": "Om Chant",
+    "sound_himalaya": "Himalayan Wind",
+    "previewSound": "Preview {{name}}",
+    "stopPreview": "Stop preview",
+    "previewing": "Playing preview…",
+    "lockedHint": "Locked · tap to preview",
+    "unlockAction": "Unlock 48h",
+    "unlockSound": "Watch an ad to unlock {{name}} for 48 hours",
+    "unlockedHours_one": "Unlocked · {{count}} hour left",
+    "unlockedHours_other": "Unlocked · {{count}} hours left",
+    "adFreeTitle": "Ad-free for a day",
+    "adFreeDesc": "Watch one short video to hide all other ads for 24 hours.",
+    "adFreeActive_one": "Ad-free · {{count}} hour left",
+    "adFreeActive_other": "Ad-free · {{count}} hours left",
+    "adFreeAction": "Watch",
+    "moreSoundsSummary": "{{count}} premium sounds · {{unlocked}} unlocked",
+    "closeSounds": "Close soundscapes",
+    "done": "Done"
   },
   "common": {
     "loading": "Loading…",
@@ -223,5 +251,8 @@
     "studioName": "DeepDive Apps",
     "madeBy": "Made by {{studio}}",
     "studioTagline": "Think Deep. Dive Beyond."
+  },
+  "ads": {
+    "badge": "Ad"
   }
 }

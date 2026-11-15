@@ -9,24 +9,30 @@ import mobileAds, {
 } from 'react-native-google-mobile-ads';
 import { create } from 'zustand';
 
-import { shouldShowInterstitial } from '@/shared/lib/adPacing';
+import { isAdFree, shouldShowInterstitial } from '@/shared/lib/adPacing';
 import { toLocalDateString } from '@/shared/lib/dateHelpers';
 import { useAdStore } from '@/shared/store/useAdStore';
 import { useProgressStore } from '@/shared/store/useProgressStore';
 
-type AdKind = 'Banner' | 'Interstitial' | 'Rewarded';
+type AdKind = 'Banner' | 'Interstitial' | 'Rewarded' | 'Native';
 
 const TEST_IDS: Record<AdKind, string> = {
   Banner: TestIds.ADAPTIVE_BANNER,
   Interstitial: TestIds.INTERSTITIAL,
   Rewarded: TestIds.REWARDED,
+  Native: TestIds.NATIVE,
 };
+
+function configuredUnitId(kind: AdKind): string | undefined {
+  const extra = Constants.expoConfig?.extra;
+  return (
+    (extra?.[`admob${kind}${Platform.OS === 'ios' ? 'Ios' : 'Android'}`] as string) || undefined
+  );
+}
 
 /** Real unit ID for this platform (from `extra.admob<Kind><Platform>`); test ID in dev or when unset. */
 function unitId(kind: AdKind): string {
-  const extra = Constants.expoConfig?.extra;
-  const id = extra?.[`admob${kind}${Platform.OS === 'ios' ? 'Ios' : 'Android'}`] as
-    string | undefined;
+  const id = configuredUnitId(kind);
   return __DEV__ || !id ? TEST_IDS[kind] : id;
 }
 
@@ -42,6 +48,9 @@ export const useAdsConsentStore = create<{
 
 export const getBannerUnitId = () => unitId('Banner');
 export const getRewardedUnitId = () => unitId('Rewarded');
+/** Native unit, or null in a release build that has none configured (then no native ad shows). */
+export const getNativeUnitId = (): string | null =>
+  __DEV__ ? TEST_IDS.Native : (configuredUnitId('Native') ?? null);
 
 // One preloaded interstitial, reloaded after each show so the next is ready.
 let interstitial: InterstitialAd | null = null;
@@ -126,9 +135,11 @@ export function endPracticeSession() {
   if (!ads.endSession()) return;
   if (!useAdsConsentStore.getState().canRequestAds) return;
 
-  const { sessionsSinceInterstitial, lastInterstitialAt, lastReviewPromptDate } =
+  const { sessionsSinceInterstitial, lastInterstitialAt, lastReviewPromptDate, adFreeUntil } =
     useAdStore.getState();
   const now = Date.now();
+  // Earned with a rewarded video: honour it fully.
+  if (isAdFree(now, adFreeUntil)) return;
   // A session that ended in the rating dialog doesn't also end in an ad.
   if (lastReviewPromptDate === toLocalDateString(new Date(now))) return;
   const due = shouldShowInterstitial({

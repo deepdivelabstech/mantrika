@@ -186,7 +186,15 @@ describe('restoreStreak', () => {
     expect(useProgressStore.getState().streakDays).toBe(13);
   });
 
-  it('does nothing when the gap is not exactly one missed day', () => {
+  it('also bridges two missed days', () => {
+    // Last active Jan 10, missed Jan 11 and 12, today Jan 13.
+    useProgressStore.getState().restoreStreak(new Date(2026, 0, 13, 9));
+    const s = useProgressStore.getState();
+    expect(s.lastActiveDate).toBe('2026-01-12');
+    expect(selectStreakDays(s, '2026-01-13')).toBe(12);
+  });
+
+  it('does nothing when the gap is not one or two missed days', () => {
     useProgressStore.getState().restoreStreak(new Date(2026, 0, 14, 9));
     expect(useProgressStore.getState().lastActiveDate).toBe('2026-01-10');
     useProgressStore.getState().restoreStreak(new Date(2026, 0, 11, 9));

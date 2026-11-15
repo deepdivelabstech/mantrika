@@ -76,6 +76,7 @@ jest.mock('react-native-google-mobile-ads', () => ({
     ADAPTIVE_BANNER: 'test-adaptive-banner',
     INTERSTITIAL: 'test-interstitial',
     REWARDED: 'test-rewarded',
+    NATIVE: 'test-native',
   },
   AdEventType: { LOADED: 'loaded', ERROR: 'error', CLOSED: 'closed' },
   InterstitialAd: {
@@ -86,12 +87,23 @@ jest.mock('react-native-google-mobile-ads', () => ({
     })),
   },
   useRewardedAd: jest.fn(() => ({
-    isLoaded: false,
-    isClosed: false,
-    isEarnedReward: false,
+    status: 'idle',
+    earnedReward: false,
     load: jest.fn(),
     show: jest.fn(),
   })),
+  NativeAd: {
+    createForAdRequest: jest.fn(() => new Promise(() => undefined)),
+  },
+  NativeAdView: ({ children }) => children,
+  NativeAsset: ({ children }) => children,
+  NativeAssetType: {
+    ADVERTISER: 'advertiser',
+    BODY: 'body',
+    CALL_TO_ACTION: 'callToAction',
+    HEADLINE: 'headline',
+    ICON: 'icon',
+  },
 }));
 
 jest.mock('expo-store-review', () => ({

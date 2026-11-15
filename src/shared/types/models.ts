@@ -32,7 +32,24 @@ export type CustomMantra = {
 
 export type Language = 'en' | 'hi';
 export type AnimSpeed = 'gentle' | 'steady' | 'quick';
-export type SoundscapeId = 'silence' | 'ganga' | 'forest' | 'bowls';
+/** Soundscapes everyone can play. */
+export const FREE_SOUNDS = ['silence', 'ganga', 'forest', 'bowls'] as const;
+/** Soundscapes unlocked for a while by watching a rewarded ad. */
+export const PREMIUM_SOUNDS = [
+  'rain',
+  'ocean',
+  'thunder',
+  'crickets',
+  'havan',
+  'windchimes',
+  'templebells',
+  'tanpura',
+  'om',
+  'himalaya',
+] as const;
+export type FreeSoundId = (typeof FREE_SOUNDS)[number];
+export type PremiumSoundId = (typeof PREMIUM_SOUNDS)[number];
+export type SoundscapeId = FreeSoundId | PremiumSoundId;
 export type Appearance = 'system' | 'light' | 'dark';
 
 export type Settings = {

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
-Synthesizes the ambient soundscape loops in assets/sounds/ (ganga, forest,
-bowls) using only the Python standard library, then encodes them to AAC with
+Synthesizes the ambient soundscape loops in assets/sounds/ using only the
+Python standard library: the free ganga, forest and bowls, plus the premium
+set unlocked by a rewarded ad (rain, ocean, thunder, crickets, havan,
+windchimes, templebells, tanpura, om, himalaya), then encodes them to AAC with
 macOS `afconvert`. Everything is generated, so there are no licensing
 questions, and every run with the same seed gives the same output.
 
@@ -105,6 +107,56 @@ def normalize(x, peak_db=-3.0):
     peak = max(abs(v) for v in x) or 1.0
     g = 10 ** (peak_db / 20) / peak
     return [v * g for v in x]
+
+
+def svf_band(x, freq, q=0.5):
+    """Chamberlin state-variable bandpass. `freq` is a number or a per-sample callable."""
+    low = band = 0.0
+    out = [0.0] * len(x)
+    fixed = None if callable(freq) else 2 * math.sin(math.pi * min(freq, SR / 6) / SR)
+    for i, v in enumerate(x):
+        f = fixed if fixed is not None else 2 * math.sin(math.pi * min(freq(i), SR / 6) / SR)
+        low += f * band
+        high = v - low - q * band
+        band += f * high
+        out[i] = band
+    return out
+
+
+def burst(seconds, rng, decay):
+    """A short noise burst with an exponential tail: drops, crackles, pops."""
+    n = max(1, int(seconds * SR))
+    return [rng.uniform(-1.0, 1.0) * math.exp(-i / (decay * SR)) for i in range(n)]
+
+
+def harmonic_tone(f0, seconds, weights, env, vibrato=0.0, vib_rate=5.0, phase_rng=None, kmax=40):
+    """Sum of harmonics; `weights(k, t)` gives harmonic k's amplitude at time t, `env(t)` the overall level.
+
+    Weights and envelope are evaluated at a control rate (every 32 samples)
+    and held in between, which keeps pure-Python rendering tractable.
+    """
+    n = int(seconds * SR)
+    out = [0.0] * n
+    kmax = max(1, min(kmax, int((SR / 2 - 200) / f0)))
+    ks = range(1, kmax + 1)
+    phases = [(phase_rng.random() * TAU if phase_rng else 0.0) for _ in range(kmax + 1)]
+    ph = 0.0
+    active = []
+    e = 0.0
+    for i in range(n):
+        t = i / SR
+        if i % 32 == 0:
+            e = env(t)
+            active = [(k, w, phases[k]) for k in ks for w in (weights(k, t),) if w > 1e-4]
+        f = f0 * (1 + vibrato * math.sin(TAU * vib_rate * t))
+        ph += TAU * f / SR
+        if e < 1e-5:
+            continue
+        acc = 0.0
+        for k, w, p0 in active:
+            acc += w * math.sin(k * ph + p0)
+        out[i] = acc * e
+    return out
 
 
 # ── events ───────────────────────────────────────────────────────────────────
@@ -241,6 +293,247 @@ def chime(rng):
     return out
 
 
+# ── premium soundscapes ──────────────────────────────────────────────────────
+
+
+def _rain_bed(rng, heaviness=1.0):
+    extra = 3 * SR
+    hiss = loopable(bandpass(pink(N + extra, rng), 900, 7000))
+    body = loopable(lowpass(brown(N + extra, rng), 350))
+    out = [0.0] * N
+    for i in range(N):
+        out[i] = (hiss[i] * 0.55 + body[i] * 0.5) * (0.88 + 0.08 * lfo(i, 8.0) + 0.04 * lfo(i, 5.0, 1.0))
+    # individual drops on leaves and stone
+    for _ in range(int(LOOP_SECONDS * 55 * heaviness)):
+        d = svf_band(burst(rng.uniform(0.006, 0.02), rng, 0.003), rng.uniform(1500, 5500), 0.35)
+        add_wrapped(out, rng.randrange(N), d, rng.uniform(0.04, 0.16))
+    return out
+
+
+def rain(rng):
+    """Steady monsoon rain: a soft hiss, a low body of water and close drops."""
+    return _rain_bed(rng)
+
+
+def ocean(rng):
+    """Waves on a quiet shore: slow swells that rise, break and wash back."""
+    extra = 3 * SR
+    roar = loopable(lowpass(brown(N + extra, rng), 700))
+    foam = loopable(bandpass(pink(N + extra, rng), 600, 5000))
+    out = [0.0] * N
+    # five waves per loop with slightly different strengths
+    waves = 5
+    strengths = [rng.uniform(0.75, 1.0) for _ in range(waves)]
+    for i in range(N):
+        pos = i * waves / N
+        w = int(pos)
+        p = pos - w
+        # fast rise to the break, long wash back
+        swell = (p / 0.28) ** 2 if p < 0.28 else math.exp(-(p - 0.28) * 3.2)
+        swell *= strengths[w % waves]
+        out[i] = roar[i] * (0.35 + 0.65 * swell) + foam[i] * (0.08 + 0.75 * swell ** 1.6)
+    return out
+
+
+def thunder(rng):
+    """Rain under a passing storm, with distant thunder rolling twice per loop."""
+    out = _rain_bed(rng, heaviness=1.3)
+    for start in (6.0, 26.0):
+        n = int(9.0 * SR)
+        rumble = lowpass(brown(n, rng), 140)
+        crack = bandpass(white(n, rng), 200, 1800)
+        roll = [0.0] * n
+        # a few overlapping rolls make one long, uneven peal
+        onsets = sorted(rng.uniform(0.0, 2.5) for _ in range(4))
+        for i in range(n):
+            t = i / SR
+            e = 0.0
+            for o in onsets:
+                if t >= o:
+                    dt = t - o
+                    e += min(1.0, dt / 0.25) * math.exp(-dt / 2.2)
+            c = math.exp(-max(0.0, t - onsets[0]) / 0.35) if t >= onsets[0] else 0.0
+            roll[i] = rumble[i] * e * 2.2 + crack[i] * c * 0.25
+        add_wrapped(out, int(start * SR), roll, rng.uniform(0.22, 0.28))
+    return out
+
+
+def crickets(rng):
+    """A warm Indian night: crickets in several voices over a still, dark hush."""
+    extra = 3 * SR
+    hush = loopable(lowpass(pink(N + extra, rng), 600))
+    out = [h * 0.25 for h in hush]
+    for _ in range(6):
+        f = rng.uniform(3800, 5200)
+        pulse_rate = rng.uniform(25, 40)          # pulses within one chirp
+        pulses = rng.randint(3, 5)
+        chirp_gap = rng.uniform(0.45, 1.1)        # between chirps
+        gain = rng.uniform(0.05, 0.12)
+        one = []
+        for k in range(pulses):
+            m = int(SR / pulse_rate)
+            for i in range(m):
+                p = i / m
+                one.append(math.sin(TAU * f * (len(one)) / SR) * (math.sin(math.pi * min(1.0, p / 0.6)) if p < 0.6 else 0.0))
+        one = lowpass(one, rng.uniform(6500, 9000))
+        t = rng.uniform(0.0, chirp_gap)
+        while t < LOOP_SECONDS:
+            add_wrapped(out, int(t * SR), one, gain * rng.uniform(0.8, 1.0))
+            t += chirp_gap * rng.uniform(0.92, 1.08)
+    # a faraway owl, once
+    hoot = lowpass(chirp(420, 380, 0.45) + [0.0] * int(0.35 * SR) + chirp(410, 360, 0.7), 1500)
+    add_wrapped(out, int(23.0 * SR), hoot, 0.06)
+    return out
+
+
+def havan(rng):
+    """Sacred fire: a low breathing flame with crackles, sap pops and ember hiss."""
+    extra = 3 * SR
+    flame = loopable(lowpass(brown(N + extra, rng), 260))
+    hiss = loopable(bandpass(pink(N + extra, rng), 1800, 6000))
+    out = [0.0] * N
+    for i in range(N):
+        breath = 0.7 + 0.2 * lfo(i, 5.0, 0.4) + 0.1 * lfo(i, 13.3, 2.0)
+        out[i] = flame[i] * 1.1 * breath + hiss[i] * 0.06 * breath
+    # clustered crackles
+    t = 0.0
+    while t < LOOP_SECONDS:
+        for _ in range(rng.randint(2, 9)):
+            c = svf_band(burst(rng.uniform(0.002, 0.006), rng, 0.0012), rng.uniform(1800, 6000), 0.6)
+            add_wrapped(out, int((t + rng.uniform(0, 0.25)) * SR), c, rng.uniform(0.15, 0.5))
+        t += rng.uniform(0.15, 0.9)
+    # a few bigger pops
+    for _ in range(9):
+        pop = svf_band(burst(0.03, rng, 0.008), rng.uniform(500, 1400), 0.4)
+        add_wrapped(out, rng.randrange(N), pop, rng.uniform(0.35, 0.6))
+    return out
+
+
+def windchimes(rng):
+    """Bamboo-and-brass chimes stirring in a light breeze, tuned pentatonic."""
+    extra = 3 * SR
+    breeze = loopable(bandpass(pink(N + extra, rng), 200, 1400))
+    out = [0.0] * N
+    for i in range(N):
+        out[i] = breeze[i] * (1.0 + 0.3 * lfo(i, 10.0) + 0.2 * lfo(i, 6.7, 1.1))
+    notes = [1046.5, 1174.7, 1318.5, 1568.0, 1760.0, 2093.0]
+    partials = [(1.0, 1.0, 1.0), (2.76, 0.35, 0.45), (5.40, 0.15, 0.25)]
+    rendered = {f: lowpass(bell(f, 3.5, partials, 1.1, rng, detune=1.2), 7000) for f in notes}
+    t = 0.3
+    while t < LOOP_SECONDS:
+        # gusts set several chimes going at once; lulls leave one or none
+        for _ in range(rng.choice((1, 1, 2, 3, 4))):
+            add_wrapped(out, int((t + rng.uniform(0, 0.6)) * SR), rendered[rng.choice(notes)], rng.uniform(0.04, 0.08))
+        t += rng.uniform(1.0, 3.2)
+    return out
+
+
+def templebells(rng):
+    """Mandir at aarti: a hand ghanti rung in bursts, a deep ghanta and a murmuring hall."""
+    extra = 3 * SR
+    hall = loopable(bandpass(pink(N + extra, rng), 150, 900))
+    out = [h * 0.7 for h in hall]
+    ghanti_p = [(1.0, 1.0, 1.0), (2.42, 0.6, 0.6), (4.10, 0.35, 0.35), (6.60, 0.18, 0.2)]
+    ghanta_p = [(1.0, 1.0, 1.0), (2.76, 0.5, 0.55), (5.40, 0.3, 0.3), (8.93, 0.14, 0.2)]
+    ghanti = lowpass(bell(1480, 1.8, ghanti_p, 0.55, rng, detune=2.0), 7500)
+    # three bursts of rapid ringing per loop
+    for start in (1.0, 14.5, 28.0):
+        t = start
+        end = start + rng.uniform(3.0, 4.5)
+        while t < end:
+            add_wrapped(out, int(t * SR), ghanti, rng.uniform(0.12, 0.2))
+            t += rng.uniform(0.14, 0.2)
+    for start in (0.2, 10.0, 20.0, 30.0):
+        g = lowpass(bell(rng.uniform(205, 215), 10.0, ghanta_p, 3.6, rng, detune=0.5), 3000)
+        add_wrapped(out, int(start * SR), g, 0.45)
+    return out
+
+
+def tanpura(rng):
+    """Tanpura drone tuned Pa-Sa-Sa-Sa (C), with the jawari's moving buzz."""
+    sa = 130.81
+    cycle = 5.0  # four plucks per cycle, eight cycles per loop
+    def pluck(f0):
+        dur = 7.0
+        def weights(k, t):
+            # jawari: a bright band that sweeps up through the harmonics as the string rings
+            centre = 3 + 14 * (1 - math.exp(-t / 1.6))
+            band = math.exp(-((k - centre) ** 2) / 18.0)
+            return (0.55 / k ** 0.9 + 0.6 * band / k ** 0.35) * math.exp(-t * (0.12 + 0.02 * k))
+        env = lambda t: min(1.0, t / 0.01) * math.exp(-t / 3.0)
+        return lowpass(harmonic_tone(f0, dur, weights, env, phase_rng=rng, kmax=36), 5000)
+    voices = {'pa': pluck(sa * 0.75), 'sa': pluck(sa), 'low': pluck(sa / 2)}
+    out = [0.0] * N
+    for c in range(int(LOOP_SECONDS / cycle)):
+        base = c * cycle
+        for j, name in enumerate(('pa', 'sa', 'sa', 'low')):
+            add_wrapped(out, int((base + j * cycle / 4) * SR), voices[name], rng.uniform(0.85, 1.0))
+    return out
+
+
+def om(rng):
+    """A slow, low Om chanted four times per loop, two voices a breath apart."""
+    f0 = 103.8  # G#2: a comfortable chanting pitch
+    dur = 10.0
+    # vowel formants (centre Hz, bandwidth Hz, gain) for A, U and the closed M
+    A = ((730, 120, 1.0), (1090, 140, 0.55), (2440, 200, 0.18))
+    U = ((320, 80, 1.0), (800, 110, 0.4), (2240, 200, 0.08))
+    M = ((260, 70, 1.0), (1000, 300, 0.05), (2200, 300, 0.02))
+    def vowel_at(t):
+        # A 0-3 s, glide to U by 4 s, close to M by 6 s and hum out
+        if t < 2.6:
+            return A, A, 0.0
+        if t < 4.0:
+            return A, U, (t - 2.6) / 1.4
+        if t < 5.8:
+            return U, M, (t - 4.0) / 1.8
+        return M, M, 0.0
+    def weights(k, t):
+        a, b, x = vowel_at(t)
+        fk = k * f0
+        acc = 0.0
+        for (c1, w1, g1), (c2, w2, g2) in zip(a, b):
+            c = c1 + (c2 - c1) * x
+            w = w1 + (w2 - w1) * x
+            g = g1 + (g2 - g1) * x
+            acc += g * math.exp(-((fk - c) ** 2) / (2 * w * w))
+        return acc / k ** 0.3
+    def env(t):
+        return min(1.0, t / 0.6) * (1.0 if t < 8.4 else max(0.0, (dur - t) / 1.6))
+    voice1 = harmonic_tone(f0, dur, weights, env, vibrato=0.004, vib_rate=4.6, phase_rng=rng, kmax=32)
+    voice2 = harmonic_tone(f0 * 1.004, dur, weights, env, vibrato=0.005, vib_rate=5.1, phase_rng=rng, kmax=32)
+    out = [0.0] * N
+    # a soft sub drone holds the space between chants
+    cycles = round(f0 / 2 * LOOP_SECONDS)
+    for i in range(N):
+        out[i] = 0.05 * math.sin(TAU * cycles * i / N)
+    for start in (0.0, 10.0, 20.0, 30.0):
+        add_wrapped(out, int(start * SR), voice1, 0.6)
+        add_wrapped(out, int((start + 0.18) * SR), voice2, 0.45)
+    return lowpass(out, 4000)
+
+
+def himalaya(rng):
+    """High mountain air: wind whistling across a ridge over a deep valley rumble."""
+    extra = 3 * SR
+    total = N + extra
+    rumble = loopable(lowpass(brown(total, rng), 180))
+    def sweep(base, depth, period, phase):
+        cycles = max(1, round(LOOP_SECONDS / period))
+        return lambda i: base + depth * math.sin(TAU * cycles * (i % N) / N + phase)
+    whistle1 = loopable(svf_band(pink(total, rng), sweep(700, 260, 13.3, 0.0), 0.08))
+    whistle2 = loopable(svf_band(pink(total, rng), sweep(1250, 380, 8.0, 1.7), 0.1))
+    gust_bed = loopable(bandpass(white(total, rng), 400, 3000))
+    out = [0.0] * N
+    for i in range(N):
+        gust = max(0.0, 0.45 + 0.35 * lfo(i, 10.0, 0.3) + 0.2 * lfo(i, 4.0, 2.4))
+        out[i] = (rumble[i] * 0.9
+                  + whistle1[i] * 0.22 * gust
+                  + whistle2[i] * 0.12 * (1 - 0.5 * gust)
+                  + gust_bed[i] * 0.1 * gust)
+    return out
+
+
 # ── output ───────────────────────────────────────────────────────────────────
 
 
@@ -262,7 +555,22 @@ def write_m4a(name, samples):
     print(f'wrote {os.path.relpath(out_path)} ({os.path.getsize(out_path) // 1024} KB)')
 
 
-SOUNDS = (('ganga', ganga, 108), ('forest', forest, 27), ('bowls', bowls, 9), ('chime', chime, 3))
+SOUNDS = (
+    ('ganga', ganga, 108),
+    ('forest', forest, 27),
+    ('bowls', bowls, 9),
+    ('chime', chime, 3),
+    ('rain', rain, 11),
+    ('ocean', ocean, 21),
+    ('thunder', thunder, 31),
+    ('crickets', crickets, 41),
+    ('havan', havan, 51),
+    ('windchimes', windchimes, 61),
+    ('templebells', templebells, 71),
+    ('tanpura', tanpura, 81),
+    ('om', om, 91),
+    ('himalaya', himalaya, 101),
+)
 
 if __name__ == '__main__':
     wanted = set(sys.argv[1:])

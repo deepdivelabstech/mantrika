@@ -1,7 +1,14 @@
 import { useMantraStore } from '@/shared/store/useMantraStore';
 import { migrateProgress, pickProgress, useProgressStore } from '@/shared/store/useProgressStore';
 import { MAX_DAILY_GOAL_MALAS, useSettingsStore } from '@/shared/store/useSettingsStore';
-import type { CustomMantra, ProgressState, Sankalpa, Settings } from '@/shared/types/models';
+import {
+  FREE_SOUNDS,
+  PREMIUM_SOUNDS,
+  type CustomMantra,
+  type ProgressState,
+  type Sankalpa,
+  type Settings,
+} from '@/shared/types/models';
 
 /** v2 adds the per-day log, per-mantra totals, best streak and sankalpa. v1 still imports. */
 export const BACKUP_VERSION = 2;
@@ -119,7 +126,7 @@ export function parseBackup(json: string): Backup {
 const SETTINGS_ENUMS: Partial<Record<keyof Settings, readonly unknown[]>> = {
   lang: ['en', 'hi'],
   animSpeed: ['gentle', 'steady', 'quick'],
-  sound: ['silence', 'ganga', 'forest', 'bowls'],
+  sound: [...FREE_SOUNDS, ...PREMIUM_SOUNDS],
   appearance: ['system', 'light', 'dark'],
 };
 

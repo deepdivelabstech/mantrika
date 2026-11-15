@@ -94,7 +94,7 @@
     "noHistory": "जप करते ही आपकी साधना यहाँ दिखेगी।",
     "dayAria": "{{day}}: {{count}} मनके",
     "restoreTitle": "अपना {{days}} दिन का क्रम बनाए रखें",
-    "restoreDesc": "आप कल अभ्यास नहीं कर पाए। क्रम जारी रखने के लिए एक छोटा विज्ञापन देखें।",
+    "restoreDesc": "आप एक-दो दिन अभ्यास नहीं कर पाए। क्रम जारी रखने के लिए एक छोटा विज्ञापन देखें।",
     "restoreAction": "विज्ञापन देखकर क्रम लौटाएँ",
     "restoreLoading": "विज्ञापन लोड हो रहा है…",
     "restoreDone": "क्रम लौट आया। इसे जारी रखने के लिए आज जप करें।",
@@ -164,7 +164,35 @@
     "rateTitle": "मंत्रिका को रेट करें",
     "rateDesc": "Google Play पर आपकी समीक्षा दूसरे साधकों को ऐप खोजने में मदद करती है।",
     "adPrivacyTitle": "विज्ञापन गोपनीयता विकल्प",
-    "adPrivacyDesc": "विज्ञापन आपके डेटा का उपयोग कैसे करें, इसे देखें या बदलें।"
+    "adPrivacyDesc": "विज्ञापन आपके डेटा का उपयोग कैसे करें, इसे देखें या बदलें।",
+    "moreSounds": "और ध्वनियाँ",
+    "moreSoundsHint": "झलक सुनने के लिए ▶ दबाएँ। एक छोटा विज्ञापन देखकर कोई ध्वनि 48 घंटे के लिए खोलें।",
+    "sound_rain": "मानसून की वर्षा",
+    "sound_ocean": "समुद्र तट",
+    "sound_thunder": "दूर का तूफ़ान",
+    "sound_crickets": "रात के झींगुर",
+    "sound_havan": "हवन की अग्नि",
+    "sound_windchimes": "पवन घंटियाँ",
+    "sound_templebells": "मंदिर आरती की घंटियाँ",
+    "sound_tanpura": "तानपुरा",
+    "sound_om": "ॐ जप",
+    "sound_himalaya": "हिमालय की हवा",
+    "previewSound": "{{name}} की झलक सुनें",
+    "stopPreview": "झलक रोकें",
+    "previewing": "झलक चल रही है…",
+    "lockedHint": "बंद · झलक के लिए दबाएँ",
+    "unlockAction": "48 घंटे खोलें",
+    "unlockSound": "{{name}} को 48 घंटे के लिए खोलने हेतु विज्ञापन देखें",
+    "unlockedHours_one": "खुला · {{count}} घंटा शेष",
+    "unlockedHours_other": "खुला · {{count}} घंटे शेष",
+    "adFreeTitle": "एक दिन विज्ञापन-मुक्त",
+    "adFreeDesc": "एक छोटा वीडियो देखें और 24 घंटे तक बाकी सभी विज्ञापन छिपाएँ।",
+    "adFreeActive_one": "विज्ञापन-मुक्त · {{count}} घंटा शेष",
+    "adFreeActive_other": "विज्ञापन-मुक्त · {{count}} घंटे शेष",
+    "adFreeAction": "देखें",
+    "moreSoundsSummary": "{{count}} विशेष ध्वनियाँ · {{unlocked}} खुली",
+    "closeSounds": "ध्वनियाँ बंद करें",
+    "done": "हो गया"
   },
   "common": {
     "loading": "लोड हो रहा है…",
@@ -223,5 +251,8 @@
     "studioName": "DeepDive Apps",
     "madeBy": "{{studio}} द्वारा निर्मित",
     "studioTagline": "Think Deep. Dive Beyond."
+  },
+  "ads": {
+    "badge": "विज्ञापन"
   }
 }

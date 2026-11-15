@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
-import { useRewardedAd } from 'react-native-google-mobile-ads';
 import { useTranslation } from 'react-i18next';
 
-import { getRewardedUnitId, useAdsConsentStore } from '@/app/ads';
 import { Button } from '@/shared/components/Button';
+import { useRewardedUnlock } from '@/shared/hooks/useRewardedUnlock';
 import { fontFamily, makeStyles, radius, spacing } from '@/shared/theme';
 
 type Props = {
@@ -13,21 +12,11 @@ type Props = {
   onRestore: () => void;
 };
 
-/** Opt-in rewarded ad: after one missed day, watching an ad carries the streak forward. */
+/** Opt-in rewarded ad: after one or two missed days, watching an ad carries the streak forward. */
 export function StreakRestoreCard({ streakDays, restored, onRestore }: Props) {
   const styles = useStyles();
   const { t } = useTranslation();
-  const { isLoaded, isClosed, isEarnedReward, load, show } = useRewardedAd(getRewardedUnitId());
-
-  const canRequestAds = useAdsConsentStore((s) => s.canRequestAds);
-
-  useEffect(() => {
-    if (!restored && canRequestAds) load();
-  }, [load, restored, isClosed, canRequestAds]);
-
-  useEffect(() => {
-    if (isEarnedReward && !restored) onRestore();
-  }, [isEarnedReward, restored, onRestore]);
+  const { ready: isLoaded, show } = useRewardedUnlock(!restored);
 
   if (restored) {
     return (
@@ -44,7 +33,7 @@ export function StreakRestoreCard({ streakDays, restored, onRestore }: Props) {
       <Button
         label={isLoaded ? t('progress.restoreAction') : t('progress.restoreLoading')}
         disabled={!isLoaded}
-        onPress={() => show()}
+        onPress={() => show(onRestore)}
         style={[styles.button, !isLoaded && styles.buttonWaiting]}
       />
     </View>

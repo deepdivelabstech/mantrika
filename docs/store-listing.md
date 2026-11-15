@@ -220,6 +220,89 @@ Feature graphic (1024×500): `en/feature-graphic.png` and
 `hi/feature-graphic.png`. Keep text out of the outer 10% if you ever add a
 promo video, because Play overlays a play button in the centre.
 
+### Promo video
+
+[`store-assets/promo-video.mp4`](store-assets/promo-video.mp4): 31 s,
+1920×1080, 30 fps, H.264 and AAC, about −15 LUFS. Rebuild it with
+`python3 scripts/render-promo-video.py --shots <dir>` (the script header lists
+the screenshots it needs).
+
+| Time      | Scene                                                           |
+| --------- | --------------------------------------------------------------- |
+| 0–3.5     | Hook: "Lost count in the middle of your mala?"                  |
+| 3.5–9     | Tap once for every bead (the live count climbs, with tap marks) |
+| 9–13      | 107 → 108, temple bell rings, round counted                     |
+| 13–16.5   | Focus mode on a dark screen                                     |
+| 16.5–20.5 | 35 sacred mantras, or your own                                  |
+| 20.5–24.5 | Streaks, sankalpa, practice calendar                            |
+| 24.5–27   | English & हिंदी, light and dark themes                          |
+| 27–31     | Icon, name, Free · No sign-up, "Install free · start today"     |
+
+Every screen shown is a real capture of the app. The music is the app's own
+tanpura loop, and the bell is the app's own round chime, so the video is safe
+to monetise-check and needs no licences.
+
+Upload it to YouTube, then paste the link in Play Console → Main store
+listing → Video:
+
+- Visibility **Public** or **Unlisted** (not Private). Turn **off** ads on the
+  video and leave it **not** age-restricted, or Play won't show it.
+- Use the same video for en-IN and hi-IN. Its on-screen text is English with
+  Hindi accents, which reads naturally to the bilingual audience.
+- With a video, Play puts the feature graphic behind a centred play button.
+  Check the listing preview, and if the button covers "Your mantra jaap
+  counter", move the text in the feature graphic further left.
+- The first 3–5 s matter most: most viewers stop by then. If installs from the
+  video page stay flat, test a hook that opens directly on the counter.
+
+### YouTube upload
+
+Thumbnail: [`store-assets/youtube-thumbnail.png`](store-assets/youtube-thumbnail.png)
+(1280×720, under YouTube's 2 MB limit). Rebuild it with
+`python3 scripts/render-youtube-thumbnail.py --shots <dir>`. Custom thumbnails
+need a phone-verified YouTube channel.
+
+**Title** (66 chars, keywords first, readable before YouTube truncates it):
+
+```
+Mantrika: Mantra Jaap Counter App | 108 Bead Japa Mala (मंत्र जाप)
+```
+
+Alternatives for A/B testing (YouTube Studio → Test & compare):
+
+- `Never Lose Count of Your Mantra Jaap Again | Mantrika 108 Bead Mala App`
+- `Digital Japa Mala App for Daily Naam Jap | Mantrika (मंत्र जाप काउंटर)`
+
+**Description:**
+
+```
+Mantrika is a free digital japa mala. Tap once for every bead and Mantrika counts your mantra jaap for you: 108 beads to a mala, every round, every day.
+
+📿 Download free on Google Play:
+https://play.google.com/store/apps/details?id=com.deepdivelabs.mantrika
+
+✨ What you get
+• 108-bead mala counter with automatic round (mala) counting
+• A temple bell at every 108th bead
+• Focus mode: chant with your eyes closed, tap anywhere to count
+• 35 sacred mantras (Om Namah Shivaya, Gayatri Mantra, Hare Krishna, Maha Mrityunjaya…) or add your own
+• Daily goals, streaks, sankalpa vows and a practice calendar
+• English & हिंदी, light and dark themes
+• Free, no sign-up, your counts stay on your phone
+
+मंत्रिका एक मुफ़्त डिजिटल जप माला है। हर मनके पर एक बार टैप करें, गिनती ऐप रखेगा: 108 मनकों की माला, हर दिन।
+
+#mantrajaap #japamala #naamjap
+```
+
+**Tags:** mantra jaap counter, japa mala app, mala counter, naam jap, jaap
+counter, 108 beads, digital mala, chanting app, Om Namah Shivaya, Gayatri
+Mantra, Hare Krishna, sadhana, मंत्र जाप, जप माला, Mantrika
+
+**Settings:** Category _Howto & Style_ · Not made for kids · Language English ·
+Visibility Public (Unlisted also works for Play, but Public can rank in YouTube
+search too) · Monetisation off (Play won't show a video that runs ads).
+
 ## Iterating
 
 - Use Play Console → Store listing experiments to change one thing at a time:

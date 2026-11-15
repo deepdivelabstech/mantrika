@@ -8,8 +8,10 @@ import { DailyRecommendationCard } from '@/features/mantra-library/components/Da
 import { FilterChips } from '@/features/mantra-library/components/FilterChips';
 import { MantraListItem } from '@/features/mantra-library/components/MantraListItem';
 import { SearchBar } from '@/features/mantra-library/components/SearchBar';
+import { getNativeUnitId } from '@/app/ads';
 import { AdBanner } from '@/shared/components/AdBanner';
 import { Header } from '@/shared/components/Header';
+import { NativeAdRow } from '@/shared/components/NativeAdRow';
 import { ScreenContainer } from '@/shared/components/ScreenContainer';
 import { EmptyState, ErrorState } from '@/shared/components/StatusStates';
 import { filterMantras, mergeMantras, pickDailyMantra } from '@/shared/lib/mantraDisplay';
@@ -24,11 +26,29 @@ const DEFAULT_MANTRA_ID = 'om-namah-shivaya';
 type LibraryFilter = 'core' | 'all' | 'favorites' | 'mine';
 type CategoryFilter = MantraCategory | 'any';
 
-/** One in-list ad, after this many mantras, so it never sits at the top of the list. */
+/** The first in-list ad comes after this many mantras, so it never sits at the top of the list. */
 const AD_AFTER_INDEX = 6;
-const AD_ROW = { id: '__ad__' } as const;
-type Row = Mantra | typeof AD_ROW;
-const isAdRow = (row: Row): row is typeof AD_ROW => row === AD_ROW;
+/** Native ads blend in, so long lists get another one every this many mantras. */
+const NATIVE_AD_EVERY = 12;
+type AdRow = { id: string; ad: true };
+type Row = Mantra | AdRow;
+const isAdRow = (row: Row): row is AdRow => 'ad' in row;
+
+/** Native when a unit is configured; otherwise the single 300x250 the library always had. */
+const hasNativeAd = getNativeUnitId() !== null;
+
+function withAdRows(mantras: Mantra[]): Row[] {
+  if (mantras.length <= AD_AFTER_INDEX) return mantras;
+  const rows: Row[] = [];
+  mantras.forEach((m, i) => {
+    const sinceFirst = i - AD_AFTER_INDEX;
+    if (sinceFirst === 0 || (hasNativeAd && sinceFirst > 0 && sinceFirst % NATIVE_AD_EVERY === 0)) {
+      rows.push({ id: `__ad__${i}`, ad: true });
+    }
+    rows.push(m);
+  });
+  return rows;
+}
 
 function Separator() {
   const styles = useStyles();
@@ -115,10 +135,7 @@ export function MantraLibraryScreen() {
   );
   // No ad while searching: results should be the only thing in view.
   const rows = useMemo<Row[]>(
-    () =>
-      query.trim() || visible.length <= AD_AFTER_INDEX
-        ? visible
-        : [...visible.slice(0, AD_AFTER_INDEX), AD_ROW, ...visible.slice(AD_AFTER_INDEX)],
+    () => (query.trim() ? visible : withAdRows(visible)),
     [visible, query],
   );
 
@@ -203,7 +220,11 @@ export function MantraLibraryScreen() {
         }
         renderItem={({ item }) =>
           isAdRow(item) ? (
-            <AdBanner variant="inline" />
+            hasNativeAd ? (
+              <NativeAdRow />
+            ) : (
+              <AdBanner variant="inline" />
+            )
           ) : (
             <MantraListItem
               mantra={item}

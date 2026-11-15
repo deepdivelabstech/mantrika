@@ -203,3 +203,21 @@ export function ChevronIcon({ size = 18, color }: IconProps) {
     </Svg>
   );
 }
+
+export function StopIcon({ size = 20, color }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Circle cx={12} cy={12} r={9} stroke={color} {...strokeProps} />
+      <Path d="M9.5 9.5h5v5h-5z" fill={color} />
+    </Svg>
+  );
+}
+
+export function LockIcon({ size = 16, color }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path stroke={color} {...strokeProps} d="M6 11h12v9H6z" />
+      <Path stroke={color} {...strokeProps} d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" />
+    </Svg>
+  );
+}

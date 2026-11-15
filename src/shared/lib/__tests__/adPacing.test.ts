@@ -1,6 +1,9 @@
 import {
+  AD_FREE_MS,
   canRestoreStreak,
   INTERSTITIAL_MIN_GAP_MS,
+  isAdFree,
+  isRestorableGap,
   shouldShowInterstitial,
 } from '@/shared/lib/adPacing';
 
@@ -42,13 +45,15 @@ describe('canRestoreStreak', () => {
     lastRestoreDate: '',
   };
 
-  it('allows a restore after exactly one missed day', () => {
+  it('allows a restore after one or two missed days', () => {
     expect(canRestoreStreak(ok)).toBe(true);
+    expect(canRestoreStreak({ ...ok, lastActiveDate: '2026-01-09' })).toBe(true);
   });
 
-  it('refuses when no day, or more than one day, was missed', () => {
+  it('refuses when no day, or more than two days, were missed', () => {
     expect(canRestoreStreak({ ...ok, lastActiveDate: '2026-01-11' })).toBe(false);
-    expect(canRestoreStreak({ ...ok, lastActiveDate: '2026-01-09' })).toBe(false);
+    expect(canRestoreStreak({ ...ok, lastActiveDate: '2026-01-12' })).toBe(false);
+    expect(canRestoreStreak({ ...ok, lastActiveDate: '2026-01-08' })).toBe(false);
     expect(canRestoreStreak({ ...ok, lastActiveDate: '' })).toBe(false);
   });
 
@@ -56,8 +61,24 @@ describe('canRestoreStreak', () => {
     expect(canRestoreStreak({ ...ok, streakDays: 1 })).toBe(false);
   });
 
-  it('enforces the cooldown between restores', () => {
-    expect(canRestoreStreak({ ...ok, lastRestoreDate: '2026-01-08' })).toBe(false);
-    expect(canRestoreStreak({ ...ok, lastRestoreDate: '2026-01-05' })).toBe(true);
+  it('enforces the three-day cooldown between restores', () => {
+    expect(canRestoreStreak({ ...ok, lastRestoreDate: '2026-01-10' })).toBe(false);
+    expect(canRestoreStreak({ ...ok, lastRestoreDate: '2026-01-09' })).toBe(true);
+  });
+});
+
+describe('isRestorableGap', () => {
+  it('bridges only gaps of one or two missed days', () => {
+    expect([0, 1, 2, 3, 4].map(isRestorableGap)).toEqual([false, false, true, true, false]);
+  });
+});
+
+describe('isAdFree', () => {
+  it('runs until the granted time, then ends', () => {
+    const until = 1_000 + AD_FREE_MS;
+    expect(isAdFree(1_000, until)).toBe(true);
+    expect(isAdFree(until - 1, until)).toBe(true);
+    expect(isAdFree(until, until)).toBe(false);
+    expect(isAdFree(1_000, 0)).toBe(false);
   });
 });
